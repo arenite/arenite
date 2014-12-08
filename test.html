@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="js/lib/jasmine.css"/>
+
+  <!-- IoC -->
+  <script type="text/javascript" src="js/ioc.js"></script>
+</head>
+<body>
+</body>
+<script>
+  IOC({
+    exposeIoc: true,
+    context: {
+      dependencies: {
+        default: {
+          sync: [
+            'js/lib/jasmine.js',
+            'js/lib/jasmine-html.js',
+            'js/lib/console.js',
+            'js/lib/boot.js'
+          ],
+          async: [
+            'js/lib/blanket.js',
+            'js/lib/blanket_jasmine.js',
+            'js/test/test.js',
+            'js/test/testrunner.js'
+          ]
+        }
+      },
+      instances: {
+        test: {
+          namespace: 'IOC.Test',
+          args: [{ref: 'ioc'}],
+          init: {
+            func: 'enableCoverage'
+          }
+        }
+      },
+      start: [
+        {
+          instance: 'test',
+          func: 'runTests'
+        }
+      ]
+    }
+  });
+
+</script>
+</html>
