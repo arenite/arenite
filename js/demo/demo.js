@@ -3,10 +3,12 @@ IOC.Demo = function () {
   return {
     context: {
       dependencies: {
-        default: [
-          'js/demo/echo/echo.js',
-          'js/demo/config/config.js'
-        ]
+        default: {
+          async: [
+            'js/demo/echo/echo.js',
+            'js/demo/config/config.js'
+          ]
+        }
       },
       start: [
         {

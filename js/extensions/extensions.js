@@ -3,11 +3,13 @@ IOC.Extensions = function () {
   return {
     context: {
       dependencies: {
-        default: [
-          'js/extensions/bus/bus.js',
-          'js/extensions/template/dot.js',
-          'js/extensions/storage/storage.js'
-        ]
+        default: {
+          async: [
+            'js/extensions/bus/bus.js',
+            'js/extensions/template/dot.js',
+            'js/extensions/storage/storage.js'
+          ]
+        }
       },
       start: [
         {
