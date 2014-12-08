@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <script type="text/javascript" src="js/ioc.js"></script>
+</head>
+<body>
+</body>
+<script>
+  IOC({
+    exposeIoc: true,
+    imports: [
+      {
+        url: 'js/extensions/extensions.js',
+        namespace: 'IOC.Extensions'
+      },
+      {
+        url: 'js/demo/demo.js',
+        namespace: 'IOC.Demo'
+      }
+    ],
+    context: {
+      dependencies: {
+        default: [
+//          '//code.jquery.com/jquery-2.1.1.min.js',
+//          '//rawgithub.com/olado/doT/1.0.1/doT.min.js',
+//          '//rawgithub.com/lcavadas/Storage.js/master/storage.js'
+          'js/lib/jquery-2.1.1.min.js',
+          'js/lib/doT.min.js',
+          'js/lib/storage.min.js'
+        ]
+      },
+      start: [
+        {
+          func: function (arg) {
+            console.log(arg);
+          },
+          args: [
+            {value: 'hey'}
+          ]
+        }
+      ]
+    }
+  });
+
+</script>
+</html>
