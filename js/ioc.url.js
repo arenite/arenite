@@ -1,3 +1,4 @@
+/*global IOC:true*/
 IOC.Url = function () {
   return {
     url: {

@@ -1,51 +1,13 @@
-var IOC = function (config) {
-
-  var ioc = {};
-
-  var _loadScript = function (url, callback) {
-    var head = document.getElementsByTagName('head')[0];
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = url;
-    script.onreadystatechange = script.onload = function () {
-      window.console.log('IOC: Loaded', url);
-      if (typeof callback === 'function') {
-        callback();
-      }
-    };
-    window.console.log('IOC: Loading', url);
-    head.appendChild(script);
-  };
-
-  var _loadResource = function (url, callback, error) {
-    var req = new window.XMLHttpRequest();
-    req.open('GET', url);
-    req.onreadystatechange = function () {
-      if (req.readyState === 4) {
-        if (req.status % 100 < 4) {
-          callback(req);
-        } else if (typeof error === 'function') {
-          error(req);
-        }
-      }
-    };
-    req.send();
-  };
-
-  var _createBaseIoc = function () {
-    ioc = new IOC.Object(ioc);
-    ioc = ioc.object.extend(ioc, {loadScript: _loadScript, loadResource: _loadResource});
-    ioc = ioc.object.extend(ioc, new IOC.Async(ioc));
-    ioc = ioc.object.extend(ioc, new IOC.Url(ioc));
-    ioc = ioc.object.extend(ioc, new IOC.DI(ioc));
-  };
-
-  var _init = (function () {
-    _createBaseIoc();
-    ioc.di.loadConfig(config);
-  });
-  _init(); //explicit call for clarity
+/* global IOC:true */
+IOC = function (config) {
+  var ioc = new IOC.Object(ioc);
+  ioc = ioc.object.extend(ioc, new IOC.Loader());
+  ioc = ioc.object.extend(ioc, new IOC.Async());
+  ioc = ioc.object.extend(ioc, new IOC.Url());
+  ioc = ioc.object.extend(ioc, new IOC.DI(ioc));
+  ioc.di.loadConfig(config);
 };
+/*global IOC:true*/
 IOC.Async = function () {
   var _sequencialLatch = function (values, callback, finalCallback) {
     var index = 0;
@@ -66,22 +28,24 @@ IOC.Async = function () {
 
   var _latch = function (times, callback, name) {
     var id = name || new Date().getTime();
-    window.console.log('Latch: Starting latch', id, 'for', times, 'times');
+    window.console.groupCollapsed('Latch: Starting latch "' + id + '" for', times, 'times');
+    window.console.trace();
+    window.console.groupEnd();
     var executions = 0;
     return {
       countDown: function () {
         executions++;
-        window.console.log('Latch: Counting down latch', id, ',', times - executions, 'remaining');
-        if (executions === (times)) {
-          window.console.log('Latch: Triggering latch', id);
+        window.console.log('Latch: Counting down latch "' + id + '" ,', times - executions, 'remaining');
+        if (executions === times) {
+          window.console.log('Latch: Triggering latch "' + id + '"');
           callback(executions);
         }
       },
       countUp: function () {
         executions--;
-        window.console.log('Latch: Counting up latch', id, ',', times - executions, 'remaining');
-        if (executions === (times - 1)) {
-          window.console.log('Latch: Triggering latch', id);
+        window.console.log('Latch: Counting up latch "' + id + '" ,', times - executions, 'remaining');
+        if (executions === times) {
+          window.console.log('Latch: Triggering latch "' + id + '"');
           callback(executions);
         }
       }
@@ -99,6 +63,7 @@ IOC.Async = function () {
     }
   };
 };
+/*global IOC:true*/
 IOC.DI = function (ioc) {
 
   var registry = {};
@@ -143,7 +108,7 @@ IOC.DI = function (ioc) {
   var _addInstance = function (name, instance, factory, args) {
     registry[name] = instance;
     if (factory) {
-      factories[name] = args;
+      factories[name] = args || [];
     }
   };
 
@@ -224,7 +189,7 @@ IOC.DI = function (ioc) {
     var dependencies = ioc.config.context.dependencies[ioc.config.mode];
 
     var seqLatch = ioc.async.seqLatch(dependencies.sync || [], function (url) {
-      ioc.loadScript(url, seqLatch.next);
+      ioc.loader.loadScript(url, seqLatch.next);
     }, function () {
       var latch = ioc.async.latch(dependencies.async ? dependencies.async.length : 0, function () {
         window.console.log('wire instances');
@@ -235,7 +200,7 @@ IOC.DI = function (ioc) {
         _start(ioc.config.context.start);
       }, 'dependencies');
       dependencies.async.forEach(function (dep) {
-        ioc.loadScript(dep, latch.countDown);
+        ioc.loader.loadScript(dep, latch.countDown);
       });
     });
     seqLatch.next();
@@ -259,7 +224,7 @@ IOC.DI = function (ioc) {
         _mergeImports(unloadedImports);
       }, 'imports');
       unloadedImports.forEach(function (subImp) {
-        ioc.loadScript(subImp.url, latch.countDown);
+        ioc.loader.loadScript(subImp.url, latch.countDown);
       });
     } else {
       _loadDependencies();
@@ -270,6 +235,7 @@ IOC.DI = function (ioc) {
     ioc.di.addInstance('ioc', ioc);
     ioc.config = config;
     ioc.config.mode = ioc.url.query().env || 'default';
+    window.console.log('IOC: Starting in mode', ioc.config.mode);
     if (config.exposeIoc) {
       window.ioc = ioc;
     }
@@ -286,6 +252,45 @@ IOC.DI = function (ioc) {
       loadConfig: _loadConfig,
       getInstance: _getInstance,
       addInstance: _addInstance
+    }
+  };
+};
+/*global IOC:true*/
+IOC.Loader = function () {
+  var _loadScript = function (url, callback) {
+    var head = document.getElementsByTagName('head')[0];
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = url;
+    script.onreadystatechange = script.onload = function () {
+      window.console.log('IOC: Loaded', url);
+      if (typeof callback === 'function') {
+        callback();
+      }
+    };
+    window.console.log('IOC: Loading', url);
+    head.appendChild(script);
+  };
+
+  var _loadResource = function (url, callback, error) {
+    var req = new window.XMLHttpRequest();
+    req.open('GET', url);
+    req.onreadystatechange = function () {
+      if (req.readyState === 4) {
+        if (req.status % 100 < 4) {
+          callback(req);
+        } else if (typeof error === 'function') {
+          error(req);
+        }
+      }
+    };
+    req.send();
+  };
+
+  return {
+    loader: {
+      loadResource: _loadResource,
+      loadScript: _loadScript
     }
   };
 };
@@ -415,6 +420,7 @@ IOC.Object = function () {
     }
   };
 };
+/*global IOC:true*/
 IOC.Url = function () {
   return {
     url: {
