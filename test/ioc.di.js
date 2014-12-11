@@ -257,24 +257,24 @@ describe("IOC.DI", function () {
     expect(IOC.Extra).toHaveBeenCalled();
   });
 
-  //it('should extend ioc if instance is configured to do so', function () {
-  //  IOC.Extra = function () {
-  //    return {yay: 'yay'};
-  //  };
-  //  IOC({
-  //    exposeIoc: true,
-  //    context: {
-  //      instances: {
-  //        extension: true,
-  //        one: {
-  //          namespace: 'IOC.Extra'
-  //        }
-  //      }
-  //    }
-  //  });
-  //
-  //  expect(window.ioc.yay).toEqual('yay');
-  //});
+  it('should extend ioc if instance is configured to do so', function () {
+    window.IOC.Extra = function () {
+      return {yay: 'yay'};
+    };
+    IOC({
+      exposeIoc: true,
+      context: {
+        instances: {
+          one: {
+            extension: true,
+            namespace: 'IOC.Extra'
+          }
+        }
+      }
+    });
+
+    expect(window.ioc.yay).toEqual('yay');
+  });
 
   it('should wire dependencies on other instances', function () {
     IOC({
@@ -326,6 +326,54 @@ describe("IOC.DI", function () {
         }
       });
     }).toThrow('Unknown function "IOC.Extra3"');
+  });
+
+  it('should execute inits', function () {
+    var funcSpy = jasmine.createSpy('init');
+    spyOn(IOC, 'Extra').and.returnValue({
+      init: funcSpy
+    });
+    IOC({
+      exposeIoc: true,
+      context: {
+        instances: {
+          one: {
+            namespace: 'IOC.Extra',
+            init: {
+              func: 'init'
+            }
+          }
+        }
+      }
+    });
+    expect(funcSpy).toHaveBeenCalled();
+  });
+
+  it('should execute starts', function () {
+    var funcSpy = jasmine.createSpy('start');
+    spyOn(IOC, 'Extra').and.returnValue({
+      start: funcSpy
+    });
+    IOC({
+      exposeIoc: true,
+      context: {
+        instances: {
+          one: {
+            namespace: 'IOC.Extra'
+          }
+        },
+        start: [
+          {
+            instance: 'one',
+            func: 'start'
+          },
+          {
+            func: funcSpy
+          }
+        ]
+      }
+    });
+    expect(funcSpy.calls.count()).toBe(2);
   });
 
 });
