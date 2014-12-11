@@ -11,7 +11,7 @@ IOC.DI = function (ioc) {
       if (typeof arg.value !== 'undefined') {
         resolved.push(arg.value);
       } else if (typeof arg.ref !== 'undefined') {
-        var ref = ioc.di.getInstance(arg.ref);
+        var ref = _getInstance(arg.ref);
         if (ref) {
           resolved.push(ref);
         } else {
@@ -27,7 +27,7 @@ IOC.DI = function (ioc) {
   };
 
   var _execFunction = function (instance, func, args) {
-    var resolvedFunc = (typeof func === 'function' ? func : ioc.object.get(ioc.di.getInstance(instance), func));
+    var resolvedFunc = (typeof func === 'function' ? func : ioc.object.get(_getInstance(instance), func));
     if (resolvedFunc) {
       var resolvedArgs = _resolveArgs(args || []);
       if (resolvedArgs) {
@@ -61,8 +61,9 @@ IOC.DI = function (ioc) {
   };
 
   var _wire = function (instances) {
-    if (!instances)
+    if (!instances) {
       return;
+    }
 
     var instanceKeys = ioc.object.keys(instances);
     var unresolved = {};
@@ -74,7 +75,7 @@ IOC.DI = function (ioc) {
         if (args) {
           window.console.log(instance, 'wired');
           var actualInstance = instances[instance].factory ? func : func.apply(func, args);
-          ioc.di.addInstance(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
+          _addInstance(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
           if (instances[instance].extension) {
             ioc = ioc.object.extend(ioc, actualInstance);
           }
@@ -87,7 +88,7 @@ IOC.DI = function (ioc) {
     });
 
     var unresolvedKeys = ioc.object.keys(unresolved);
-    if (unresolvedKeys.length !== instances.length && unresolvedKeys.length > 0) {
+    if (unresolvedKeys.length !== ioc.object.keys(instances).length && unresolvedKeys.length > 0) {
       _wire(unresolved);
     } else {
       if (unresolvedKeys.length !== 0) {
@@ -142,12 +143,12 @@ IOC.DI = function (ioc) {
   };
 
   var _loadSyncDependencies = function () {
-    if (!ioc.config.context) {
+    if (!ioc.config.context || !ioc.config.context.dependencies) {
       return _loadContext();
     }
 
     var dependencies;
-    if (!ioc.config.context.dependencies || !ioc.config.context.dependencies[ioc.config.mode]) {
+    if (!ioc.config.context.dependencies[ioc.config.mode]) {
       dependencies = {sync: [], async: []};
     } else {
       dependencies = ioc.config.context.dependencies[ioc.config.mode];
@@ -187,7 +188,7 @@ IOC.DI = function (ioc) {
   };
 
   var _loadConfig = function (config) {
-    ioc.di.addInstance('ioc', ioc);
+    _addInstance('ioc', ioc);
     ioc.config = config;
     ioc.config.mode = ioc.url.query().env || 'default';
     window.console.log('IOC: Starting in mode', ioc.config.mode);
