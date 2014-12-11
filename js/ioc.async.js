@@ -1,3 +1,4 @@
+/*global IOC:true*/
 IOC.Async = function () {
   var _sequencialLatch = function (values, callback, finalCallback) {
     var index = 0;
@@ -18,22 +19,24 @@ IOC.Async = function () {
 
   var _latch = function (times, callback, name) {
     var id = name || new Date().getTime();
-    window.console.log('Latch: Starting latch', id, 'for', times, 'times');
+    window.console.groupCollapsed('Latch: Starting latch "' + id + '" for', times, 'times');
+    window.console.trace();
+    window.console.groupEnd();
     var executions = 0;
     return {
       countDown: function () {
         executions++;
-        window.console.log('Latch: Counting down latch', id, ',', times - executions, 'remaining');
-        if (executions === (times)) {
-          window.console.log('Latch: Triggering latch', id);
+        window.console.log('Latch: Counting down latch "' + id + '" ,', times - executions, 'remaining');
+        if (executions === times) {
+          window.console.log('Latch: Triggering latch "' + id + '"');
           callback(executions);
         }
       },
       countUp: function () {
         executions--;
-        window.console.log('Latch: Counting up latch', id, ',', times - executions, 'remaining');
-        if (executions === (times - 1)) {
-          window.console.log('Latch: Triggering latch', id);
+        window.console.log('Latch: Counting up latch "' + id + '" ,', times - executions, 'remaining');
+        if (executions === times) {
+          window.console.log('Latch: Triggering latch "' + id + '"');
           callback(executions);
         }
       }

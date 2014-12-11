@@ -1,3 +1,4 @@
+/*global IOC:true*/
 IOC.DI = function (ioc) {
 
   var registry = {};
@@ -42,17 +43,17 @@ IOC.DI = function (ioc) {
   var _addInstance = function (name, instance, factory, args) {
     registry[name] = instance;
     if (factory) {
-      factories[name] = args;
+      factories[name] = args || [];
     }
   };
 
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
-      var args = _resolveArgs(factories[name]);
+      var args = _resolveArgs(factories[name] || []);
       if (args) {
         return registry[name].apply(registry[name], args);
       } else {
-        throw 'Unable to resolve arguments for "' + name;
+        throw 'Unable to resolve arguments for "' + name + '"';
       }
     } else {
       return registry[name];
@@ -61,7 +62,7 @@ IOC.DI = function (ioc) {
 
   var _wire = function (instances) {
     if (!instances)
-      throw 'Your context defines no instances';
+      return;
 
     var instanceKeys = ioc.object.keys(instances);
     var unresolved = {};
@@ -104,6 +105,9 @@ IOC.DI = function (ioc) {
   };
 
   var _start = function (starts) {
+    if (!starts) {
+      return;
+    }
     if (document.readyState !== 'complete') {
       window.setTimeout(function () {
         _start(starts);
@@ -119,23 +123,40 @@ IOC.DI = function (ioc) {
     }
   };
 
-  var _loadDependencies = function () {
-    var dependencies = ioc.config.context.dependencies[ioc.config.mode];
+  var _loadContext = function () {
+    if (ioc.config.context) {
+      window.console.log('wire instances');
+      _wire(ioc.config.context.instances);
+      window.console.log('init instances');
+      _init(ioc.config.context.instances);
+      window.console.log('start instances');
+      _start(ioc.config.context.start);
+    }
+  };
+
+  var _loadAsyncDependencies = function (dependencies) {
+    var latch = ioc.async.latch(dependencies.async ? dependencies.async.length : 0, _loadContext, 'dependencies');
+    dependencies.async.forEach(function (dep) {
+      ioc.loader.loadScript(dep, latch.countDown);
+    });
+  };
+
+  var _loadSyncDependencies = function () {
+    if (!ioc.config.context) {
+      return _loadContext();
+    }
+
+    var dependencies;
+    if (!ioc.config.context.dependencies || !ioc.config.context.dependencies[ioc.config.mode]) {
+      dependencies = {sync: [], async: []};
+    } else {
+      dependencies = ioc.config.context.dependencies[ioc.config.mode];
+    }
 
     var seqLatch = ioc.async.seqLatch(dependencies.sync || [], function (url) {
-      ioc.loadScript(url, seqLatch.next);
+      ioc.loader.loadScript(url, seqLatch.next);
     }, function () {
-      var latch = ioc.async.latch(dependencies.async ? dependencies.async.length : 0, function () {
-        window.console.log('wire instances');
-        _wire(ioc.config.context.instances);
-        window.console.log('init instances');
-        _init(ioc.config.context.instances);
-        window.console.log('start instances');
-        _start(ioc.config.context.start);
-      }, 'dependencies');
-      dependencies.async.forEach(function (dep) {
-        ioc.loadScript(dep, latch.countDown);
-      });
+      _loadAsyncDependencies(dependencies);
     });
     seqLatch.next();
   };
@@ -158,10 +179,10 @@ IOC.DI = function (ioc) {
         _mergeImports(unloadedImports);
       }, 'imports');
       unloadedImports.forEach(function (subImp) {
-        ioc.loadScript(subImp.url, latch.countDown);
+        ioc.loader.loadScript(subImp.url, latch.countDown);
       });
     } else {
-      _loadDependencies();
+      _loadSyncDependencies();
     }
   };
 
@@ -169,6 +190,7 @@ IOC.DI = function (ioc) {
     ioc.di.addInstance('ioc', ioc);
     ioc.config = config;
     ioc.config.mode = ioc.url.query().env || 'default';
+    window.console.log('IOC: Starting in mode', ioc.config.mode);
     if (config.exposeIoc) {
       window.ioc = ioc;
     }
@@ -176,7 +198,7 @@ IOC.DI = function (ioc) {
     if (ioc.config.imports) {
       _mergeImports(JSON.parse(JSON.stringify(ioc.config.imports)));
     } else {
-      _loadDependencies();
+      _loadSyncDependencies();
     }
   };
 

@@ -7,8 +7,14 @@
   var uglify = require('gulp-uglify');
   var jshint = require('gulp-jshint');
   var concat = require('gulp-concat');
+  var shell = require('gulp-shell');
 
   var DEST = 'build/';
+
+  gulp.task('docs', function(){
+    return gulp.src('di.iml', {read:false})
+      .pipe(shell('node_modules/docco/bin/docco -o docs js/*'));
+  });
 
   gulp.task('default', function () {
     return gulp.src(['js/ioc.core.js', 'js/**.js'])

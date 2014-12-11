@@ -5,7 +5,7 @@ IOC.Templates = function (ioc) {
   return {
     template: {
       add: function (url, callback) {
-        ioc.loadResource(url, function (template) {
+        ioc.loader.loadResource(url, function (template) {
 
           var _$templateContainer = $('<div></div>');
           $(document.body).append(_$templateContainer);

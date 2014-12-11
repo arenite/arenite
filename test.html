@@ -27,37 +27,43 @@
           async: [
             'lib/blanket.js',
             'lib/blanket_jasmine.js',
-            'test/ioc.test.js',
-            'test/ioc.core.js',
-            'test/ioc.url.js',
-            'test/ioc.object.js'
+            'test/ioc.test.js'
           ]
         }
       },
       instances: {
         test: {
           namespace: 'IOC.Test',
-          args: [{ref: 'ioc'}],
-          init: {
-            func: 'enableCoverage',
-            args: [
-              {
-                value: [
-                  'js/ioc.core.js',
-                  'js/ioc.object.js',
-                  'js/ioc.async.js',
-                  'js/ioc.url.js',
-                  'js/ioc.di.js'
-                ]
-              }
-            ]
-          }
+          args: [{ref: 'ioc'}]
         }
       },
       start: [
         {
           instance: 'test',
-          func: 'runTests'
+          func: 'runTests',
+          args: [
+            {
+              value: ['js/ioc.core.js']
+            },
+            {
+              value: [
+                'js/ioc.loader.js',
+                'js/ioc.object.js',
+                'js/ioc.async.js',
+                'js/ioc.url.js',
+                'js/ioc.di.js'
+              ]
+            },
+            {
+              value: [
+                'test/ioc.core.js',
+                'test/ioc.url.js',
+                'test/ioc.object.js',
+                'test/ioc.async.js',
+                'test/ioc.loader.js',
+                'test/ioc.di.js'
+              ]
+            }]
         }
       ]
     }
