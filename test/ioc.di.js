@@ -1,22 +1,8 @@
-/*global IOC:true, describe:true, it:true, expect:true, jasmine:true, beforeEach:true, spyOn:true */
+/*global IOC:true, describe:true, it:true, expect:true, jasmine:true, spyOn:true */
 describe("IOC.DI", function () {
+  IOC.Extra = function () {
 
-  var testConf;
-
-  beforeEach(function () {
-    IOC.Extra = function () {
-
-    };
-    testConf = {
-      context: {
-        dependencies: {
-          default: {
-            sync: []
-          }
-        }
-      }
-    };
-  });
+  };
 
   it("should be able to add and retrieve instances from the context", function () {
     var di = IOC.DI();
@@ -97,22 +83,6 @@ describe("IOC.DI", function () {
     }]);
     di.di.getInstance('instanceName');
     expect(calls).toBe(1);
-  });
-
-  it("should resolve ref arguments", function () {
-    var di = IOC.DI({
-      di: {
-        getInstance: function () {
-          return {};
-        }
-      }
-    });
-    di.di.addInstance('instanceName', function (c) {
-      return {a: c};
-    }, true, [{ref: 'other'}]);
-    expect(function () {
-      di.di.getInstance('instanceName');
-    }).not.toThrow('Unable to resolve arguments for "instanceName"');
   });
 
   it("should resolve func arguments", function () {
@@ -237,6 +207,125 @@ describe("IOC.DI", function () {
     expect(loadingSpy.calls.count()).toEqual(2);
     expect(loadingSpy).toHaveBeenCalledWith('1', jasmine.any(Function));
     expect(loadingSpy).toHaveBeenCalledWith('2', jasmine.any(Function));
+  });
+
+  it('should fetch no dependencies if mode is unknown', function () {
+    var loadingSpy = jasmine.createSpy('load').and.callFake(function (url, cb) {
+      cb();
+    });
+
+    spyOn(IOC, 'Loader').and.callFake(function () {
+      return {
+        loader: {
+          loadScript: loadingSpy
+        }
+      };
+    });
+
+    IOC({
+      exposeIoc: true,
+      context: {
+        dependencies: {
+          mmm: {
+            sync: [
+              '1'
+            ],
+            async: [
+              '2'
+            ]
+          }
+        }
+      }
+    });
+
+    expect(loadingSpy.calls.count()).toEqual(0);
+  });
+
+  it('should wire instances', function () {
+    spyOn(IOC, 'Extra');
+    IOC({
+      exposeIoc: true,
+      context: {
+        instances: {
+          one: {
+            namespace: 'IOC.Extra'
+          }
+        }
+      }
+    });
+
+    expect(IOC.Extra).toHaveBeenCalled();
+  });
+
+  //it('should extend ioc if instance is configured to do so', function () {
+  //  IOC.Extra = function () {
+  //    return {yay: 'yay'};
+  //  };
+  //  IOC({
+  //    exposeIoc: true,
+  //    context: {
+  //      instances: {
+  //        extension: true,
+  //        one: {
+  //          namespace: 'IOC.Extra'
+  //        }
+  //      }
+  //    }
+  //  });
+  //
+  //  expect(window.ioc.yay).toEqual('yay');
+  //});
+
+  it('should wire dependencies on other instances', function () {
+    IOC({
+      exposeIoc: true,
+      context: {
+        instances: {
+          one: {
+            namespace: 'IOC.Object',
+            args: [{ref: 'two'}]
+          },
+          two: {
+            namespace: 'IOC.Object'
+          }
+        }
+      }
+    });
+  });
+
+  it('should throw error on circular references', function () {
+    expect(function () {
+      IOC({
+        exposeIoc: true,
+        context: {
+          instances: {
+            one: {
+              namespace: 'IOC.Object',
+              args: [{ref: 'two'}]
+            },
+            two: {
+              namespace: 'IOC.Object',
+              args: [{ref: 'one'}]
+            }
+          }
+        }
+      });
+    }).toThrow('Make sure you don\'t have circular dependencies, Unable to resolve the following instances: one, two');
+  });
+
+  it('should throw error on wire unknown instances', function () {
+    expect(function () {
+      IOC({
+        exposeIoc: true,
+        context: {
+          instances: {
+            one: {
+              namespace: 'IOC.Extra3'
+            }
+          }
+        }
+      });
+    }).toThrow('Unknown function "IOC.Extra3"');
   });
 
 });
