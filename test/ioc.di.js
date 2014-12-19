@@ -349,6 +349,52 @@ describe("IOC.DI", function () {
     expect(funcSpy).toHaveBeenCalled();
   });
 
+  it('should fail on inits if function does not exist', function () {
+    var funcSpy = jasmine.createSpy('init');
+    spyOn(IOC, 'Extra').and.returnValue({
+      init: funcSpy
+    });
+    expect(function () {
+      IOC({
+        exposeIoc: true,
+        context: {
+          instances: {
+            one: {
+              namespace: 'IOC.Extra',
+              init: {
+                func: 'idonotexist'
+              }
+            }
+          }
+        }
+      });
+    }).toThrow('Unknown function "idonotexist" for instance "one"');
+  });
+
+  it('should fail on inits if arguments cannot be resolved', function () {
+    var funcSpy = jasmine.createSpy('init');
+    spyOn(IOC, 'Extra').and.returnValue({
+      init: funcSpy
+    });
+    expect(function () {
+      IOC({
+        exposeIoc: true,
+        context: {
+          instances: {
+            one: {
+              namespace: 'IOC.Extra',
+              init: {
+                func: 'init',
+                args: [{ref: 'idonotexist'}]
+              }
+            }
+          }
+        }
+      });
+
+    }).toThrow('Unable to resolve arguments for "init" of instance "one"');
+  });
+
   it('should execute starts', function () {
     var funcSpy = jasmine.createSpy('start');
     spyOn(IOC, 'Extra').and.returnValue({
@@ -376,4 +422,60 @@ describe("IOC.DI", function () {
     expect(funcSpy.calls.count()).toBe(2);
   });
 
+  it('should fail on starts if function does not exist', function () {
+    var funcSpy = jasmine.createSpy('start');
+    spyOn(IOC, 'Extra').and.returnValue({
+      start: funcSpy
+    });
+    expect(function () {
+      IOC({
+        exposeIoc: true,
+        context: {
+          instances: {
+            one: {
+              namespace: 'IOC.Extra'
+            }
+          },
+          start: [
+            {
+              instance: 'one',
+              func: 'idontexist'
+            },
+            {
+              func: funcSpy
+            }
+          ]
+        }
+      });
+    }).toThrow('Unknown function "idontexist" for instance "one"');
+  });
+
+  it('should fail on starts if arguments cannot be resolved', function () {
+    var funcSpy = jasmine.createSpy('start');
+    spyOn(IOC, 'Extra').and.returnValue({
+      start: funcSpy
+    });
+    expect(function () {
+      IOC({
+        exposeIoc: true,
+        context: {
+          instances: {
+            one: {
+              namespace: 'IOC.Extra'
+            }
+          },
+          start: [
+            {
+              instance: 'one',
+              func: 'start',
+              args: [{ref: 'idontexist'}]
+            },
+            {
+              func: funcSpy
+            }
+          ]
+        }
+      });
+    }).toThrow('Unable to resolve arguments for "start" of instance "one"');
+  });
 });
