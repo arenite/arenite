@@ -1,4 +1,5 @@
 /*global IOC:true*/
+/*jshint evil:true*/
 IOC.DI = function (ioc) {
 
   var registry = {};
