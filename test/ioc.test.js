@@ -35,7 +35,16 @@ IOC.Test = function (ioc) {
         window.console.log('IOC: Starting the tests');
         var env = jasmine.getEnv();
         blanket.setupCoverage();
+
+        jasmineRequire.console(jasmineRequire, jasmine);
+        var consoleReporter = new jasmine.ConsoleReporter({print: function (t) {
+          if (t !== '.' && t.trim().length > 0) {
+            window.console.log(t);
+          }
+        }});
+
         env.addReporter(new jasmine.BlanketReporter());
+        env.addReporter(consoleReporter);
         env.execute();
       }
       catch (e) {

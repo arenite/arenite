@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="lib/jasmine.css"/>
+  <link rel="stylesheet" href="lib/jasmine/jasmine.css"/>
 
   <!-- IoC -->
   <script type="text/javascript" src="build/ioc.js"></script>
@@ -19,14 +19,14 @@
       dependencies: {
         default: {
           sync: [
-            'lib/jasmine.js',
-            'lib/jasmine-html.js',
-            'lib/console.js',
-            'lib/boot.js'
+            'lib/jasmine/jasmine.js',
+            'lib/jasmine/jasmine-html.js',
+            'lib/jasmine/console.js',
+            'lib/jasmine/boot.js'
           ],
           async: [
-            'lib/blanket.js',
-            'lib/blanket_jasmine.js',
+            'lib/jasmine/blanket.js',
+            'lib/jasmine/blanket_jasmine.js',
             'test/ioc.test.js'
           ]
         }
