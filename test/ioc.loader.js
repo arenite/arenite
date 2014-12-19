@@ -1,4 +1,4 @@
-/*global IOC:true, describe:true, it:true, expect:true, spyOn:true, jasmine:true */
+/*global IOC:true, describe:true, it:true, expect:true, jasmine:true */
 describe("IOC.Loader", function () {
   it("should invoke callback on successful load", function () {
     var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send']);
@@ -49,51 +49,4 @@ describe("IOC.Loader", function () {
     expect(callback).not.toHaveBeenCalledWith();
   });
 
-  it("should include script tag on head when loadScript is used", function () {
-    var tag;
-    var head = {
-      appendChild: jasmine.createSpy('appendChild').and.callFake(function (el) {
-        tag = el;
-      })
-    };
-    document.getElementsByTagName = function () {
-      return [head];
-    };
-    var loader = IOC.Loader();
-    loader.loader.loadScript('asd');
-    expect(head.appendChild).toHaveBeenCalled();
-  });
-
-  it("loadScript should not invoke callback until script is loaded", function () {
-    var tag;
-    var head = {
-      appendChild: jasmine.createSpy('appendChild').and.callFake(function (el) {
-        tag = el;
-      })
-    };
-    document.getElementsByTagName = function () {
-      return [head];
-    };
-    var loader = IOC.Loader();
-    var cb = jasmine.createSpy('cb');
-    loader.loader.loadScript('asd', cb);
-    expect(cb).not.toHaveBeenCalled();
-  });
-
-  it("loadScript should invoke callback if one is defined when script is loaded", function () {
-    var tag = null;
-    var head = {
-      appendChild: jasmine.createSpy('appendChild').and.callFake(function (el) {
-        tag = el;
-      })
-    };
-    document.getElementsByTagName = function () {
-      return [head];
-    };
-    var loader = IOC.Loader();
-    var cb = jasmine.createSpy('cb');
-    loader.loader.loadScript('asd', cb);
-    tag.onload();
-    expect(cb).toHaveBeenCalled();
-  });
 });

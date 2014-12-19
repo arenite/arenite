@@ -203,11 +203,70 @@ IOC.DI = function (ioc) {
     }
   };
 
+  var _processAnnotations = function (text) {
+    var regex = /@ioc-instance\s+["']([^"']+)["']\s*(.*);\s*(@ioc-init\s+["']([^"']+)["']\s*(.*);)*\s*(@ioc-start\s+["']([^"']+)["']\s*(.*);)*\s*\*\/\s*([\w.]+)/g;
+    var match;
+    while ((match = regex.exec(text))) {
+      _processAnnotation(match);
+    }
+  };
+
+  var _processArgAnnotation = function (match) {
+    var args = [];
+    var split = match.split(',');
+    split.forEach(function (arg) {
+      var argPair = arg.split(":");
+      var argObj = {};
+      argObj[argPair[0].trim()] = argPair[0].trim() === 'ref' ? argPair[1].trim() : eval(argPair[1].trim());
+      args.push(argObj);
+    });
+    return args;
+  };
+
+  var _processAnnotation = function (match) {
+    var instanceName = match[1];
+    var namespace = match[9];
+
+    if (!instanceName) {
+      return;
+    }
+    if (!ioc.config.context) {
+      ioc.config.context = {instances: {}};
+    }
+
+    //instance
+    ioc.config.context.instances[instanceName] = {namespace: namespace};
+    if (match[2]) {
+      ioc.config.context.instances[instanceName].args = _processArgAnnotation(match[2]);
+    }
+
+    // init
+    if (match[4]) {
+      ioc.config.context.instances[instanceName].init = {func: match[4]};
+      if (match[5]) {
+        ioc.config.context.instances[instanceName].init.args = _processArgAnnotation(match[5]);
+      }
+    }
+
+    // start
+    if (match[7]) {
+      var start = {instance: instanceName, func: match[7]};
+      if (match[8]) {
+        start.args = _processArgAnnotation(match[8]);
+      }
+      if (!ioc.config.context.start) {
+        ioc.config.context.start = [];
+      }
+      ioc.config.context.start.push(start);
+    }
+  };
+
   return {
     di: {
       loadConfig: _loadConfig,
       getInstance: _getInstance,
-      addInstance: _addInstance
+      addInstance: _addInstance,
+      processAnnotations: _processAnnotations
     }
   };
 };
