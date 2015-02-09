@@ -116,11 +116,7 @@ IOC.DI = function (ioc) {
       }, 100);
     } else {
       starts.forEach(function (start) {
-        if (start.instance) {
           _execFunction(start.instance, start.func, start.args);
-        } else if (start.func) {
-          _execFunction(null, start.func, start.args);
-        }
       });
     }
   };

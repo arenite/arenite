@@ -13,7 +13,7 @@
 
   gulp.task('docs', function(){
     return gulp.src('di.iml', {read:false})
-      .pipe(shell('node_modules/docco/bin/docco -o docs js/*'));
+      .pipe(shell('node_modules/docco/bin/docco -o website/docs js/*.js js/extensions/*.js js/extensions/**/*.js'));
   });
 
   gulp.task('default', function () {

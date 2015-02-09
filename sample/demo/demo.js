@@ -5,8 +5,9 @@ IOC.Demo = function () {
       dependencies: {
         default: {
           async: [
-            'js/demo/echo/echo.js',
-            'js/demo/config/config.js'
+            'demo/annotation/annotation.js',
+            'demo/echo/echo.js',
+            'demo/config/config.js'
           ]
         }
       },

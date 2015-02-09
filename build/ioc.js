@@ -1,13 +1,36 @@
 /* global IOC:true */
+// IOC is an implementation of the Sandbox and Module patterns. It was designed to,
+// unlike most of the existing module libraries, not affect your code making it dependant on the module library itself.
+//
+// Base of the ioc sandbox object. Creates the base services in the ioc sandbox object.
+//
+// Using the Namespace and MVP (or MVC) patterns is strongly recommended but not mandatory.
+//
+// For more information about the mentioned patterns consult the book "Javascript Patterns"
+// by Stoyan Stefanov from O'Reilly Media which discusses these patterns in detail.
 IOC = function (config) {
+  //### IOC.Object
+  // Instance of the Sandbox is started with the <a href="ioc.object.html">IOC.Object</a> module witch gives us access to the <code>extend</code> function used.
   var ioc = new IOC.Object(ioc);
+  //### IOC.Async
+  // Extend the instance with the <a href="ioc.async.html">IOC.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
   ioc = ioc.object.extend(ioc, new IOC.Async());
+  //### IOC.Url
+  // Extend the instance with the <a href="ioc.url.html">IOC.Url</a> extension which provides functions for analysis of query parameters.
   ioc = ioc.object.extend(ioc, new IOC.Url());
+  //### IOC.DI
+  // Extend the instance with the <a href="ioc.di.html">IOC.DI</a> extension which provides
+  // the injector functionality.
   ioc = ioc.object.extend(ioc, new IOC.DI(ioc));
+  //### IOC.Loader
+  // Extend the instance with the <a href="ioc.loader.html">IOC.Loader</a> extension which provides
+  // the script and resource loading functionality to the sandbox.
   ioc = ioc.object.extend(ioc, new IOC.Loader(ioc));
+  // Initialize the injector by having it read the configuration object passed into this constructor.
   ioc.di.loadConfig(config);
 };
 /*global IOC:true*/
+//Asynchronous tools
 IOC.Async = function () {
   var _sequencialLatch = function (values, callback, finalCallback) {
     var index = 0;
@@ -54,9 +77,36 @@ IOC.Async = function () {
 
   return {
     async: {
+      //###Sequencial latch.
+      //The sequencial latch will synchronously execute the handler
+      // with the provided values and execute a callback when all operations are complete.
+      //<pre><code>
+      // seqLatch(values, handler, callback)
+      //</code></pre>
+      // Where *<b>values</b>* is an array of values to be passed as parameters to the handler function.
+      // The *<b>handler</b>* function must call the <code>next</code> function of the returned object when it
+      // finishes the execution.
+      // The *<b>callback</b>* is the function that is executed once all the values have been handled.
       seqLatch: function (values, handler, callback) {
-        return _sequencialLatch(values, handler, callback);
+        return new _sequencialLatch(values, handler, callback);
       },
+      //###Latch.
+      //The latch will execute asynchronous tasks and invoke a callback when all the declared times have been executed
+      //<pre><code>
+      // latch(times, callback [, name])
+      //</code></pre>
+      // Where *<b>times</b>* is the initially expected times the latch should wait for to trigger the callback.
+      // The *<b>callback</b>* is the function invoked once times reaches 0.
+      // The optional *<b></b>*name is if you wish to have a meaningful name in the console logs.
+      // This function returns an object with two functions:
+      //<pre><code>
+      // {
+      //   countDown:...
+      //   countUp:...
+      // }
+      //</code></pre>
+      // *<b>countDown</b>* will decrease the counter and *<b>CountUp</b>* will increase the counter that is initialized with the times argument.
+      // Once the counter hits 0 the callback is invoked.
       latch: function (times, callback, name) {
         return new _latch(times, callback, name);
       }
@@ -373,6 +423,9 @@ IOC.Loader = function (ioc) {
   };
 };
 /*global IOC:true*/
+// Collection of utility functions to handle objects.
+// This is an integral part for the usage of the Namespace pattern since this provides the ability to, for example,
+// retrieve the functions by namespace.
 IOC.Object = function () {
 
   var _navigateToBeforeLast = function (object, path) {
@@ -485,26 +538,82 @@ IOC.Object = function () {
 
   return {
     object: {
+      //###object.get
+      // Retrieves a property from an object. The property is expressed as a string, denoting a path.
+      //<pre><code>
+      // get(object, path)
+      //</pre></code>
+      //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be fetched.
       get: _getInObject,
+      //###object.set
+      // Sets a property in an object. The property is expressed as a string, denoting a path.
+      //<pre><code>
+      // set(object, path, value)
+      //</pre></code>
+      //where *<b>object</b>* is the target object,
+      // *<b>path</b>* is the path of the value and *<b>value</b>* the value to be set at the given path.
       set: _setInObject,
+      //###object.delete
+      // Removes a property from an object. The property is expressed as a string, denoting a path.
+      //<pre><code>
+      // get(object, path)
+      //</pre></code>
+      //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be deleted.
       delete: _deleteInObject,
+      //###object.extend
+      // Extend merges to objects. The second object will "override" properties also existing in the first.
+      //<pre><code>
+      // extend(object, other)
+      //</pre></code>
+      //where *<b>object</b>* is the object to be merged and extended by *<b>other</b>*.
       extend: _extend,
-      keys: _keys
+      //###object.keys
+      //Returns all the properties available to an object in the form of an array.
+      //<pre><code>
+      // keys(object)
+      //</pre></code>
+      //where *<b>object</b>* is the object from which the properties will be extracted.
+      keys: _keys,
+      //###object.contains
+      // Determines if a element is present in an array or a key exists in an object:
+      //<pre><code>
+      // contains(object, key)
+      //</pre></code>
+      //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
+      contains: _contains
     },
     array: {
+      //###array.contains
+      // Determines if a element is present in an array or a key exists in an object:
+      //<pre><code>
+      // contains(object, key)
+      //</pre></code>
+      //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
       contains: _contains,
+      //###array.uniq
+      // Filters an array returning a new one with the unique values.
+      //<pre><code>
+      // contains(array)
+      //</pre></code>
+      //where *<b>array</b>* is the array to be stripped o duplicate values
       uniq: _uniq
     }
   };
 };
 /*global IOC:true*/
+//Utility function for interpreting url query parameters
 IOC.Url = function () {
   return {
     url: {
+      //### url.query
+      // Fetches the query parameters for the current url and returns them in an object.
+      // Variables will be keys in the object and the values are either the value for the variable or an array of
+      //values in the case where a variable is defined more than once.
       query: function () {
         var query_string = {};
         var query = window.location.search.substring(1);
-        var vars = query.split("&");
+        var vars = query.split("#")[0];
+        vars = vars.split("&");
         for (var i = 0; i < vars.length; i++) {
           var pair = vars[i].split("=");
           if (typeof query_string[pair[0]] === "undefined") {
