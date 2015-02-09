@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="lib/jasmine/jasmine.css"/>
 
   <!-- IoC -->
-  <script type="text/javascript" src="build/ioc.js"></script>
+  <script type="text/javascript" src="../build/ioc.js"></script>
 </head>
 <body>
 </body>
@@ -27,7 +27,7 @@
           async: [
             'lib/jasmine/blanket.js',
             'lib/jasmine/blanket_jasmine.js',
-            'test/ioc.test.js'
+            '../js/extensions/test/ioc.test.js'
           ]
         }
       },
@@ -43,25 +43,25 @@
           func: 'runTests',
           args: [
             {
-              value: ['js/ioc.core.js']
+              value: ['../js/ioc.core.js']
             },
             {
               value: [
-                'js/ioc.loader.js',
-                'js/ioc.object.js',
-                'js/ioc.async.js',
-                'js/ioc.url.js',
-                'js/ioc.di.js'
+                '../js/ioc.loader.js',
+                '../js/ioc.object.js',
+                '../js/ioc.async.js',
+                '../js/ioc.url.js',
+                '../js/ioc.di.js'
               ]
             },
             {
               value: [
-                'test/ioc.core.js',
-                'test/ioc.url.js',
-                'test/ioc.object.js',
-                'test/ioc.async.js',
-                'test/ioc.loader.js',
-                'test/ioc.di.js'
+                'ioc.core.js',
+                'ioc.url.js',
+                'ioc.object.js',
+                'ioc.async.js',
+                'ioc.loader.js',
+                'ioc.di.js'
               ]
             }]
         }

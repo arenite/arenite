@@ -1,4 +1,7 @@
 /*global IOC:true*/
+// Collection of utility functions to handle objects.
+// This is an integral part for the usage of the Namespace pattern since this provides the ability to, for example,
+// retrieve the functions by namespace.
 IOC.Object = function () {
 
   var _navigateToBeforeLast = function (object, path) {
@@ -111,14 +114,64 @@ IOC.Object = function () {
 
   return {
     object: {
+      //###object.get
+      // Retrieves a property from an object. The property is expressed as a string, denoting a path.
+      //<pre><code>
+      // get(object, path)
+      //</pre></code>
+      //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be fetched.
       get: _getInObject,
+      //###object.set
+      // Sets a property in an object. The property is expressed as a string, denoting a path.
+      //<pre><code>
+      // set(object, path, value)
+      //</pre></code>
+      //where *<b>object</b>* is the target object,
+      // *<b>path</b>* is the path of the value and *<b>value</b>* the value to be set at the given path.
       set: _setInObject,
+      //###object.delete
+      // Removes a property from an object. The property is expressed as a string, denoting a path.
+      //<pre><code>
+      // get(object, path)
+      //</pre></code>
+      //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be deleted.
       delete: _deleteInObject,
+      //###object.extend
+      // Extend merges to objects. The second object will "override" properties also existing in the first.
+      //<pre><code>
+      // extend(object, other)
+      //</pre></code>
+      //where *<b>object</b>* is the object to be merged and extended by *<b>other</b>*.
       extend: _extend,
-      keys: _keys
+      //###object.keys
+      //Returns all the properties available to an object in the form of an array.
+      //<pre><code>
+      // keys(object)
+      //</pre></code>
+      //where *<b>object</b>* is the object from which the properties will be extracted.
+      keys: _keys,
+      //###object.contains
+      // Determines if a element is present in an array or a key exists in an object:
+      //<pre><code>
+      // contains(object, key)
+      //</pre></code>
+      //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
+      contains: _contains
     },
     array: {
+      //###array.contains
+      // Determines if a element is present in an array or a key exists in an object:
+      //<pre><code>
+      // contains(object, key)
+      //</pre></code>
+      //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
       contains: _contains,
+      //###array.uniq
+      // Filters an array returning a new one with the unique values.
+      //<pre><code>
+      // contains(array)
+      //</pre></code>
+      //where *<b>array</b>* is the array to be stripped o duplicate values
       uniq: _uniq
     }
   };

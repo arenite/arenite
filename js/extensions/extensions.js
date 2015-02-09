@@ -1,13 +1,18 @@
 /*global IOC:true*/
+// This is a sample configuration that adds the existing extensions to the sandbox.
+// The sandbox object is auto-registered as <code>ioc</code> and can be referenced for any other instance.
 IOC.Extensions = function () {
   return {
     context: {
       dependencies: {
         default: {
           async: [
-            'js/extensions/bus/bus.js',
-            'js/extensions/template/dot.js',
-            'js/extensions/storage/storage.js'
+            'lib/jquery-2.1.1.min.js',
+            'lib/doT.min.js',
+            'lib/storage.min.js',
+            '/di/js/extensions/bus/bus.js',
+            '/di/js/extensions/template/dot.js',
+            '/di/js/extensions/storage/storage.js'
           ]
         }
       },
@@ -15,19 +20,33 @@ IOC.Extensions = function () {
         {
           instance: 'bus',
           func: 'bus.publish',
-          args: [{'value': 'hell-yeah'}]
+          args: [{'value': 'application-started'}]
         }
       ],
       instances: {
+        //### IOC.Bus
+        // Event bus extension.
+        //
+        // Described in <a href="extensions/bus/bus.html">IOC.Bus</a>.
         bus: {
           extension: true,
           namespace: 'IOC.Bus'
         },
+        //### IOC.Templates
+        // HTML templating extension using <a href="http://olado.github.io/doT/index.html">doT.js</a>.
+        //
+        // Described in <a href="extensions/template/dot.html">IOC.Templates</a>
         templates: {
+          extension: true,
           namespace: 'IOC.Templates',
           args: [{ref: 'ioc'}]
         },
+        //### IOC.Storage
+        // Local storage extension using <a href="https://github.com/lcavadas/Storage.js">Storage.js</a>
+        //
+        // Described in <a href="extensions/storage/storage.html">IOC.Storage</a>
         storage: {
+          extension: true,
           namespace: 'IOC.Storage',
           args: [
             {ref: 'ioc'}

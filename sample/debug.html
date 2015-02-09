@@ -2,12 +2,12 @@
 <html>
 <head lang="en">
   <meta charset="UTF-8">
-  <script type="text/javascript" src="js/ioc.core.js"></script>
-  <script type="text/javascript" src="js/ioc.loader.js"></script>
-  <script type="text/javascript" src="js/ioc.object.js"></script>
-  <script type="text/javascript" src="js/ioc.async.js"></script>
-  <script type="text/javascript" src="js/ioc.url.js"></script>
-  <script type="text/javascript" src="js/ioc.di.js"></script>
+  <script type="text/javascript" src="../js/ioc.core.js"></script>
+  <script type="text/javascript" src="../js/ioc.loader.js"></script>
+  <script type="text/javascript" src="../js/ioc.object.js"></script>
+  <script type="text/javascript" src="../js/ioc.async.js"></script>
+  <script type="text/javascript" src="../js/ioc.url.js"></script>
+  <script type="text/javascript" src="../js/ioc.di.js"></script>
 </head>
 <body onload="start()">
 </body>
@@ -17,11 +17,11 @@
       exposeIoc: true,
       imports: [
         {
-          url: 'js/extensions/extensions.js',
+          url: '../js/extensions/extensions.js',
           namespace: 'IOC.Extensions'
         },
         {
-          url: 'js/demo/demo.js',
+          url: 'demo/demo.js',
           namespace: 'IOC.Demo'
         }
       ],
@@ -32,7 +32,7 @@
               'lib/jquery-2.1.1.min.js',
               'lib/doT.min.js',
               'lib/storage.min.js',
-              'js/demo/annotation/annotation.js'
+              'demo/annotation/annotation.js'
             ]
           }
         },
