@@ -21,7 +21,7 @@ IOC.DI = function (ioc) {
       } else if (typeof arg.func !== 'undefined') {
         resolved.push(arg.func);
       } else if (typeof arg.exec !== 'undefined') {
-        resolved.push(arg.exec());
+        resolved.push(arg.exec(ioc));
       }
     });
     return failure ? null : resolved;
