@@ -1,5 +1,5 @@
 /*!
- * JIOC JavaScript Library v0.0.1
+ * JIOC JavaScript Library v0.0.2
  * https://github.com/lcavadas/jioc
  *
  * Copyright 2014, Luís Serralheiro
@@ -401,7 +401,7 @@ IOC.Loader = function (ioc) {
 
   var _loadResource = function (url, callback, error) {
     var req = new window.XMLHttpRequest();
-    req.open('GET', url);
+    req.open('GET', url, true);
     req.onreadystatechange = function () {
       if (req.readyState === 4) {
         if (req.status % 100 < 4) {
@@ -411,6 +411,8 @@ IOC.Loader = function (ioc) {
         }
       }
     };
+    req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    req.setRequestHeader("Access-Control-Allow-Origin", window.location.origin);
     req.send();
   };
 
