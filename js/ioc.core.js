@@ -1,5 +1,5 @@
 /*!
- * JIOC JavaScript Library v0.0.1
+ * JIOC JavaScript Library v0.0.2
  * https://github.com/lcavadas/jioc
  *
  * Copyright 2014, Luís Serralheiro
