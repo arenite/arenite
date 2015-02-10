@@ -11,8 +11,8 @@
 
   var DEST = 'build/';
 
-  gulp.task('docs', function(){
-    return gulp.src('di.iml', {read:false})
+  gulp.task('docs', function () {
+    return gulp.src('di.iml', {read: false})
       .pipe(shell('node_modules/docco/bin/docco -o website/docs js/*.js js/extensions/*.js js/extensions/**/*.js'));
   });
 
@@ -22,7 +22,7 @@
       .pipe(jshint.reporter('default'))
       .pipe(concat('ioc.js'))
       .pipe(gulp.dest(DEST))
-      .pipe(uglify())
+      .pipe(uglify({preserveComments: 'some'}))
       .pipe(rename({extname: '.min.js'}))
       .pipe(gulp.dest(DEST));
   });
