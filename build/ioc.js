@@ -1,3 +1,9 @@
+/*!
+ * JIOC JavaScript Library v0.0.1
+ * https://github.com/lcavadas/jioc
+ *
+ * Copyright 2014, Luís Serralheiro
+ */
 /* global IOC:true */
 // IOC is an implementation of the Sandbox and Module patterns. It was designed to,
 // unlike most of the existing module libraries, not affect your code making it dependant on the module library itself.
@@ -6,8 +12,15 @@
 //
 // Using the Namespace and MVP (or MVC) patterns is strongly recommended but not mandatory.
 //
+// You can create further extensions to the sandbox by providing new services or overriding already imported ones.
+//
+// There are a few extensions included in this repository and you can read more about them <a href="extensions.html">here</a>.
+//
 // For more information about the mentioned patterns consult the book "Javascript Patterns"
 // by Stoyan Stefanov from O'Reilly Media which discusses these patterns in detail.
+//
+// ## Configuration
+// The documentation for the configuration is presented in the <a href="../index.html">website</a>.
 IOC = function (config) {
   //### IOC.Object
   // Instance of the Sandbox is started with the <a href="ioc.object.html">IOC.Object</a> module witch gives us access to the <code>extend</code> function used.
@@ -231,11 +244,7 @@ IOC.DI = function (ioc) {
       }, 100);
     } else {
       starts.forEach(function (start) {
-        if (start.instance) {
           _execFunction(start.instance, start.func, start.args);
-        } else if (start.func) {
-          _execFunction(null, start.func, start.args);
-        }
       });
     }
   };

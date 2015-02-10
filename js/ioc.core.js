@@ -1,3 +1,9 @@
+/*!
+ * JIOC JavaScript Library v0.0.1
+ * https://github.com/lcavadas/jioc
+ *
+ * Copyright 2014, Luís Serralheiro
+ */
 /* global IOC:true */
 // IOC is an implementation of the Sandbox and Module patterns. It was designed to,
 // unlike most of the existing module libraries, not affect your code making it dependant on the module library itself.
