@@ -22,6 +22,13 @@ IOC.Extensions = function () {
           instance: 'bus',
           func: 'bus.publish',
           args: [{'value': 'application-started'}]
+        },
+        {
+          instance: 'templates',
+          func: 'template.add',
+          args: [{
+            value: ['templates/templates.html']
+          }]
         }
       ],
       instances: {
