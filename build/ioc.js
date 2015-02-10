@@ -149,7 +149,7 @@ IOC.DI = function (ioc) {
       } else if (typeof arg.func !== 'undefined') {
         resolved.push(arg.func);
       } else if (typeof arg.exec !== 'undefined') {
-        resolved.push(arg.exec());
+        resolved.push(arg.exec(ioc));
       }
     });
     return failure ? null : resolved;
@@ -450,7 +450,7 @@ IOC.Loader = function (ioc) {
       a.protocol === loc.protocol;
   };
 
-  var _loadScript = function (url, callback, ajax) {
+  var _loadScript = function (url, callback) {
     if (_sameOrigin(url)) {
       _loadScriptAsResource(url, callback);
     } else {
