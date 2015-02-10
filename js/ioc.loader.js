@@ -19,7 +19,22 @@ IOC.Loader = function (ioc) {
     req.send();
   };
 
-  var _loadScript = function (url, callback) {
+  var _loadScriptWithTag = function (url, callback) {
+    var head = document.getElementsByTagName('head')[0];
+    var script = document.createElement('script');
+    script.async = true;
+    script.type = 'text/javascript';
+    script.onreadystatechange = function () {
+      if (this.readyState === 'complete') {
+        callback();
+      }
+    };
+    script.onload = callback;
+    script.src = url;
+    head.appendChild(script);
+  };
+
+  var _loadScriptAsResource = function (url, callback) {
     _loadResource(url, function (req) {
       //analyze the script for "annotation" type configurations
       ioc.di.processAnnotations(req.responseText);
@@ -27,6 +42,23 @@ IOC.Loader = function (ioc) {
       eval(req.responseText + file_tag);
       callback();
     });
+  };
+
+  var _sameOrigin = function (url) {
+    var loc = window.location;
+    var a = document.createElement('a');
+    a.href = url;
+    return a.hostname === loc.hostname &&
+      a.port === loc.port &&
+      a.protocol === loc.protocol;
+  };
+
+  var _loadScript = function (url, callback) {
+    if (_sameOrigin(url)) {
+      _loadScriptAsResource(url, callback);
+    } else {
+      _loadScriptWithTag(url, callback);
+    }
   };
 
   return {
