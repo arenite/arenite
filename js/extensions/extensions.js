@@ -7,7 +7,8 @@ IOC.Extensions = function () {
       dependencies: {
         default: {
           async: [
-            'lib/jquery-2.1.1.min.js',
+            //'lib/jquery-2.1.1.min.js',
+            '//code.jquery.com/jquery-2.1.3.min.js',
             'lib/doT.min.js',
             'lib/storage.min.js',
             '/di/js/extensions/bus/bus.js',

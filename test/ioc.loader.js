@@ -1,7 +1,7 @@
 /*global IOC:true, describe:true, it:true, expect:true, jasmine:true */
 describe("IOC.Loader", function () {
   it("should invoke callback on successful load", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader']);
 
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
@@ -17,7 +17,7 @@ describe("IOC.Loader", function () {
   });
 
   it("should invoke error callback on unsuccessful load", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader']);
 
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
@@ -34,7 +34,7 @@ describe("IOC.Loader", function () {
   });
 
   it("should not generate exception on error when error callback is not defined on an unsuccessful load", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader']);
 
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
