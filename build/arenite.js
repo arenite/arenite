@@ -168,7 +168,7 @@ Arenite.DI = function (arenite) {
       } else if (typeof arg.exec !== 'undefined') {
         resolved.push(arg.exec(arenite));
       } else if (typeof arg.instance !== 'undefined') {
-        resolved.push(_wire([arg.instance],'anonymous'));
+        resolved = arenite.array.merge(resolved,_wire([arg.instance],'anonymous'));
       }
     });
 
