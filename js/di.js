@@ -40,10 +40,12 @@ Arenite.DI = function (arenite) {
       } else if (typeof arg.exec !== 'undefined') {
         resolved.push(arg.exec(arenite));
       } else if (typeof arg.instance !== 'undefined') {
-        var anonymousContext = {instances: {'__anonymous_temp_instance__': arg.instance}};
+        var anonymousContext = {instances: {}};
+        var tempId = '__anonymous_temp_instance__' + new Date().getTime();
+        anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
-        resolved.push(arenite.di.getInstance('__anonymous_temp_instance__'));
-        _removeInstance('__anonymous_temp_instance__');
+        resolved.push(arenite.di.getInstance(tempId));
+        _removeInstance(tempId);
       }
     });
 
