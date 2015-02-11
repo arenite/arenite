@@ -14,13 +14,12 @@ IOC.Templates = function (ioc) {
           _templates[scriptTags[i].id] = doT.template(scriptTags[i].innerHTML);
         }
 
-        if (typeof callback === 'function') {
-          callback();
-        }
-
         document.body.removeChild(templateContainer);
       });
     });
+    if (typeof callback === 'function') {
+      callback();
+    }
   };
 
   var _apply = function (name, arg) {
@@ -31,9 +30,7 @@ IOC.Templates = function (ioc) {
   };
 
   return {
-    template: {
-      add: _add,
-      apply: _apply
-    }
+    add: _add,
+    apply: _apply
   };
 };

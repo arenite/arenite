@@ -155,8 +155,17 @@ IOC.DI = function (ioc) {
     return failure ? null : resolved;
   };
 
-  var _execFunction = function (instance, func, args) {
-    var resolvedFunc = (typeof func === 'function' ? func : ioc.object.get(_getInstance(instance), func));
+  var _execFunction = function (instance, func, args, extension) {
+    var resolvedFunc;
+    if (typeof func === 'function') {
+      resolvedFunc = func;
+    } else {
+      if (extension) {
+        resolvedFunc = ioc.object.get(ioc[instance], func);
+      } else {
+        resolvedFunc = ioc.object.get(_getInstance(instance), func);
+      }
+    }
     if (resolvedFunc) {
       var resolvedArgs = _resolveArgs(args || []);
       if (resolvedArgs) {
@@ -189,7 +198,7 @@ IOC.DI = function (ioc) {
     }
   };
 
-  var _wire = function (instances) {
+  var _wire = function (instances, extension) {
     if (!instances) {
       return;
     }
@@ -204,9 +213,12 @@ IOC.DI = function (ioc) {
         if (args) {
           window.console.log(instance, 'wired');
           var actualInstance = instances[instance].factory ? func : func.apply(func, args);
-          _addInstance(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
-          if (instances[instance].extension) {
-            ioc = ioc.object.extend(ioc, actualInstance);
+          if (extension) {
+            var wrappedInstance = {};
+            wrappedInstance[instance] = actualInstance;
+            ioc = ioc.object.extend(ioc, wrappedInstance);
+          } else {
+            _addInstance(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
           }
         } else {
           unresolved[instance] = instances[instance];
@@ -226,10 +238,10 @@ IOC.DI = function (ioc) {
     }
   };
 
-  var _init = function (instances) {
+  var _init = function (instances, extension) {
     ioc.object.keys(instances).forEach(function (instance) {
       if (instances[instance].init) {
-        _execFunction(instance, instances[instance].init.func, instances[instance].init.args);
+        _execFunction(instance, instances[instance].init.func, instances[instance].init.args, extension);
       }
     });
   };
@@ -244,7 +256,7 @@ IOC.DI = function (ioc) {
       }, 100);
     } else {
       starts.forEach(function (start) {
-          _execFunction(start.instance, start.func, start.args);
+        _execFunction(start.instance, start.func, start.args);
       });
     }
   };
@@ -252,9 +264,9 @@ IOC.DI = function (ioc) {
   var _loadContext = function () {
     if (ioc.config.context) {
       window.console.log('wire extensions');
-      _wire(ioc.config.context.extensions);
+      _wire(ioc.config.context.extensions, true);
       window.console.log('init extensions');
-      _init(ioc.config.context.extensions);
+      _init(ioc.config.context.extensions, true);
       window.console.log('wire instances');
       _wire(ioc.config.context.instances);
       window.console.log('init instances');

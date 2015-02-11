@@ -33,10 +33,8 @@ IOC.Bus = function () {
   };
 
   return {
-    bus: {
-      subscribe: _subscribe,
-      unsubscribe: _unsubscribe,
-      publish: _publish
-    }
+    subscribe: _subscribe,
+    unsubscribe: _unsubscribe,
+    publish: _publish
   };
 };

@@ -257,23 +257,22 @@ describe("IOC.DI", function () {
     expect(IOC.Extra).toHaveBeenCalled();
   });
 
-  it('should extend ioc if instance is configured to do so', function () {
+  it('should extend ioc if extensions is present', function () {
     window.IOC.Extra = function () {
       return {yay: 'yay'};
     };
     IOC({
       exposeIoc: true,
       context: {
-        instances: {
+        extensions: {
           one: {
-            extension: true,
             namespace: 'IOC.Extra'
           }
         }
       }
     });
 
-    expect(window.ioc.yay).toEqual('yay');
+    expect(window.ioc.one.yay).toEqual('yay');
   });
 
   it('should wire dependencies on other instances', function () {

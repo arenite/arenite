@@ -19,25 +19,24 @@ IOC.Extensions = function () {
       },
       start: [
         {
-          instance: 'bus',
+          instance: 'ioc',
           func: 'bus.publish',
           args: [{'value': 'application-started'}]
         },
         {
-          instance: 'templates',
-          func: 'template.add',
+          instance: 'ioc',
+          func: 'templates.add',
           args: [{
             value: ['templates/templates.html']
           }]
         }
       ],
-      instances: {
+      extensions: {
         //### IOC.Bus
         // Event bus extension.
         //
         // Described in <a href="extensions/bus/bus.html">IOC.Bus</a>.
         bus: {
-          extension: true,
           namespace: 'IOC.Bus'
         },
         //### IOC.Templates
@@ -45,7 +44,6 @@ IOC.Extensions = function () {
         //
         // Described in <a href="extensions/template/dot.html">IOC.Templates</a>
         templates: {
-          extension: true,
           namespace: 'IOC.Templates',
           args: [{ref: 'ioc'}]
         },
@@ -54,7 +52,6 @@ IOC.Extensions = function () {
         //
         // Described in <a href="extensions/storage/storage.html">IOC.Storage</a>
         storage: {
-          extension: true,
           namespace: 'IOC.Storage',
           args: [
             {ref: 'ioc'}
