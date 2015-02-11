@@ -1,12 +1,12 @@
-/*global IOC:true*/
+/*global Arenite:true*/
 /*
- @ioc-instance 'annotated1' ref:ioc;
- @ioc-init 'init' value : "init annotated1";
- @ioc-start 'start' value : "start", value : "annotated1";
+ @arenite-instance 'annotated1' ref:arenite;
+ @arenite-init 'init' value : "init annotated1";
+ @arenite-start 'start' value : "start", value : "annotated1";
  */
 
-IOC.Annotated1 = function (ioc) {
-  window.console.log('instantiation', 'annotated1', ioc);
+Arenite.Annotated1 = function (arenite) {
+  window.console.log('instantiation', 'annotated1', arenite);
 
   var _start = function () {
     window.console.log(arguments);
@@ -23,12 +23,12 @@ IOC.Annotated1 = function (ioc) {
 };
 
 /*
- @ioc-instance 'annotated2' ref:ioc;
- @ioc-init 'init' value : "init annotated2";
+ @arenite-instance 'annotated2' ref:arenite;
+ @arenite-init 'init' value : "init annotated2";
  */
 
-IOC.Annotated2 = function (ioc) {
-  window.console.log('instantiation', 'annotated2', ioc);
+Arenite.Annotated2 = function (arenite) {
+  window.console.log('instantiation', 'annotated2', arenite);
 
   var _start = function () {
     window.console.log(arguments);
@@ -45,12 +45,12 @@ IOC.Annotated2 = function (ioc) {
 };
 
 /*
- @ioc-instance 'annotated3' ref:ioc;
- @ioc-start 'start'  value : "start", value : "annotated3";
+ @arenite-instance 'annotated3' ref:arenite;
+ @arenite-start 'start'  value : "start", value : "annotated3";
  */
 
-IOC.Annotated3 = function (ioc) {
-  window.console.log('instantiation', 'annotated3', ioc);
+Arenite.Annotated3 = function (arenite) {
+  window.console.log('instantiation', 'annotated3', arenite);
 
   var _start = function () {
     window.console.log(arguments);
@@ -68,9 +68,9 @@ IOC.Annotated3 = function (ioc) {
 
 
 /*
- @ioc-instance 'annotated4' ref:ioc;
+ @arenite-instance 'annotated4' ref:arenite;
  */
 
-IOC.Annotated4 = function (ioc) {
-  window.console.log('instantiation', 'annotated4', ioc);
+Arenite.Annotated4 = function (arenite) {
+  window.console.log('instantiation', 'annotated4', arenite);
 };

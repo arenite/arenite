@@ -1,6 +1,6 @@
-/*global IOC:true*/
+/*global Arenite:true*/
 /*jshint evil:true*/
-IOC.Loader = function (ioc) {
+Arenite.Loader = function (arenite) {
 
   var _loadResource = function (url, callback, error) {
     var req = new window.XMLHttpRequest();
@@ -37,7 +37,7 @@ IOC.Loader = function (ioc) {
   var _loadScriptAsResource = function (url, callback) {
     _loadResource(url, function (req) {
       //analyze the script for "annotation" type configurations
-      ioc.di.processAnnotations(req.responseText);
+      arenite.di.processAnnotations(req.responseText);
       var file_tag = '\n//@ sourceURL=' + window.location.origin + '/' + url + '\n//# sourceURL=' + window.location.origin + '/' + url;
       eval(req.responseText + file_tag);
       callback();

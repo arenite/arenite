@@ -1,5 +1,5 @@
-/*global IOC:true*/
-IOC.Demo = function () {
+/*global Arenite:true*/
+Arenite.Demo = function () {
   return {
     context: {
       dependencies: {
@@ -13,21 +13,21 @@ IOC.Demo = function () {
       },
       start: [
         {
-          func: function (ioc) {
-            ioc.di.getInstance('echo');
+          func: function (arenite) {
+            arenite.di.getInstance('echo');
             window.setTimeout(function () {
-              ioc.di.getInstance('echo');
+              arenite.di.getInstance('echo');
             }, 2000);
           },
           args: [
-            {ref: 'ioc'}
+            {ref: 'arenite'}
           ]
         }
       ],
       instances: {
         echo: {
           factory: true,
-          namespace: 'IOC.Echo',
+          namespace: 'Arenite.Echo',
           args: [{
             exec: function () {
               return new Date();
@@ -35,8 +35,8 @@ IOC.Demo = function () {
           }]
         },
         config: {
-          namespace: 'IOC.Config',
-          args: [{ref: 'ioc'}]
+          namespace: 'Arenite.Config',
+          args: [{ref: 'arenite'}]
         }
       }
     }

@@ -1,11 +1,11 @@
-/*global IOC:true, describe:true, it:true, expect:true, jasmine:true, spyOn:true */
-describe("IOC.DI", function () {
-  IOC.Extra = function () {
+/*global Arenite:true, describe:true, it:true, expect:true, jasmine:true, spyOn:true */
+describe("Arenite.DI", function () {
+  Arenite.Extra = function () {
 
   };
 
   it("should be able to add and retrieve instances from the context", function () {
-    var di = IOC.DI();
+    var di = Arenite.DI();
     var instance = (function () {
       return {'a': 'b'};
     })();
@@ -14,7 +14,7 @@ describe("IOC.DI", function () {
   });
 
   it("should be able to retrieve factory instances from the context", function () {
-    var di = IOC.DI();
+    var di = Arenite.DI();
     var factory = function () {
       return {a: 'b'};
     };
@@ -23,7 +23,7 @@ describe("IOC.DI", function () {
   });
 
   it("should be able to retrieve factory instances with arguments from the context", function () {
-    var di = IOC.DI();
+    var di = Arenite.DI();
     var factory = function (c) {
       return {a: c};
     };
@@ -32,7 +32,7 @@ describe("IOC.DI", function () {
   });
 
   it("should be able to retrieve differnt instances from factory instances on each retrieve", function () {
-    var di = IOC.DI();
+    var di = Arenite.DI();
     var factory = function (c) {
       return {a: c};
     };
@@ -45,12 +45,12 @@ describe("IOC.DI", function () {
   });
 
   it("should return undefined for unknown instances", function () {
-    var di = IOC.DI();
+    var di = Arenite.DI();
     expect(di.di.getInstance('instanceName')).toBe(undefined);
   });
 
   it("should throw exception if arguments can\'t be resolved", function () {
-    var di = IOC.DI({
+    var di = Arenite.DI({
       di: {
         getInstance: function () {
           return null;
@@ -71,7 +71,7 @@ describe("IOC.DI", function () {
 
   it("should resolve exec arguments", function () {
     var calls = 0;
-    var di = IOC.DI();
+    var di = Arenite.DI();
     var factory = function (c) {
       return {a: c};
     };
@@ -88,7 +88,7 @@ describe("IOC.DI", function () {
   it("should resolve func arguments", function () {
     var func = function () {
     };
-    var di = IOC.DI({
+    var di = Arenite.DI({
       di: {
         getInstance: function () {
           return {};
@@ -102,52 +102,52 @@ describe("IOC.DI", function () {
   });
 
   it('can use empty config', function () {
-    IOC({});
+    Arenite({});
   });
 
-  it('should not expose ioc if option isn\'t true', function () {
-    IOC({
-      exposeIoc: false
+  it('should not expose arenite if option isn\'t true', function () {
+    Arenite({
+      expose: false
     });
-    expect(window.ioc).toBe(undefined);
+    expect(window.arenite).toBe(undefined);
   });
 
-  it('should expose ioc if option is true', function () {
-    IOC({
-      exposeIoc: true
+  it('should expose arenite if option is true', function () {
+    Arenite({
+      expose: true
     });
-    expect(window.ioc).not.toBe(undefined);
+    expect(window.arenite).not.toBe(undefined);
   });
 
   it('should merge config with imports', function () {
-    spyOn(IOC, 'Extra').and.callFake(function () {
+    spyOn(Arenite, 'Extra').and.callFake(function () {
       return {
         context: {
           instances: {}
         }
       };
     });
-    IOC({
-      exposeIoc: true,
+    Arenite({
+      expose: true,
       imports: [
         {
           url: 'url',
-          namespace: 'IOC.Extra'
+          namespace: 'Arenite.Extra'
         }
       ]
     });
 
-    expect(window.ioc.config).toEqual({
-      exposeIoc: true, imports: [{url: 'url', namespace: 'IOC.Extra'}], mode: 'default', context: {instances: {}}
+    expect(window.arenite.config).toEqual({
+      expose: true, imports: [{url: 'url', namespace: 'Arenite.Extra'}], mode: 'default', context: {instances: {}}
     });
   });
 
   it('should fetch and merge config with imports if not already present', function () {
-    spyOn(IOC, 'Loader').and.callFake(function () {
+    spyOn(Arenite, 'Loader').and.callFake(function () {
       return {
         loader: {
           loadScript: function (url, cb) {
-            IOC.Extra2 = function () {
+            Arenite.Extra2 = function () {
               return {
                 context: {
                   instances: {}
@@ -160,18 +160,18 @@ describe("IOC.DI", function () {
       };
     });
 
-    IOC({
-      exposeIoc: true,
+    Arenite({
+      expose: true,
       imports: [
         {
           url: 'url',
-          namespace: 'IOC.Extra2'
+          namespace: 'Arenite.Extra2'
         }
       ]
     });
 
-    expect(window.ioc.config).toEqual({
-      exposeIoc: true, imports: [{url: 'url', namespace: 'IOC.Extra2'}], mode: 'default', context: {instances: {}}
+    expect(window.arenite.config).toEqual({
+      expose: true, imports: [{url: 'url', namespace: 'Arenite.Extra2'}], mode: 'default', context: {instances: {}}
     });
   });
 
@@ -180,7 +180,7 @@ describe("IOC.DI", function () {
       cb();
     });
 
-    spyOn(IOC, 'Loader').and.callFake(function () {
+    spyOn(Arenite, 'Loader').and.callFake(function () {
       return {
         loader: {
           loadScript: loadingSpy
@@ -188,8 +188,8 @@ describe("IOC.DI", function () {
       };
     });
 
-    IOC({
-      exposeIoc: true,
+    Arenite({
+      expose: true,
       context: {
         dependencies: {
           default: {
@@ -214,7 +214,7 @@ describe("IOC.DI", function () {
       cb();
     });
 
-    spyOn(IOC, 'Loader').and.callFake(function () {
+    spyOn(Arenite, 'Loader').and.callFake(function () {
       return {
         loader: {
           loadScript: loadingSpy
@@ -222,8 +222,8 @@ describe("IOC.DI", function () {
       };
     });
 
-    IOC({
-      exposeIoc: true,
+    Arenite({
+      expose: true,
       context: {
         dependencies: {
           mmm: {
@@ -242,50 +242,50 @@ describe("IOC.DI", function () {
   });
 
   it('should wire instances', function () {
-    spyOn(IOC, 'Extra');
-    IOC({
-      exposeIoc: true,
+    spyOn(Arenite, 'Extra');
+    Arenite({
+      expose: true,
       context: {
         instances: {
           one: {
-            namespace: 'IOC.Extra'
+            namespace: 'Arenite.Extra'
           }
         }
       }
     });
 
-    expect(IOC.Extra).toHaveBeenCalled();
+    expect(Arenite.Extra).toHaveBeenCalled();
   });
 
-  it('should extend ioc if extensions is present', function () {
-    window.IOC.Extra = function () {
+  it('should extend arenite if extensions is present', function () {
+    window.Arenite.Extra = function () {
       return {yay: 'yay'};
     };
-    IOC({
-      exposeIoc: true,
+    Arenite({
+      expose: true,
       context: {
         extensions: {
           one: {
-            namespace: 'IOC.Extra'
+            namespace: 'Arenite.Extra'
           }
         }
       }
     });
 
-    expect(window.ioc.one.yay).toEqual('yay');
+    expect(window.arenite.one.yay).toEqual('yay');
   });
 
   it('should wire dependencies on other instances', function () {
-    IOC({
-      exposeIoc: true,
+    Arenite({
+      expose: true,
       context: {
         instances: {
           one: {
-            namespace: 'IOC.Object',
+            namespace: 'Arenite.Object',
             args: [{ref: 'two'}]
           },
           two: {
-            namespace: 'IOC.Object'
+            namespace: 'Arenite.Object'
           }
         }
       }
@@ -294,16 +294,16 @@ describe("IOC.DI", function () {
 
   it('should throw error on circular references', function () {
     expect(function () {
-      IOC({
-        exposeIoc: true,
+      Arenite({
+        expose: true,
         context: {
           instances: {
             one: {
-              namespace: 'IOC.Object',
+              namespace: 'Arenite.Object',
               args: [{ref: 'two'}]
             },
             two: {
-              namespace: 'IOC.Object',
+              namespace: 'Arenite.Object',
               args: [{ref: 'one'}]
             }
           }
@@ -314,30 +314,30 @@ describe("IOC.DI", function () {
 
   it('should throw error on wire unknown instances', function () {
     expect(function () {
-      IOC({
-        exposeIoc: true,
+      Arenite({
+        expose: true,
         context: {
           instances: {
             one: {
-              namespace: 'IOC.Extra3'
+              namespace: 'Arenite.Extra3'
             }
           }
         }
       });
-    }).toThrow('Unknown function "IOC.Extra3"');
+    }).toThrow('Unknown function "Arenite.Extra3"');
   });
 
   it('should execute inits', function () {
     var funcSpy = jasmine.createSpy('init');
-    spyOn(IOC, 'Extra').and.returnValue({
+    spyOn(Arenite, 'Extra').and.returnValue({
       init: funcSpy
     });
-    IOC({
-      exposeIoc: true,
+    Arenite({
+      expose: true,
       context: {
         instances: {
           one: {
-            namespace: 'IOC.Extra',
+            namespace: 'Arenite.Extra',
             init: {
               func: 'init'
             }
@@ -350,16 +350,16 @@ describe("IOC.DI", function () {
 
   it('should fail on inits if function does not exist', function () {
     var funcSpy = jasmine.createSpy('init');
-    spyOn(IOC, 'Extra').and.returnValue({
+    spyOn(Arenite, 'Extra').and.returnValue({
       init: funcSpy
     });
     expect(function () {
-      IOC({
-        exposeIoc: true,
+      Arenite({
+        expose: true,
         context: {
           instances: {
             one: {
-              namespace: 'IOC.Extra',
+              namespace: 'Arenite.Extra',
               init: {
                 func: 'idonotexist'
               }
@@ -372,16 +372,16 @@ describe("IOC.DI", function () {
 
   it('should fail on inits if arguments cannot be resolved', function () {
     var funcSpy = jasmine.createSpy('init');
-    spyOn(IOC, 'Extra').and.returnValue({
+    spyOn(Arenite, 'Extra').and.returnValue({
       init: funcSpy
     });
     expect(function () {
-      IOC({
-        exposeIoc: true,
+      Arenite({
+        expose: true,
         context: {
           instances: {
             one: {
-              namespace: 'IOC.Extra',
+              namespace: 'Arenite.Extra',
               init: {
                 func: 'init',
                 args: [{ref: 'idonotexist'}]
@@ -396,15 +396,15 @@ describe("IOC.DI", function () {
 
   it('should execute starts', function () {
     var funcSpy = jasmine.createSpy('start');
-    spyOn(IOC, 'Extra').and.returnValue({
+    spyOn(Arenite, 'Extra').and.returnValue({
       start: funcSpy
     });
-    IOC({
-      exposeIoc: true,
+    Arenite({
+      expose: true,
       context: {
         instances: {
           one: {
-            namespace: 'IOC.Extra'
+            namespace: 'Arenite.Extra'
           }
         },
         start: [
@@ -423,16 +423,16 @@ describe("IOC.DI", function () {
 
   it('should fail on starts if function does not exist', function () {
     var funcSpy = jasmine.createSpy('start');
-    spyOn(IOC, 'Extra').and.returnValue({
+    spyOn(Arenite, 'Extra').and.returnValue({
       start: funcSpy
     });
     expect(function () {
-      IOC({
-        exposeIoc: true,
+      Arenite({
+        expose: true,
         context: {
           instances: {
             one: {
-              namespace: 'IOC.Extra'
+              namespace: 'Arenite.Extra'
             }
           },
           start: [
@@ -451,16 +451,16 @@ describe("IOC.DI", function () {
 
   it('should fail on starts if arguments cannot be resolved', function () {
     var funcSpy = jasmine.createSpy('start');
-    spyOn(IOC, 'Extra').and.returnValue({
+    spyOn(Arenite, 'Extra').and.returnValue({
       start: funcSpy
     });
     expect(function () {
-      IOC({
-        exposeIoc: true,
+      Arenite({
+        expose: true,
         context: {
           instances: {
             one: {
-              namespace: 'IOC.Extra'
+              namespace: 'Arenite.Extra'
             }
           },
           start: [

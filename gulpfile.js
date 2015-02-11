@@ -17,10 +17,10 @@
   });
 
   gulp.task('default', function () {
-    return gulp.src(['js/ioc.core.js', 'js/**.js'])
+    return gulp.src(['js/core.js', 'js/**.js'])
       .pipe(jshint())
       .pipe(jshint.reporter('default'))
-      .pipe(concat('ioc.js'))
+      .pipe(concat('arenite.js'))
       .pipe(gulp.dest(DEST))
       .pipe(uglify({preserveComments: 'some'}))
       .pipe(rename({extname: '.min.js'}))

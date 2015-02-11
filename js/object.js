@@ -1,8 +1,8 @@
-/*global IOC:true*/
+/*global Arenite:true*/
 // Collection of utility functions to handle objects.
 // This is an integral part for the usage of the Namespace pattern since this provides the ability to, for example,
 // retrieve the functions by namespace.
-IOC.Object = function () {
+Arenite.Object = function () {
 
   var _navigateToBeforeLast = function (object, path) {
     if (!object) {

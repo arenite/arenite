@@ -1,9 +1,9 @@
-/*global IOC:true, jasmine:true, blanket:true */
+/*global Arenite:true, jasmine:true, blanket:true */
 /*jshint evil:true*/
-IOC.Test = function (ioc) {
+Arenite.Test = function (arenite) {
 
   var _coverageLoad = function (url, cb) {
-    ioc.loader.loadResource(url, function (resp) {
+    arenite.loader.loadResource(url, function (resp) {
       window.blanket.instrument({inputFile: resp.responseText, inputFileName: url}, function (instrumented) {
         window.console.log('Instrumenting:', url);
         //inject the script with the instrumented version
@@ -17,9 +17,9 @@ IOC.Test = function (ioc) {
   };
 
   var _reloadWithCoverage = function (syncResources, asyncResources, cb) {
-    var latch = ioc.async.latch(asyncResources.length, cb, 'async test dependencies retrieve');
+    var latch = arenite.async.latch(asyncResources.length, cb, 'async test dependencies retrieve');
 
-    var seqLatch = ioc.async.seqLatch(syncResources, function (url) {
+    var seqLatch = arenite.async.seqLatch(syncResources, function (url) {
       _coverageLoad(url, seqLatch.next);
     }, function () {
       asyncResources.forEach(function (url) {
@@ -30,9 +30,9 @@ IOC.Test = function (ioc) {
   };
 
   var _run = function (syncResources, asyncResources, testFiles) {
-    var latch = ioc.async.latch(testFiles.length, function () {
+    var latch = arenite.async.latch(testFiles.length, function () {
       try {
-        window.console.log('IOC: Starting the tests');
+        window.console.log('Arenite: Starting the tests');
         var env = jasmine.getEnv();
         blanket.setupCoverage();
 
@@ -54,7 +54,7 @@ IOC.Test = function (ioc) {
 
     _reloadWithCoverage(syncResources, asyncResources, function () {
       testFiles.forEach(function (testFile) {
-        ioc.loader.loadScript(testFile, latch.countDown);
+        arenite.loader.loadScript(testFile, latch.countDown);
       });
     });
   };

@@ -2,21 +2,21 @@
 <html>
 <head lang="en">
   <meta charset="UTF-8">
-  <script type="text/javascript" src="../build/ioc.min.js"></script>
+  <script type="text/javascript" src="../build/arenite.min.js"></script>
 </head>
 <body>
 </body>
 <script>
-  IOC({
-    exposeIoc: true,
+  Arenite({
+    expose: true,
     imports: [
       {
         url: '../js/extensions/extensions.js',
-        namespace: 'IOC.Extensions'
+        namespace: 'Arenite.Extensions'
       },
       {
         url: 'demo/demo.js',
-        namespace: 'IOC.Demo'
+        namespace: 'Arenite.Demo'
       }
     ]
   });
