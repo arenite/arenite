@@ -251,6 +251,10 @@ IOC.DI = function (ioc) {
 
   var _loadContext = function () {
     if (ioc.config.context) {
+      window.console.log('wire extensions');
+      _wire(ioc.config.context.extensions);
+      window.console.log('init extensions');
+      _init(ioc.config.context.extensions);
       window.console.log('wire instances');
       _wire(ioc.config.context.instances);
       window.console.log('init instances');
