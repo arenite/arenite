@@ -1,6 +1,6 @@
 {
   "name": "Arenite",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Inversion of Control / Dependency Injection Library",
   "repository": "git://github.com/lcavadas/arenite",
   "author": {
