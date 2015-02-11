@@ -1,5 +1,9 @@
 /*global Arenite:true*/
 Arenite.Echo = function (arg) {
   window.console.log('echo:', arg);
-  return {};
+  return {
+    init: function () {
+      window.console.log('echo: init');
+    }
+  };
 };
