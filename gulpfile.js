@@ -12,7 +12,7 @@
   var DEST = 'build/';
 
   gulp.task('docs', function () {
-    return gulp.src('di.iml', {read: false})
+    return gulp.src('js/core.js', {read: false})
       .pipe(shell('node_modules/docco/bin/docco -o website/docs js/*.js js/extensions/*.js js/extensions/**/*.js'));
   });
 
