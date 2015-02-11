@@ -14,7 +14,7 @@
 <script>
   function start() {
     Arenite({
-      expose: true,
+      expose: 'arenite',
       imports: [
         {
           url: '../js/extensions/extensions.js',
@@ -29,9 +29,6 @@
         dependencies: {
           default: {
             async: [
-              'lib/jquery-2.1.1.min.js',
-              'lib/doT.min.js',
-              'lib/storage.min.js',
               'demo/annotation/annotation.js'
             ]
           }

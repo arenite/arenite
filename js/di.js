@@ -255,7 +255,13 @@ Arenite.DI = function (arenite) {
     arenite.config.mode = arenite.url.query().env || 'default';
     window.console.log('Arenite: Starting in mode', arenite.config.mode);
     if (config.expose) {
-      window.arenite = arenite;
+      var exposeName = config.expose;
+      if (typeof config.expose === 'function') {
+        exposeName = config.expose(arenite);
+      }
+      if(exposeName){
+        window[exposeName] = arenite;
+      }
     }
 
     if (arenite.config.imports) {

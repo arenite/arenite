@@ -114,7 +114,7 @@ describe("Arenite.DI", function () {
 
   it('should expose arenite if option is true', function () {
     Arenite({
-      expose: true
+      expose: 'arenite'
     });
     expect(window.arenite).not.toBe(undefined);
   });
@@ -128,7 +128,7 @@ describe("Arenite.DI", function () {
       };
     });
     Arenite({
-      expose: true,
+      expose: 'arenite',
       imports: [
         {
           url: 'url',
@@ -138,7 +138,7 @@ describe("Arenite.DI", function () {
     });
 
     expect(window.arenite.config).toEqual({
-      expose: true, imports: [{url: 'url', namespace: 'Arenite.Extra'}], mode: 'default', context: {instances: {}}
+      expose: 'arenite', imports: [{url: 'url', namespace: 'Arenite.Extra'}], mode: 'default', context: {instances: {}}
     });
   });
 
@@ -161,7 +161,7 @@ describe("Arenite.DI", function () {
     });
 
     Arenite({
-      expose: true,
+      expose: 'arenite',
       imports: [
         {
           url: 'url',
@@ -171,7 +171,7 @@ describe("Arenite.DI", function () {
     });
 
     expect(window.arenite.config).toEqual({
-      expose: true, imports: [{url: 'url', namespace: 'Arenite.Extra2'}], mode: 'default', context: {instances: {}}
+      expose: 'arenite', imports: [{url: 'url', namespace: 'Arenite.Extra2'}], mode: 'default', context: {instances: {}}
     });
   });
 
@@ -189,7 +189,7 @@ describe("Arenite.DI", function () {
     });
 
     Arenite({
-      expose: true,
+      expose: 'arenite',
       context: {
         dependencies: {
           default: {
@@ -223,7 +223,7 @@ describe("Arenite.DI", function () {
     });
 
     Arenite({
-      expose: true,
+      expose: 'arenite',
       context: {
         dependencies: {
           mmm: {
@@ -244,7 +244,7 @@ describe("Arenite.DI", function () {
   it('should wire instances', function () {
     spyOn(Arenite, 'Extra');
     Arenite({
-      expose: true,
+      expose: 'arenite',
       context: {
         instances: {
           one: {
@@ -262,7 +262,7 @@ describe("Arenite.DI", function () {
       return {yay: 'yay'};
     };
     Arenite({
-      expose: true,
+      expose: 'arenite',
       context: {
         extensions: {
           one: {
@@ -276,7 +276,7 @@ describe("Arenite.DI", function () {
 
   it('should wire dependencies on other instances', function () {
     Arenite({
-      expose: true,
+      expose: 'arenite',
       context: {
         instances: {
           one: {
@@ -294,7 +294,7 @@ describe("Arenite.DI", function () {
   it('should throw error on circular references', function () {
     expect(function () {
       Arenite({
-        expose: true,
+        expose: 'arenite',
         context: {
           instances: {
             one: {
@@ -314,7 +314,7 @@ describe("Arenite.DI", function () {
   it('should throw error on wire unknown instances', function () {
     expect(function () {
       Arenite({
-        expose: true,
+        expose: 'arenite',
         context: {
           instances: {
             one: {
@@ -332,7 +332,7 @@ describe("Arenite.DI", function () {
       init: funcSpy
     });
     Arenite({
-      expose: true,
+      expose: 'arenite',
       context: {
         instances: {
           one: {
@@ -354,7 +354,7 @@ describe("Arenite.DI", function () {
     });
     expect(function () {
       Arenite({
-        expose: true,
+        expose: 'arenite',
         context: {
           instances: {
             one: {
@@ -376,7 +376,7 @@ describe("Arenite.DI", function () {
     });
     expect(function () {
       Arenite({
-        expose: true,
+        expose: 'arenite',
         context: {
           instances: {
             one: {
@@ -399,7 +399,7 @@ describe("Arenite.DI", function () {
       start: funcSpy
     });
     Arenite({
-      expose: true,
+      expose: 'arenite',
       context: {
         instances: {
           one: {
@@ -427,7 +427,7 @@ describe("Arenite.DI", function () {
     });
     expect(function () {
       Arenite({
-        expose: true,
+        expose: 'arenite',
         context: {
           instances: {
             one: {
@@ -455,7 +455,7 @@ describe("Arenite.DI", function () {
     });
     expect(function () {
       Arenite({
-        expose: true,
+        expose: 'arenite',
         context: {
           instances: {
             one: {

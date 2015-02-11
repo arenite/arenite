@@ -53,11 +53,25 @@ Arenite.Loader = function (arenite) {
       a.protocol === loc.protocol;
   };
 
-  var _loadScript = function (url, callback) {
+  var _loadScriptFrom = function (url, callback) {
     if (_sameOrigin(url)) {
       _loadScriptAsResource(url, callback);
     } else {
       _loadScriptWithTag(url, callback);
+    }
+  };
+
+  var _loadScript = function (script, done) {
+    if (typeof script === 'string') {
+      _loadScriptFrom(script, done);
+    } else {
+      _loadScriptFrom(script.url, function () {
+        arenite.di.addInstance(script.instance, window[script.window]);
+        delete window[script.window];
+        if (typeof done === 'function') {
+          done();
+        }
+      });
     }
   };
 

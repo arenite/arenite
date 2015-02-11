@@ -8,7 +8,11 @@
 </body>
 <script>
   Arenite({
-    expose: true,
+    expose: function (arenite) {
+      if (arenite.url.query().env !== 'default') {
+        return 'ar';
+      }
+    },
     imports: [
       {
         url: '../js/extensions/extensions.js',
@@ -20,6 +24,5 @@
       }
     ]
   });
-
 </script>
 </html>
