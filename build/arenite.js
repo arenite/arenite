@@ -167,6 +167,8 @@ Arenite.DI = function (arenite) {
         resolved.push(arg.func);
       } else if (typeof arg.exec !== 'undefined') {
         resolved.push(arg.exec(arenite));
+      } else if (typeof arg.instance !== 'undefined') {
+        resolved.push(_wire([arg.instance],'anonymous'));
       }
     });
 
@@ -213,13 +215,15 @@ Arenite.DI = function (arenite) {
     }
   };
 
-  var _wire = function (instances, extension) {
+  //type can be 'extension' or 'anonymous'
+  var _wire = function (instances, type) {
     if (!instances) {
       return;
     }
 
     var instanceKeys = arenite.object.keys(instances);
     var unresolved = {};
+    var results = [];
 
     instanceKeys.forEach(function (instance) {
       var func = arenite.object.get(window, instances[instance].namespace);
@@ -228,10 +232,12 @@ Arenite.DI = function (arenite) {
         if (args) {
           window.console.log('Arenite:', instance, 'wired');
           var actualInstance = instances[instance].factory ? func : func.apply(func, args);
-          if (extension) {
+          if (type === 'extension') {
             var wrappedInstance = {};
             wrappedInstance[instance] = actualInstance;
             arenite = arenite.object.extend(arenite, wrappedInstance);
+          } else if (type === 'anonymous') {
+            results.push(actualInstance);
           } else {
             _addInstance(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
           }
@@ -245,12 +251,13 @@ Arenite.DI = function (arenite) {
 
     var unresolvedKeys = arenite.object.keys(unresolved);
     if (unresolvedKeys.length !== arenite.object.keys(instances).length && unresolvedKeys.length > 0) {
-      _wire(unresolved);
+      arenite.array.merge(results, _wire(unresolved));
     } else {
       if (unresolvedKeys.length !== 0) {
         throw 'Make sure you don\'t have circular dependencies, Unable to resolve the following instances: ' + unresolvedKeys.join(", ");
       }
     }
+    return results;
   };
 
   var _init = function (instances, latch, extension) {
@@ -305,7 +312,7 @@ Arenite.DI = function (arenite) {
       }, "extensions");
 
       window.console.log('Arenite: wire extensions');
-      _wire(arenite.config.context.extensions, true);
+      _wire(arenite.config.context.extensions, 'extension');
       window.console.log('Arenite: init extensions');
       _init(arenite.config.context.extensions, extensionsLatch, true);
       extensionsLatch.countDown();
@@ -631,6 +638,17 @@ Arenite.Object = function () {
     return result;
   };
 
+  var _merge = function (arr1, arr2) {
+    var result = [];
+    arr1.forEach(function (el) {
+      result.push(el);
+    });
+    arr2.forEach(function (el) {
+      result.push(el);
+    });
+    return _uniq(result);
+  };
+
   return {
     object: {
       //###object.get
@@ -691,7 +709,14 @@ Arenite.Object = function () {
       // contains(array)
       //</pre></code>
       //where *<b>array</b>* is the array to be stripped o duplicate values
-      uniq: _uniq
+      uniq: _uniq,
+      //###array.merge
+      // Merges two arrays returning a new one with the unique values.
+      //<pre><code>
+      // merge(arr1, arr2)
+      //</pre></code>
+      //where *<b>arr1</b>* and *<b>arr2</b>* are the arrays to be merged
+      merge: _merge
     }
   };
 };
