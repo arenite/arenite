@@ -1,5 +1,5 @@
 /*!
- * Arenite JavaScript Library v0.0.2
+ * Arenite JavaScript Library v0.0.3
  * https://github.com/lcavadas/arenite
  *
  * Copyright 2014, Luís Serralheiro
@@ -42,6 +42,7 @@ Arenite = function (config) {
   // Initialize the injector by having it read the configuration object passed into this constructor.
   arenite.di.loadConfig(config);
 };
+
 /*global Arenite:true*/
 //Asynchronous tools
 Arenite.Async = function () {
@@ -334,7 +335,7 @@ Arenite.DI = function (arenite) {
 
   var _loadSyncDependencies = function () {
     if (!arenite.config.context || !arenite.config.context.dependencies) {
-      return _loadContext();
+      return _loadContext(arenite.config.context);
     }
 
     var dependencies;
