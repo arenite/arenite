@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="lib/jasmine/jasmine.css"/>
 
-  <!-- IoC -->
-  <script type="text/javascript" src="../build/ioc.js"></script>
+  <!-- Arenite -->
+  <script type="text/javascript" src="../build/arenite.js"></script>
 </head>
 <body>
 </body>
@@ -14,7 +14,7 @@
     window.location.search = '?test1=test1&test2=test2&test2=another2&test2=yetanother2&invalid' +
     (window.location.search.indexOf('catch=false') !== -1 ? '&catch=false' : '')
   }
-  IOC({
+  Arenite({
     context: {
       dependencies: {
         default: {
@@ -27,14 +27,14 @@
           async: [
             'lib/jasmine/blanket.js',
             'lib/jasmine/blanket_jasmine.js',
-            '../js/extensions/test/ioc.test.js'
+            '../js/extensions/test/test.js'
           ]
         }
       },
       instances: {
         test: {
-          namespace: 'IOC.Test',
-          args: [{ref: 'ioc'}]
+          namespace: 'Arenite.Test',
+          args: [{ref: 'arenite'}]
         }
       },
       start: [
@@ -43,25 +43,25 @@
           func: 'runTests',
           args: [
             {
-              value: ['../js/ioc.core.js']
+              value: ['../js/core.js']
             },
             {
               value: [
-                '../js/ioc.loader.js',
-                '../js/ioc.object.js',
-                '../js/ioc.async.js',
-                '../js/ioc.url.js',
-                '../js/ioc.di.js'
+                '../js/loader.js',
+                '../js/object.js',
+                '../js/async.js',
+                '../js/url.js',
+                '../js/di.js'
               ]
             },
             {
               value: [
-                'ioc.core.js',
-                'ioc.url.js',
-                'ioc.object.js',
-                'ioc.async.js',
-                'ioc.loader.js',
-                'ioc.di.js'
+                'core.js',
+                'url.js',
+                'object.js',
+                'async.js',
+                'loader.js',
+                'di.js'
               ]
             }]
         }

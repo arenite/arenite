@@ -1,6 +1,6 @@
-/*global IOC:true*/
+/*global Arenite:true*/
 //Asynchronous tools
-IOC.Async = function () {
+Arenite.Async = function () {
   var _sequencialLatch = function (values, callback, finalCallback) {
     var index = 0;
     var length = values.length;

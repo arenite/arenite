@@ -1,12 +1,12 @@
-/*global IOC:true, describe:true, it:true, expect:true, jasmine:true */
-describe("IOC.Loader", function () {
+/*global Arenite:true, describe:true, it:true, expect:true, jasmine:true */
+describe("Arenite.Loader", function () {
   it("should invoke callback on successful load", function () {
     var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader']);
 
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
-    var loader = IOC.Loader();
+    var loader = Arenite.Loader();
 
     var callback = jasmine.createSpy('callback');
     loader.loader.loadResource('asd', callback);
@@ -22,7 +22,7 @@ describe("IOC.Loader", function () {
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
-    var loader = IOC.Loader();
+    var loader = Arenite.Loader();
 
     var callback = jasmine.createSpy('callback');
     var error = jasmine.createSpy('error');
@@ -39,7 +39,7 @@ describe("IOC.Loader", function () {
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
-    var loader = IOC.Loader();
+    var loader = Arenite.Loader();
 
     var callback = jasmine.createSpy('callback');
     loader.loader.loadResource('asd', callback);

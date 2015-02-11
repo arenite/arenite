@@ -1,6 +1,6 @@
-/*global IOC:true*/
+/*global Arenite:true*/
 /*jshint evil:true*/
-IOC.DI = function (ioc) {
+Arenite.DI = function (arenite) {
 
   var registry = {};
   var factories = {};
@@ -21,7 +21,7 @@ IOC.DI = function (ioc) {
       } else if (typeof arg.func !== 'undefined') {
         resolved.push(arg.func);
       } else if (typeof arg.exec !== 'undefined') {
-        resolved.push(arg.exec(ioc));
+        resolved.push(arg.exec(arenite));
       }
     });
     return failure ? null : resolved;
@@ -33,9 +33,9 @@ IOC.DI = function (ioc) {
       resolvedFunc = func;
     } else {
       if (extension) {
-        resolvedFunc = ioc.object.get(ioc[instance], func);
+        resolvedFunc = arenite.object.get(arenite[instance], func);
       } else {
-        resolvedFunc = ioc.object.get(_getInstance(instance), func);
+        resolvedFunc = arenite.object.get(_getInstance(instance), func);
       }
     }
     if (resolvedFunc) {
@@ -78,20 +78,20 @@ IOC.DI = function (ioc) {
       return;
     }
 
-    var instanceKeys = ioc.object.keys(instances);
+    var instanceKeys = arenite.object.keys(instances);
     var unresolved = {};
 
     instanceKeys.forEach(function (instance) {
-      var func = ioc.object.get(window, instances[instance].namespace);
+      var func = arenite.object.get(window, instances[instance].namespace);
       if (func) {
         var args = _resolveArgs(instances[instance].args || []);
         if (args) {
-          window.console.log(instance, 'wired');
+          window.console.log('Arenite:',instance, 'wired');
           var actualInstance = instances[instance].factory ? func : func.apply(func, args);
           if (extension) {
             var wrappedInstance = {};
             wrappedInstance[instance] = actualInstance;
-            ioc = ioc.object.extend(ioc, wrappedInstance);
+            arenite = arenite.object.extend(arenite, wrappedInstance);
           } else {
             _addInstance(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
           }
@@ -103,8 +103,8 @@ IOC.DI = function (ioc) {
       }
     });
 
-    var unresolvedKeys = ioc.object.keys(unresolved);
-    if (unresolvedKeys.length !== ioc.object.keys(instances).length && unresolvedKeys.length > 0) {
+    var unresolvedKeys = arenite.object.keys(unresolved);
+    if (unresolvedKeys.length !== arenite.object.keys(instances).length && unresolvedKeys.length > 0) {
       _wire(unresolved);
     } else {
       if (unresolvedKeys.length !== 0) {
@@ -114,17 +114,17 @@ IOC.DI = function (ioc) {
   };
 
   var _init = function (instances, latch, extension) {
-    ioc.object.keys(instances).forEach(function (instance) {
+    arenite.object.keys(instances).forEach(function (instance) {
       if (instances[instance].init) {
         if (instances[instance].init.wait) {
           latch.countUp();
           _execFunction(instance, instances[instance].init.func, instances[instance].init.args, function () {
-            window.console.log(instance, 'initialized');
+            window.console.log('Arenite:', instance, 'initialized');
             latch.countDown();
           }, extension);
         } else {
           _execFunction(instance, instances[instance].init.func, instances[instance].init.args, null, extension);
-          window.console.log(instance, 'initialized');
+          window.console.log('Arenite:',instance, 'initialized');
         }
       }
     });
@@ -146,51 +146,51 @@ IOC.DI = function (ioc) {
   };
 
   var _loadContext = function () {
-    if (ioc.config.context) {
+    if (arenite.config.context) {
       //Starting must wait for the wiring
-      var wireLatch = ioc.async.latch(1, function () {
-        window.console.log('start instances');
-        _start(ioc.config.context.start);
+      var wireLatch = arenite.async.latch(1, function () {
+        window.console.log('Arenite: start instances');
+        _start(arenite.config.context.start);
       }, "instances");
 
       //wiring of instances must wait for the extensions
-      var extensionsLatch = ioc.async.latch(1, function () {
-        window.console.log('wire instances');
-        _wire(ioc.config.context.instances);
-        window.console.log('init instances');
-        _init(ioc.config.context.instances, wireLatch);
+      var extensionsLatch = arenite.async.latch(1, function () {
+        window.console.log('Arenite: wire instances');
+        _wire(arenite.config.context.instances);
+        window.console.log('Arenite: init instances');
+        _init(arenite.config.context.instances, wireLatch);
         wireLatch.countDown();
       }, "extensions");
 
-      window.console.log('wire extensions');
-      _wire(ioc.config.context.extensions, true);
-      window.console.log('init extensions');
-      _init(ioc.config.context.extensions, extensionsLatch, true);
+      window.console.log('Arenite: wire extensions');
+      _wire(arenite.config.context.extensions, true);
+      window.console.log('Arenite: init extensions');
+      _init(arenite.config.context.extensions, extensionsLatch, true);
       extensionsLatch.countDown();
     }
   };
 
   var _loadAsyncDependencies = function (dependencies) {
-    var latch = ioc.async.latch(dependencies.async ? dependencies.async.length : 0, _loadContext, 'dependencies');
+    var latch = arenite.async.latch(dependencies.async ? dependencies.async.length : 0, _loadContext, 'dependencies');
     dependencies.async.forEach(function (dep) {
-      ioc.loader.loadScript(dep, latch.countDown);
+      arenite.loader.loadScript(dep, latch.countDown);
     });
   };
 
   var _loadSyncDependencies = function () {
-    if (!ioc.config.context || !ioc.config.context.dependencies) {
+    if (!arenite.config.context || !arenite.config.context.dependencies) {
       return _loadContext();
     }
 
     var dependencies;
-    if (!ioc.config.context.dependencies[ioc.config.mode]) {
+    if (!arenite.config.context.dependencies[arenite.config.mode]) {
       dependencies = {sync: [], async: []};
     } else {
-      dependencies = ioc.config.context.dependencies[ioc.config.mode];
+      dependencies = arenite.config.context.dependencies[arenite.config.mode];
     }
 
-    var seqLatch = ioc.async.seqLatch(dependencies.sync || [], function (url) {
-      ioc.loader.loadScript(url, seqLatch.next);
+    var seqLatch = arenite.async.seqLatch(dependencies.sync || [], function (url) {
+      arenite.loader.loadScript(url, seqLatch.next);
     }, function () {
       _loadAsyncDependencies(dependencies);
     });
@@ -202,20 +202,20 @@ IOC.DI = function (ioc) {
     var unloadedImports = [];
 
     while (imp) {
-      if (!ioc.object.get(window, imp.namespace)) {
+      if (!arenite.object.get(window, imp.namespace)) {
         unloadedImports.push(imp);
       } else {
-        ioc.config = ioc.object.extend(ioc.config, ioc.object.get(window, imp.namespace)());
+        arenite.config = arenite.object.extend(arenite.config, arenite.object.get(window, imp.namespace)());
       }
       imp = imports.pop();
     }
 
     if (unloadedImports.length !== 0) {
-      var latch = ioc.async.latch(unloadedImports.length, function () {
+      var latch = arenite.async.latch(unloadedImports.length, function () {
         _mergeImports(unloadedImports);
       }, 'imports');
       unloadedImports.forEach(function (subImp) {
-        ioc.loader.loadScript(subImp.url, latch.countDown);
+        arenite.loader.loadScript(subImp.url, latch.countDown);
       });
     } else {
       _loadSyncDependencies();
@@ -223,23 +223,23 @@ IOC.DI = function (ioc) {
   };
 
   var _loadConfig = function (config) {
-    _addInstance('ioc', ioc);
-    ioc.config = config;
-    ioc.config.mode = ioc.url.query().env || 'default';
-    window.console.log('IOC: Starting in mode', ioc.config.mode);
-    if (config.exposeIoc) {
-      window.ioc = ioc;
+    _addInstance('arenite', arenite);
+    arenite.config = config;
+    arenite.config.mode = arenite.url.query().env || 'default';
+    window.console.log('Arenite: Starting in mode', arenite.config.mode);
+    if (config.expose) {
+      window.arenite = arenite;
     }
 
-    if (ioc.config.imports) {
-      _mergeImports(JSON.parse(JSON.stringify(ioc.config.imports)));
+    if (arenite.config.imports) {
+      _mergeImports(JSON.parse(JSON.stringify(arenite.config.imports)));
     } else {
       _loadSyncDependencies();
     }
   };
 
   var _processAnnotations = function (text) {
-    var regex = /@ioc-instance\s+["']([^"']+)["']\s*(.*);\s*(@ioc-init\s+["']([^"']+)["']\s*(.*);)*\s*(@ioc-start\s+["']([^"']+)["']\s*(.*);)*\s*\*\/\s*([\w.]+)/g;
+    var regex = /@arenite-instance\s+["']([^"']+)["']\s*(.*);\s*(@arenite-init\s+["']([^"']+)["']\s*(.*);)*\s*(@arenite-start\s+["']([^"']+)["']\s*(.*);)*\s*\*\/\s*([\w.]+)/g;
     var match;
     while ((match = regex.exec(text))) {
       _processAnnotation(match);
@@ -265,21 +265,21 @@ IOC.DI = function (ioc) {
     if (!instanceName) {
       return;
     }
-    if (!ioc.config.context) {
-      ioc.config.context = {instances: {}};
+    if (!arenite.config.context) {
+      arenite.config.context = {instances: {}};
     }
 
     //instance
-    ioc.config.context.instances[instanceName] = {namespace: namespace};
+    arenite.config.context.instances[instanceName] = {namespace: namespace};
     if (match[2]) {
-      ioc.config.context.instances[instanceName].args = _processArgAnnotation(match[2]);
+      arenite.config.context.instances[instanceName].args = _processArgAnnotation(match[2]);
     }
 
     // init
     if (match[4]) {
-      ioc.config.context.instances[instanceName].init = {func: match[4]};
+      arenite.config.context.instances[instanceName].init = {func: match[4]};
       if (match[5]) {
-        ioc.config.context.instances[instanceName].init.args = _processArgAnnotation(match[5]);
+        arenite.config.context.instances[instanceName].init.args = _processArgAnnotation(match[5]);
       }
     }
 
@@ -289,10 +289,10 @@ IOC.DI = function (ioc) {
       if (match[8]) {
         start.args = _processArgAnnotation(match[8]);
       }
-      if (!ioc.config.context.start) {
-        ioc.config.context.start = [];
+      if (!arenite.config.context.start) {
+        arenite.config.context.start = [];
       }
-      ioc.config.context.start.push(start);
+      arenite.config.context.start.push(start);
     }
   };
 

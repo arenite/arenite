@@ -1,8 +1,8 @@
-/*global IOC:true*/
-IOC.Config = function (ioc) {
+/*global Arenite:true*/
+Arenite.Config = function (arenite) {
   return {
     get: function () {
-      return ioc.config;
+      return arenite.config;
     }
   };
 };

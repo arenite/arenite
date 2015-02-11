@@ -1,8 +1,8 @@
 {
-  "name": "IOC",
+  "name": "Arenite",
   "version": "0.0.2",
   "description": "Inversion of Control / Dependency Injection Library",
-  "repository": "git://github.com/lcavadas/ioc",
+  "repository": "git://github.com/lcavadas/arenite",
   "author": {
     "name": "Luís Serralheiro",
     "email": "encavadas@gmail.com"

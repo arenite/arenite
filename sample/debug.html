@@ -2,27 +2,27 @@
 <html>
 <head lang="en">
   <meta charset="UTF-8">
-  <script type="text/javascript" src="../js/ioc.core.js"></script>
-  <script type="text/javascript" src="../js/ioc.loader.js"></script>
-  <script type="text/javascript" src="../js/ioc.object.js"></script>
-  <script type="text/javascript" src="../js/ioc.async.js"></script>
-  <script type="text/javascript" src="../js/ioc.url.js"></script>
-  <script type="text/javascript" src="../js/ioc.di.js"></script>
+  <script type="text/javascript" src="../js/core.js"></script>
+  <script type="text/javascript" src="../js/loader.js"></script>
+  <script type="text/javascript" src="../js/object.js"></script>
+  <script type="text/javascript" src="../js/async.js"></script>
+  <script type="text/javascript" src="../js/url.js"></script>
+  <script type="text/javascript" src="../js/di.js"></script>
 </head>
 <body onload="start()">
 </body>
 <script>
   function start() {
-    IOC({
-      exposeIoc: true,
+    Arenite({
+      expose: true,
       imports: [
         {
           url: '../js/extensions/extensions.js',
-          namespace: 'IOC.Extensions'
+          namespace: 'Arenite.Extensions'
         },
         {
           url: 'demo/demo.js',
-          namespace: 'IOC.Demo'
+          namespace: 'Arenite.Demo'
         }
       ],
       context: {

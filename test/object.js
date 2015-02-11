@@ -1,10 +1,10 @@
-/*global IOC:true, describe:true, it:true, expect:true, beforeEach */
-describe("IOC.Object", function () {
+/*global Arenite:true, describe:true, it:true, expect:true, beforeEach */
+describe("Arenite.Object", function () {
   var obj;
   var sample;
 
   beforeEach(function () {
-    obj = IOC.Object();
+    obj = Arenite.Object();
     sample = {
       a: {
         b: 'c',

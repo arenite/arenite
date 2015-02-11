@@ -1,6 +1,6 @@
-/*global IOC:true*/
+/*global Arenite:true*/
 //Utility function for interpreting url query parameters
-IOC.Url = function () {
+Arenite.Url = function () {
   var query_string;
 
   var _query = function (force) {

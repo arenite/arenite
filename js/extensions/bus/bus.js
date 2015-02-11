@@ -1,5 +1,5 @@
-/*global IOC:true*/
-IOC.Bus = function () {
+/*global Arenite:true*/
+Arenite.Bus = function () {
   var bus = {};
 
   var _subscribe = function (subject, func) {

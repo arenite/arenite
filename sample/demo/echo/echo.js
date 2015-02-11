@@ -1,5 +1,5 @@
-/*global IOC:true*/
-IOC.Echo = function (arg) {
+/*global Arenite:true*/
+Arenite.Echo = function (arg) {
   window.console.log('echo:', arg);
   return {};
 };

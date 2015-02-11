@@ -1,5 +1,5 @@
-/*global IOC:true*/
-IOC.Storage = function (ioc) {
+/*global Arenite:true*/
+Arenite.Storage = function (arenite) {
 
   var _local;
   var _session;
@@ -8,7 +8,7 @@ IOC.Storage = function (ioc) {
   var _init = function (cb) {
     if (_local !== null) {
 
-      var latch = ioc.async.latch(3, cb, 'storage');
+      var latch = arenite.async.latch(3, cb, 'storage');
 
       window.storage(function (sjs) {
         _local = sjs;

@@ -1,7 +1,7 @@
-/*global IOC:true*/
+/*global Arenite:true*/
 // This is a sample configuration that adds the existing extensions to the sandbox.
-// The sandbox object is auto-registered as <code>ioc</code> and can be referenced for any other instance.
-IOC.Extensions = function () {
+// The sandbox object is auto-registered as <code>arenite</code> and can be referenced for any other instance.
+Arenite.Extensions = function () {
   return {
     context: {
       dependencies: {
@@ -11,34 +11,34 @@ IOC.Extensions = function () {
             '//code.jquery.com/jquery-2.1.3.min.js',
             'lib/doT.min.js',
             'lib/storage.min.js',
-            '/di/js/extensions/bus/bus.js',
-            '/di/js/extensions/template/dot.js',
-            '/di/js/extensions/storage/storage.js'
+            '/arenite/js/extensions/bus/bus.js',
+            '/arenite/js/extensions/template/dot.js',
+            '/arenite/js/extensions/storage/storage.js'
           ]
         }
       },
       start: [
         {
-          instance: 'ioc',
+          instance: 'arenite',
           func: 'bus.publish',
           args: [{'value': 'application-started'}]
         }
       ],
       extensions: {
-        //### IOC.Bus
+        //### Arenite.Bus
         // Event bus extension.
         //
-        // Described in <a href="extensions/bus/bus.html">IOC.Bus</a>.
+        // Described in <a href="extensions/bus/bus.html">Arenite.Bus</a>.
         bus: {
-          namespace: 'IOC.Bus'
+          namespace: 'Arenite.Bus'
         },
-        //### IOC.Templates
+        //### Arenite.Templates
         // HTML templating extension using <a href="http://olado.github.io/doT/index.html">doT.js</a>.
         //
-        // Described in <a href="extensions/template/dot.html">IOC.Templates</a>
+        // Described in <a href="extensions/template/dot.html">Arenite.Templates</a>
         templates: {
-          namespace: 'IOC.Templates',
-          args: [{ref: 'ioc'}],
+          namespace: 'Arenite.Templates',
+          args: [{ref: 'arenite'}],
           init: {
             wait: true,
             func: 'add',
@@ -47,14 +47,14 @@ IOC.Extensions = function () {
             }]
           }
         },
-        //### IOC.Storage
+        //### Arenite.Storage
         // Local storage extension using <a href="https://github.com/lcavadas/Storage.js">Storage.js</a>
         //
-        // Described in <a href="extensions/storage/storage.html">IOC.Storage</a>
+        // Described in <a href="extensions/storage/storage.html">Arenite.Storage</a>
         storage: {
-          namespace: 'IOC.Storage',
+          namespace: 'Arenite.Storage',
           args: [
-            {ref: 'ioc'}
+            {ref: 'arenite'}
           ],
           init: {
             func: 'init',

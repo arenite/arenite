@@ -1,15 +1,15 @@
-/* global IOC:true, doT:true */
-IOC.Templates = function (ioc) {
+/* global Arenite:true, doT:true */
+Arenite.Templates = function (arenite) {
   var _templates = {};
 
   var _add = function (urls, callback) {
-    var templateLatch = ioc.async.latch(urls.length, function () {
+    var templateLatch = arenite.async.latch(urls.length, function () {
       if (typeof callback === 'function') {
         callback();
       }
     }, "template loader");
     urls.forEach(function (url) {
-      ioc.loader.loadResource(url, function (template) {
+      arenite.loader.loadResource(url, function (template) {
         var templateContainer = document.createElement('div');
         templateContainer.innerHTML = template.responseText;
         document.body.appendChild(templateContainer);
