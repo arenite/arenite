@@ -206,7 +206,7 @@ Arenite.DI = function (arenite) {
 
   var _loadSyncDependencies = function () {
     if (!arenite.config.context || !arenite.config.context.dependencies) {
-      return _loadContext();
+      return _loadContext(arenite.config.context);
     }
 
     var dependencies;

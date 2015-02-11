@@ -271,7 +271,6 @@ describe("Arenite.DI", function () {
         }
       }
     });
-
     expect(window.arenite.one.yay).toEqual('yay');
   });
 
