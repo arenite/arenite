@@ -22,13 +22,6 @@ IOC.Extensions = function () {
           instance: 'ioc',
           func: 'bus.publish',
           args: [{'value': 'application-started'}]
-        },
-        {
-          instance: 'ioc',
-          func: 'templates.add',
-          args: [{
-            value: ['templates/templates.html']
-          }]
         }
       ],
       extensions: {
@@ -45,7 +38,14 @@ IOC.Extensions = function () {
         // Described in <a href="extensions/template/dot.html">IOC.Templates</a>
         templates: {
           namespace: 'IOC.Templates',
-          args: [{ref: 'ioc'}]
+          args: [{ref: 'ioc'}],
+          init: {
+            wait: true,
+            func: 'add',
+            args: [{
+              value: ['templates/templates.html']
+            }]
+          }
         },
         //### IOC.Storage
         // Local storage extension using <a href="https://github.com/lcavadas/Storage.js">Storage.js</a>
