@@ -23,7 +23,7 @@
 // The documentation for the configuration is presented in the <a href="../index.html">website</a>.
 Arenite = function (config) {
   //### Arenite.Object
-  // Instance of the Sandbox is started with the <a href="arenite.object.html">Arenite.Object</a> module witch gives us access to the <code>extend</code> function used.
+  // Instance of the Sandbox is started with the <a href="object.html">Arenite.Object</a> module witch gives us access to the <code>extend</code> function used.
   var arenite = new Arenite.Object(arenite);
   //### Arenite.Async
   // Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
