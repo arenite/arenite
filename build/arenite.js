@@ -133,10 +133,27 @@ Arenite.DI = function (arenite) {
   var registry = {};
   var factories = {};
 
-  var _resolveArgs = function (args) {
+  var _resolveFunc = function (execution) {
+    var resolvedFunc = execution.func;
+    if (typeof execution.func === 'function') {
+      resolvedFunc = execution.func;
+    } else {
+      if (execution.extension) {
+        resolvedFunc = arenite.object.get(arenite[execution.instance], execution.func);
+      } else {
+        resolvedFunc = arenite.object.get(_getInstance(execution.instance), execution.func);
+      }
+    }
+    return resolvedFunc;
+  };
+
+  var _resolveArgs = function (execution, done) {
+    if (!execution.args) {
+      return [];
+    }
     var failure = false;
     var resolved = [];
-    args.forEach(function (arg) {
+    execution.args.forEach(function (arg) {
       if (typeof arg.value !== 'undefined') {
         resolved.push(arg.value);
       } else if (typeof arg.ref !== 'undefined') {
@@ -152,32 +169,27 @@ Arenite.DI = function (arenite) {
         resolved.push(arg.exec(arenite));
       }
     });
+
+    if (execution.wait && typeof done === 'function') {
+      resolved.push(done);
+    }
     return failure ? null : resolved;
   };
 
-  var _execFunction = function (instance, func, args, callback, extension) {
-    var resolvedFunc;
-    if (typeof func === 'function') {
-      resolvedFunc = func;
-    } else {
-      if (extension) {
-        resolvedFunc = arenite.object.get(arenite[instance], func);
-      } else {
-        resolvedFunc = arenite.object.get(_getInstance(instance), func);
-      }
-    }
+  var _execFunction = function (execution, before, done) {
+    var resolvedFunc = _resolveFunc(execution);
     if (resolvedFunc) {
-      var resolvedArgs = _resolveArgs(args || []);
+      var resolvedArgs = _resolveArgs(execution, done);
       if (resolvedArgs) {
-        if (typeof callback === 'function') {
-          resolvedArgs.push(callback);
+        if (execution.wait && typeof before === 'function') {
+          before();
         }
         resolvedFunc.apply(resolvedFunc, resolvedArgs);
       } else {
-        throw 'Unable to resolve arguments for "' + func + '" of instance "' + instance + '"';
+        throw 'Unable to resolve arguments for "' + execution.func + '" of instance "' + execution.instance + '"';
       }
     } else {
-      throw 'Unknown function "' + func + '" for instance "' + instance + '"';
+      throw 'Unknown function "' + execution.func + '" for instance "' + execution.instance + '"';
     }
   };
 
@@ -190,7 +202,7 @@ Arenite.DI = function (arenite) {
 
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
-      var args = _resolveArgs(factories[name] || []);
+      var args = _resolveArgs({args: factories[name]});
       if (args) {
         return registry[name].apply(registry[name], args);
       } else {
@@ -212,9 +224,9 @@ Arenite.DI = function (arenite) {
     instanceKeys.forEach(function (instance) {
       var func = arenite.object.get(window, instances[instance].namespace);
       if (func) {
-        var args = _resolveArgs(instances[instance].args || []);
+        var args = _resolveArgs(instances[instance]);
         if (args) {
-          window.console.log(instance, 'wired');
+          window.console.log('Arenite:', instance, 'wired');
           var actualInstance = instances[instance].factory ? func : func.apply(func, args);
           if (extension) {
             var wrappedInstance = {};
@@ -244,16 +256,18 @@ Arenite.DI = function (arenite) {
   var _init = function (instances, latch, extension) {
     arenite.object.keys(instances).forEach(function (instance) {
       if (instances[instance].init) {
-        if (instances[instance].init.wait) {
-          latch.countUp();
-          _execFunction(instance, instances[instance].init.func, instances[instance].init.args, function () {
-            window.console.log(instance, 'initialized');
-            latch.countDown();
-          }, extension);
-        } else {
-          _execFunction(instance, instances[instance].init.func, instances[instance].init.args, null, extension);
-          window.console.log(instance, 'initialized');
+        if (typeof instances[instance].init === 'string') {
+          instances[instance].init = {func: instances[instance].init};
         }
+        _execFunction(arenite.object.extend({
+          instance: instance,
+          extension: extension
+        }, instances[instance].init), function () {
+          latch.countUp();
+        }, function () {
+          window.console.log('Arenite:', instance, 'initialized');
+          latch.countDown();
+        });
       }
     });
   };
@@ -268,7 +282,7 @@ Arenite.DI = function (arenite) {
       }, 100);
     } else {
       starts.forEach(function (start) {
-        _execFunction(start.instance, start.func, start.args, start.wait);
+        _execFunction(start);
       });
     }
   };
@@ -277,22 +291,22 @@ Arenite.DI = function (arenite) {
     if (arenite.config.context) {
       //Starting must wait for the wiring
       var wireLatch = arenite.async.latch(1, function () {
-        window.console.log('start instances');
+        window.console.log('Arenite: start instances');
         _start(arenite.config.context.start);
       }, "instances");
 
       //wiring of instances must wait for the extensions
       var extensionsLatch = arenite.async.latch(1, function () {
-        window.console.log('wire instances');
+        window.console.log('Arenite: wire instances');
         _wire(arenite.config.context.instances);
-        window.console.log('init instances');
+        window.console.log('Arenite: init instances');
         _init(arenite.config.context.instances, wireLatch);
         wireLatch.countDown();
       }, "extensions");
 
-      window.console.log('wire extensions');
+      window.console.log('Arenite: wire extensions');
       _wire(arenite.config.context.extensions, true);
-      window.console.log('init extensions');
+      window.console.log('Arenite: init extensions');
       _init(arenite.config.context.extensions, extensionsLatch, true);
       extensionsLatch.countDown();
     }
