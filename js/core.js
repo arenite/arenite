@@ -26,17 +26,17 @@ Arenite = function (config) {
   // Instance of the Sandbox is started with the <a href="arenite.object.html">Arenite.Object</a> module witch gives us access to the <code>extend</code> function used.
   var arenite = new Arenite.Object(arenite);
   //### Arenite.Async
-  // Extend the instance with the <a href="arenite.async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
+  // Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
   arenite = arenite.object.extend(arenite, new Arenite.Async());
   //### Arenite.Url
-  // Extend the instance with the <a href="arenite.url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.
+  // Extend the instance with the <a href="url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.
   arenite = arenite.object.extend(arenite, new Arenite.Url());
   //### Arenite.DI
-  // Extend the instance with the <a href="arenite.di.html">Arenite.DI</a> extension which provides
+  // Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
   // the injector functionality.
   arenite = arenite.object.extend(arenite, new Arenite.DI(arenite));
   //### Arenite.Loader
-  // Extend the instance with the <a href="arenite.loader.html">Arenite.Loader</a> extension which provides
+  // Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
   // the script and resource loading functionality to the sandbox.
   arenite = arenite.object.extend(arenite, new Arenite.Loader(arenite));
   // Initialize the injector by having it read the configuration object passed into this constructor.

@@ -1,5 +1,5 @@
-/* global Arenite:true, doT:true */
-Arenite.Templates = function (arenite) {
+/* global Arenite:true */
+Arenite.Templates = function (arenite, doT) {
   var _templates = {};
 
   var _add = function (urls, callback) {

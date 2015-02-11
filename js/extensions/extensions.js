@@ -6,11 +6,24 @@ Arenite.Extensions = function () {
     context: {
       dependencies: {
         default: {
+          sync: [
+            {
+              url: '//code.jquery.com/jquery-2.1.3.min.js',
+              window: 'jQuery',
+              instance: 'jquery'
+            }
+          ],
           async: [
-            //'lib/jquery-2.1.1.min.js',
-            '//code.jquery.com/jquery-2.1.3.min.js',
-            'lib/doT.min.js',
-            'lib/storage.min.js',
+            {
+              url: 'lib/doT.min.js',
+              window: 'doT',
+              instance: 'doT'
+            },
+            {
+              url: 'lib/storage.min.js',
+              window: 'storage',
+              instance: 'storagejs'
+            },
             '/arenite/js/extensions/bus/bus.js',
             '/arenite/js/extensions/template/dot.js',
             '/arenite/js/extensions/storage/storage.js'
@@ -38,7 +51,10 @@ Arenite.Extensions = function () {
         // Described in <a href="extensions/template/dot.html">Arenite.Templates</a>
         templates: {
           namespace: 'Arenite.Templates',
-          args: [{ref: 'arenite'}],
+          args: [
+            {ref: 'arenite'},
+            {ref: 'doT'}
+          ],
           init: {
             wait: true,
             func: 'add',
@@ -54,7 +70,8 @@ Arenite.Extensions = function () {
         storage: {
           namespace: 'Arenite.Storage',
           args: [
-            {ref: 'arenite'}
+            {ref: 'arenite'},
+            {ref: 'storagejs'}
           ],
           init: {
             func: 'init',

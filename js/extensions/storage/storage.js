@@ -1,27 +1,27 @@
 /*global Arenite:true*/
-Arenite.Storage = function (arenite) {
+Arenite.Storage = function (arenite, storage) {
 
   var _local;
   var _session;
-  var _persistant;
+  var _persistent;
 
   var _init = function (cb) {
     if (_local !== null) {
 
       var latch = arenite.async.latch(3, cb, 'storage');
 
-      window.storage(function (sjs) {
+      storage(function (sjs) {
         _local = sjs;
         latch.countDown();
       }, 'LocalStorage');
 
-      window.storage(function (sjs) {
+      storage(function (sjs) {
         _session = sjs;
         latch.countDown();
       }, 'SessionStorage');
 
-      window.storage(function (sjs) {
-        _persistant = sjs;
+      storage(function (sjs) {
+        _persistent = sjs;
         latch.countDown();
       });
     }
@@ -29,14 +29,8 @@ Arenite.Storage = function (arenite) {
 
   return {
     init: _init,
-    localStore: function () {
-      return _local;
-    },
-    sessionStore: function () {
-      return _session;
-    },
-    persistantStore: function () {
-      return _persistant;
-    }
+    localStore: _local,
+    sessionStore: _session,
+    persistentStore: _persistent
   };
 };
