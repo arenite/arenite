@@ -35,7 +35,8 @@ Arenite.Demo = function () {
           args: [{
             instance: {
               namespace: 'Arenite.Config',
-              args: [{ref: 'arenite'}]
+              args: [{ref: 'arenite'}],
+              init:'get'
             }
           }]
         },

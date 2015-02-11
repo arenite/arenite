@@ -168,7 +168,10 @@ Arenite.DI = function (arenite) {
       } else if (typeof arg.exec !== 'undefined') {
         resolved.push(arg.exec(arenite));
       } else if (typeof arg.instance !== 'undefined') {
-        resolved = arenite.array.merge(resolved,_wire([arg.instance],'anonymous'));
+        var anonymousContext = {instances: {'__anonymous_temp_instance__': arg.instance}};
+        _loadContext(anonymousContext);
+        resolved.push(arenite.di.getInstance('__anonymous_temp_instance__'));
+        _removeInstance('__anonymous_temp_instance__');
       }
     });
 
@@ -202,6 +205,10 @@ Arenite.DI = function (arenite) {
     }
   };
 
+  var _removeInstance = function (name) {
+    arenite.object.delete(registry, name);
+  };
+
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
       var args = _resolveArgs({args: factories[name]});
@@ -215,7 +222,6 @@ Arenite.DI = function (arenite) {
     }
   };
 
-  //type can be 'extension' or 'anonymous'
   var _wire = function (instances, type) {
     if (!instances) {
       return;
@@ -223,7 +229,6 @@ Arenite.DI = function (arenite) {
 
     var instanceKeys = arenite.object.keys(instances);
     var unresolved = {};
-    var results = [];
 
     instanceKeys.forEach(function (instance) {
       var func = arenite.object.get(window, instances[instance].namespace);
@@ -236,8 +241,6 @@ Arenite.DI = function (arenite) {
             var wrappedInstance = {};
             wrappedInstance[instance] = actualInstance;
             arenite = arenite.object.extend(arenite, wrappedInstance);
-          } else if (type === 'anonymous') {
-            results.push(actualInstance);
           } else {
             _addInstance(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
           }
@@ -251,13 +254,12 @@ Arenite.DI = function (arenite) {
 
     var unresolvedKeys = arenite.object.keys(unresolved);
     if (unresolvedKeys.length !== arenite.object.keys(instances).length && unresolvedKeys.length > 0) {
-      arenite.array.merge(results, _wire(unresolved));
+      _wire(unresolved);
     } else {
       if (unresolvedKeys.length !== 0) {
         throw 'Make sure you don\'t have circular dependencies, Unable to resolve the following instances: ' + unresolvedKeys.join(", ");
       }
     }
-    return results;
   };
 
   var _init = function (instances, latch, extension) {
@@ -294,33 +296,35 @@ Arenite.DI = function (arenite) {
     }
   };
 
-  var _loadContext = function () {
-    if (arenite.config.context) {
+  var _loadContext = function (context) {
+    if (context) {
       //Starting must wait for the wiring
       var wireLatch = arenite.async.latch(1, function () {
         window.console.log('Arenite: start instances');
-        _start(arenite.config.context.start);
+        _start(context.start);
       }, "instances");
 
       //wiring of instances must wait for the extensions
       var extensionsLatch = arenite.async.latch(1, function () {
         window.console.log('Arenite: wire instances');
-        _wire(arenite.config.context.instances);
+        _wire(context.instances);
         window.console.log('Arenite: init instances');
-        _init(arenite.config.context.instances, wireLatch);
+        _init(context.instances, wireLatch);
         wireLatch.countDown();
       }, "extensions");
 
       window.console.log('Arenite: wire extensions');
-      _wire(arenite.config.context.extensions, 'extension');
+      _wire(context.extensions, 'extension');
       window.console.log('Arenite: init extensions');
-      _init(arenite.config.context.extensions, extensionsLatch, true);
+      _init(context.extensions, extensionsLatch, true);
       extensionsLatch.countDown();
     }
   };
 
   var _loadAsyncDependencies = function (dependencies) {
-    var latch = arenite.async.latch(dependencies.async ? dependencies.async.length : 0, _loadContext, 'dependencies');
+    var latch = arenite.async.latch(dependencies.async ? dependencies.async.length : 0, function () {
+      _loadContext(arenite.config.context);
+    }, 'dependencies');
     dependencies.async.forEach(function (dep) {
       arenite.loader.loadScript(dep, latch.countDown);
     });
