@@ -112,6 +112,17 @@ Arenite.Object = function () {
     return result;
   };
 
+  var _merge = function (arr1, arr2) {
+    var result = [];
+    arr1.forEach(function (el) {
+      result.push(el);
+    });
+    arr2.forEach(function (el) {
+      result.push(el);
+    });
+    return _uniq(result);
+  };
+
   return {
     object: {
       //###object.get
@@ -172,7 +183,14 @@ Arenite.Object = function () {
       // contains(array)
       //</pre></code>
       //where *<b>array</b>* is the array to be stripped o duplicate values
-      uniq: _uniq
+      uniq: _uniq,
+      //###array.merge
+      // Merges two arrays returning a new one with the unique values.
+      //<pre><code>
+      // merge(arr1, arr2)
+      //</pre></code>
+      //where *<b>arr1</b>* and *<b>arr2</b>* are the arrays to be merged
+      merge: _merge
     }
   };
 };

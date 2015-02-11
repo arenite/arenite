@@ -25,10 +25,19 @@ Arenite.Demo = function () {
         }
       ],
       instances: {
-        initEcho:{
-          namespace:'Arenite.Echo',
-          args:[{value:'creation'}],
-          init:'init'
+        initEcho: {
+          namespace: 'Arenite.Echo',
+          args: [{value: 'creation'}],
+          init: 'init'
+        },
+        anonymousArgEcho: {
+          namespace: 'Arenite.Echo',
+          args: [{
+            instance: {
+              namespace: 'Arenite.Config',
+              args: [{ref: 'arenite'}]
+            }
+          }]
         },
         echo: {
           factory: true,
