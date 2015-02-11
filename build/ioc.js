@@ -155,7 +155,7 @@ IOC.DI = function (ioc) {
     return failure ? null : resolved;
   };
 
-  var _execFunction = function (instance, func, args, extension) {
+  var _execFunction = function (instance, func, args, callback, extension) {
     var resolvedFunc;
     if (typeof func === 'function') {
       resolvedFunc = func;
@@ -169,6 +169,9 @@ IOC.DI = function (ioc) {
     if (resolvedFunc) {
       var resolvedArgs = _resolveArgs(args || []);
       if (resolvedArgs) {
+        if (typeof callback === 'function') {
+          resolvedArgs.push(callback);
+        }
         resolvedFunc.apply(resolvedFunc, resolvedArgs);
       } else {
         throw 'Unable to resolve arguments for "' + func + '" of instance "' + instance + '"';
@@ -238,10 +241,19 @@ IOC.DI = function (ioc) {
     }
   };
 
-  var _init = function (instances, extension) {
+  var _init = function (instances, latch, extension) {
     ioc.object.keys(instances).forEach(function (instance) {
       if (instances[instance].init) {
-        _execFunction(instance, instances[instance].init.func, instances[instance].init.args, extension);
+        if (instances[instance].init.wait) {
+          latch.countUp();
+          _execFunction(instance, instances[instance].init.func, instances[instance].init.args, function () {
+            window.console.log(instance, 'initialized');
+            latch.countDown();
+          }, extension);
+        } else {
+          _execFunction(instance, instances[instance].init.func, instances[instance].init.args, null, extension);
+          window.console.log(instance, 'initialized');
+        }
       }
     });
   };
@@ -256,23 +268,33 @@ IOC.DI = function (ioc) {
       }, 100);
     } else {
       starts.forEach(function (start) {
-        _execFunction(start.instance, start.func, start.args);
+        _execFunction(start.instance, start.func, start.args, start.wait);
       });
     }
   };
 
   var _loadContext = function () {
     if (ioc.config.context) {
+      //Starting must wait for the wiring
+      var wireLatch = ioc.async.latch(1, function () {
+        window.console.log('start instances');
+        _start(ioc.config.context.start);
+      }, "instances");
+
+      //wiring of instances must wait for the extensions
+      var extensionsLatch = ioc.async.latch(1, function () {
+        window.console.log('wire instances');
+        _wire(ioc.config.context.instances);
+        window.console.log('init instances');
+        _init(ioc.config.context.instances, wireLatch);
+        wireLatch.countDown();
+      }, "extensions");
+
       window.console.log('wire extensions');
       _wire(ioc.config.context.extensions, true);
       window.console.log('init extensions');
-      _init(ioc.config.context.extensions, true);
-      window.console.log('wire instances');
-      _wire(ioc.config.context.instances);
-      window.console.log('init instances');
-      _init(ioc.config.context.instances);
-      window.console.log('start instances');
-      _start(ioc.config.context.start);
+      _init(ioc.config.context.extensions, extensionsLatch, true);
+      extensionsLatch.countDown();
     }
   };
 
