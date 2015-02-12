@@ -204,7 +204,11 @@ Arenite.DI = function (arenite) {
       if (!arenite.object.get(window, imp.namespace)) {
         unloadedImports.push(imp);
       } else {
-        arenite.config = arenite.object.extend(arenite.config, arenite.object.get(window, imp.namespace)());
+        var imported = arenite.object.get(window, imp.namespace)();
+        arenite.config = arenite.object.extend(arenite.config, imported);
+        if (imported.imports) {
+          imports = arenite.array.merge(imports, imported.imports);
+        }
       }
       imp = imports.pop();
     }

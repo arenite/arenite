@@ -1,6 +1,12 @@
 /*global Arenite:true*/
 Arenite.Demo = function () {
   return {
+    imports: [
+      {
+        url: 'demo/demo.sub.js',
+        namespace: 'Arenite.SubDemo'
+      }
+    ],
     context: {
       dependencies: {
         default: {
@@ -36,7 +42,7 @@ Arenite.Demo = function () {
             instance: {
               namespace: 'Arenite.Config',
               args: [{ref: 'arenite'}],
-              init:'get'
+              init: 'get'
             }
           }]
         },

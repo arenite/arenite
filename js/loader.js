@@ -66,8 +66,10 @@ Arenite.Loader = function (arenite) {
       _loadScriptFrom(script, done);
     } else {
       _loadScriptFrom(script.url, function () {
-        arenite.context.add(script.instance, window[script.window]);
-        delete window[script.window];
+        arenite.object.keys(script.instances).forEach(function (instance) {
+          arenite.context.add(instance, window[script.instances[instance]]);
+          delete window[script.instances[instance]];
+        });
         if (typeof done === 'function') {
           done();
         }

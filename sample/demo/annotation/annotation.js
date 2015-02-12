@@ -1,5 +1,5 @@
 /*global Arenite:true*/
-/*
+/*!
  @arenite-instance 'annotated1' ref:arenite;
  @arenite-init 'init' value : "init annotated1";
  @arenite-start 'start' value : "start", value : "annotated1";
@@ -22,7 +22,7 @@ Arenite.Annotated1 = function (arenite) {
   };
 };
 
-/*
+/*!
  @arenite-instance 'annotated2' ref:arenite;
  @arenite-init 'init' value : "init annotated2";
  */
@@ -44,7 +44,7 @@ Arenite.Annotated2 = function (arenite) {
   };
 };
 
-/*
+/*!
  @arenite-instance 'annotated3' ref:arenite;
  @arenite-start 'start'  value : "start", value : "annotated3";
  */
@@ -67,7 +67,7 @@ Arenite.Annotated3 = function (arenite) {
 };
 
 
-/*
+/*!
  @arenite-instance 'annotated4' ref:arenite;
  */
 
