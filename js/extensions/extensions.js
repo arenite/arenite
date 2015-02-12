@@ -9,20 +9,23 @@ Arenite.Extensions = function () {
           sync: [
             {
               url: '//code.jquery.com/jquery-2.1.3.min.js',
-              window: 'jQuery',
-              instance: 'jquery'
+              instances: {
+                jquery: '$'
+              }
             }
           ],
           async: [
             {
               url: 'lib/doT.min.js',
-              window: 'doT',
-              instance: 'doT'
+              instances: {
+                doT: 'doT'
+              }
             },
             {
               url: 'lib/storage.min.js',
-              window: 'storage',
-              instance: 'storagejs'
+              instances: {
+                storagejs: 'storage'
+              }
             },
             '/arenite/js/extensions/bus/bus.js',
             '/arenite/js/extensions/template/dot.js',

@@ -440,7 +440,11 @@ Arenite.DI = function (arenite) {
       if (!arenite.object.get(window, imp.namespace)) {
         unloadedImports.push(imp);
       } else {
-        arenite.config = arenite.object.extend(arenite.config, arenite.object.get(window, imp.namespace)());
+        var imported = arenite.object.get(window, imp.namespace)();
+        arenite.config = arenite.object.extend(arenite.config, imported);
+        if (imported.imports) {
+          imports = arenite.array.merge(imports, imported.imports);
+        }
       }
       imp = imports.pop();
     }
@@ -554,8 +558,10 @@ Arenite.Loader = function (arenite) {
       _loadScriptFrom(script, done);
     } else {
       _loadScriptFrom(script.url, function () {
-        arenite.context.add(script.instance, window[script.window]);
-        delete window[script.window];
+        arenite.object.keys(script.instances).forEach(function (instance) {
+          arenite.context.add(instance, window[script.instances[instance]]);
+          delete window[script.instances[instance]];
+        });
         if (typeof done === 'function') {
           done();
         }
