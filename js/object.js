@@ -123,6 +123,16 @@ Arenite.Object = function () {
     return _uniq(result);
   };
 
+  var _extract = function (obj, prop) {
+    var result = [];
+    for (var _key in obj) {
+      if (obj.hasOwnProperty(_key)) {
+        result.push(obj[_key][prop]);
+      }
+    }
+    return result;
+  };
+
   return {
     object: {
       //###object.get
@@ -190,7 +200,8 @@ Arenite.Object = function () {
       // merge(arr1, arr2)
       //</pre></code>
       //where *<b>arr1</b>* and *<b>arr2</b>* are the arrays to be merged
-      merge: _merge
+      merge: _merge,
+      extract: _extract
     }
   };
 };
