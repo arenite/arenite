@@ -29,8 +29,14 @@ Arenite.Storage = function (arenite, storage) {
 
   return {
     init: _init,
-    localStore: _local,
-    sessionStore: _session,
-    persistentStore: _persistent
+    localStore: function () {
+      return _local;
+    },
+    sessionStore: function () {
+      return _session;
+    },
+    persistentStore: function () {
+      return _persistent;
+    }
   };
 };
