@@ -443,7 +443,7 @@ Arenite.DI = function (arenite) {
         var imported = arenite.object.get(window, imp.namespace)();
         arenite.config = arenite.object.extend(arenite.config, imported);
         if (imported.imports) {
-          window.console.log('Arenite: Merging imports', imported.imports);
+          window.console.log('Arenite: Merging imports', arenite.array.extract(imported.imports, 'namespace'));
           imports = arenite.array.merge(imports, imported.imports);
         }
       }
@@ -478,7 +478,7 @@ Arenite.DI = function (arenite) {
     }
 
     if (arenite.config.imports) {
-      window.console.log('Arenite: Merging imports', arenite.config.imports);
+      window.console.log('Arenite: Merging imports', arenite.array.extract(arenite.config.imports, 'namespace'));
       _mergeImports(JSON.parse(JSON.stringify(arenite.config.imports)));
     } else {
       _loadSyncDependencies();
@@ -703,6 +703,16 @@ Arenite.Object = function () {
     return _uniq(result);
   };
 
+  var _extract = function (obj, prop) {
+    var result = [];
+    for (var _key in obj) {
+      if (obj.hasOwnProperty(_key)) {
+        result.push(obj[_key][prop]);
+      }
+    }
+    return result;
+  };
+
   return {
     object: {
       //###object.get
@@ -770,7 +780,8 @@ Arenite.Object = function () {
       // merge(arr1, arr2)
       //</pre></code>
       //where *<b>arr1</b>* and *<b>arr2</b>* are the arrays to be merged
-      merge: _merge
+      merge: _merge,
+      extract: _extract
     }
   };
 };
