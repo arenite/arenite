@@ -14,9 +14,9 @@ Arenite.Demo = function () {
       start: [
         {
           func: function (arenite) {
-            arenite.di.getInstance('echo');
+            arenite.context.get('echo');
             window.setTimeout(function () {
-              arenite.di.getInstance('echo');
+              arenite.context.get('echo');
             }, 2000);
           },
           args: [
