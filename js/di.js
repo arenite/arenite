@@ -207,6 +207,7 @@ Arenite.DI = function (arenite) {
         var imported = arenite.object.get(window, imp.namespace)();
         arenite.config = arenite.object.extend(arenite.config, imported);
         if (imported.imports) {
+          window.console.log('Arenite: Merging imports', imported.imports);
           imports = arenite.array.merge(imports, imported.imports);
         }
       }
@@ -241,6 +242,7 @@ Arenite.DI = function (arenite) {
     }
 
     if (arenite.config.imports) {
+      window.console.log('Arenite: Merging imports', arenite.config.imports);
       _mergeImports(JSON.parse(JSON.stringify(arenite.config.imports)));
     } else {
       _loadSyncDependencies();
