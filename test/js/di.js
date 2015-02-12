@@ -4,101 +4,80 @@ describe("Arenite.DI", function () {
 
   };
 
-  it("should be able to add and retrieve instances from the context", function () {
-    var di = Arenite.DI();
-    var instance = (function () {
-      return {'a': 'b'};
-    })();
-    di.di.addInstance('instanceName', instance, false);
-    expect(di.di.getInstance('instanceName')).toBe(instance);
-  });
-
-  it("should be able to retrieve factory instances from the context", function () {
-    var di = Arenite.DI();
-    var factory = function () {
-      return {a: 'b'};
-    };
-    di.di.addInstance('instanceName', factory, true);
-    expect(di.di.getInstance('instanceName')).toEqual(factory());
-  });
-
-  it("should be able to retrieve factory instances with arguments from the context", function () {
-    var di = Arenite.DI();
-    var factory = function (c) {
-      return {a: c};
-    };
-    di.di.addInstance('instanceName', factory, true, [{value: '1'}]);
-    expect(di.di.getInstance('instanceName')).toEqual(factory('1'));
-  });
-
-  it("should be able to retrieve differnt instances from factory instances on each retrieve", function () {
-    var di = Arenite.DI();
-    var factory = function (c) {
-      return {a: c};
-    };
-    di.di.addInstance('instanceName', factory, true, [{
-      exec: function () {
-        return window.performance.now();
-      }
-    }]);
-    expect(di.di.getInstance('instanceName')).not.toEqual(di.di.getInstance('instanceName'));
-  });
-
-  it("should return undefined for unknown instances", function () {
-    var di = Arenite.DI();
-    expect(di.di.getInstance('instanceName')).toBe(undefined);
-  });
-
-  it("should throw exception if arguments can\'t be resolved", function () {
+  it("should return null if arguments can\'t be resolved", function () {
     var di = Arenite.DI({
-      di: {
-        getInstance: function () {
-          return null;
+      context: {
+        get: function (name) {
+          if (name === 'foo') {
+            return 'foo';
+          } else {
+            return null;
+          }
         }
       }
     });
-    di.di.addInstance('instanceName', function (c) {
-      return {a: c};
-    }, true, [{ref: 'impossible'}]);
-    expect(function () {
-      di.di.getInstance('instanceName');
-    }).toThrow('Unable to resolve arguments for "instanceName"');
+    expect(di.di.resolveArgs({instance: 'dummy', func: 'foo', args: [{ref: 'impossible'}]})).toBe(null);
   });
 
   it("should resolve value arguments", function () {
-
-  });
-
-  it("should resolve exec arguments", function () {
-    var calls = 0;
-    var di = Arenite.DI();
-    var factory = function (c) {
-      return {a: c};
-    };
-    di.di.addInstance('instanceName', factory, true, [{
-      exec: function () {
-        calls++;
-        return window.performance.now();
-      }
-    }]);
-    di.di.getInstance('instanceName');
-    expect(calls).toBe(1);
-  });
-
-  it("should resolve func arguments", function () {
-    var func = function () {
-    };
     var di = Arenite.DI({
-      di: {
-        getInstance: function () {
-          return {};
+      context: {
+        get: function (name) {
+          if (name === 'foo') {
+            return 'foo';
+          } else {
+            return null;
+          }
         }
       }
     });
-    di.di.addInstance('instanceName', function (c) {
-      return {a: c};
-    }, true, [{func: func}]);
-    expect(di.di.getInstance('instanceName').a).toBe(func);
+    expect(di.di.resolveArgs({instance: 'dummy', func: 'foo', args: [{value: 'str'}]})).toEqual(['str']);
+  });
+
+  it("should resolve exec arguments", function () {
+    var di = Arenite.DI({
+      context: {
+        get: function (name) {
+          if (name === 'foo') {
+            return 'foo';
+          } else {
+            return null;
+          }
+        }
+      }
+    });
+    var count = 0;
+    di.di.resolveArgs({
+      instance: 'dummy', func: 'foo', args: [{
+        exec: function () {
+          count++;
+        }
+      }]
+    });
+    expect(count).toBe(1);
+  });
+
+  it("should resolve func arguments", function () {
+    var di = Arenite.DI({
+      context: {
+        get: function (name) {
+          if (name === 'foo') {
+            return 'foo';
+          } else {
+            return null;
+          }
+        }
+      }
+    });
+    var actual = di.di.resolveArgs({
+      instance: 'dummy',
+      func: 'foo',
+      args: [{
+        func: function () {
+        }
+      }]
+    });
+    expect(typeof actual[0]).toBe('function');
   });
 
   it('can use empty config', function () {
@@ -112,11 +91,29 @@ describe("Arenite.DI", function () {
     expect(window.arenite).toBe(undefined);
   });
 
-  it('should expose arenite if option is true', function () {
+  it('should expose arenite with selected name', function () {
     Arenite({
-      expose: 'arenite'
+      expose: 'aren'
     });
-    expect(window.arenite).not.toBe(undefined);
+    expect(window.aren).not.toBe(undefined);
+  });
+
+  it('should expose arenite with function result as name', function () {
+    Arenite({
+      expose: function () {
+        return 'arfun';
+      }
+    });
+    expect(window.arfun).not.toBe(undefined);
+  });
+
+  it('should not expose arenite with function if result is false', function () {
+    Arenite({
+      expose: function () {
+        return false;
+      }
+    });
+    expect(window.arfunny).toBe(undefined);
   });
 
   it('should merge config with imports', function () {

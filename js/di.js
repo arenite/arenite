@@ -1,9 +1,5 @@
 /*global Arenite:true*/
-/*jshint evil:true*/
 Arenite.DI = function (arenite) {
-
-  var registry = {};
-  var factories = {};
 
   var _resolveFunc = function (execution) {
     var resolvedFunc = execution.func;
@@ -13,7 +9,7 @@ Arenite.DI = function (arenite) {
       if (execution.extension) {
         resolvedFunc = arenite.object.get(arenite[execution.instance], execution.func);
       } else {
-        resolvedFunc = arenite.object.get(_getInstance(execution.instance), execution.func);
+        resolvedFunc = arenite.object.get(arenite.context.get(execution.instance), execution.func);
       }
     }
     return resolvedFunc;
@@ -29,7 +25,7 @@ Arenite.DI = function (arenite) {
       if (typeof arg.value !== 'undefined') {
         resolved.push(arg.value);
       } else if (typeof arg.ref !== 'undefined') {
-        var ref = _getInstance(arg.ref);
+        var ref = arenite.context.get(arg.ref);
         if (ref) {
           resolved.push(ref);
         } else {
@@ -44,8 +40,8 @@ Arenite.DI = function (arenite) {
         var tempId = '__anonymous_temp_instance__' + new Date().getTime();
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
-        resolved.push(arenite.di.getInstance(tempId));
-        _removeInstance(tempId);
+        resolved.push(arenite.context.get(tempId));
+        arenite.context.remove(tempId);
       }
     });
 
@@ -72,30 +68,6 @@ Arenite.DI = function (arenite) {
     }
   };
 
-  var _addInstance = function (name, instance, factory, args) {
-    registry[name] = instance;
-    if (factory) {
-      factories[name] = args || [];
-    }
-  };
-
-  var _removeInstance = function (name) {
-    arenite.object.delete(registry, name);
-  };
-
-  var _getInstance = function (name) {
-    if (factories.hasOwnProperty(name)) {
-      var args = _resolveArgs({args: factories[name]});
-      if (args) {
-        return registry[name].apply(registry[name], args);
-      } else {
-        throw 'Unable to resolve arguments for "' + name + '"';
-      }
-    } else {
-      return registry[name];
-    }
-  };
-
   var _wire = function (instances, type) {
     if (!instances) {
       return;
@@ -116,7 +88,7 @@ Arenite.DI = function (arenite) {
             wrappedInstance[instance] = actualInstance;
             arenite = arenite.object.extend(arenite, wrappedInstance);
           } else {
-            _addInstance(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
+            arenite.context.add(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
           }
         } else {
           unresolved[instance] = instances[instance];
@@ -250,7 +222,7 @@ Arenite.DI = function (arenite) {
   };
 
   var _loadConfig = function (config) {
-    _addInstance('arenite', arenite);
+    arenite.context.add('arenite', arenite);
     arenite.config = config;
     arenite.config.mode = arenite.url.query().env || 'default';
     window.console.log('Arenite: Starting in mode', arenite.config.mode);
@@ -259,7 +231,7 @@ Arenite.DI = function (arenite) {
       if (typeof config.expose === 'function') {
         exposeName = config.expose(arenite);
       }
-      if(exposeName){
+      if (exposeName) {
         window[exposeName] = arenite;
       }
     }
@@ -271,70 +243,10 @@ Arenite.DI = function (arenite) {
     }
   };
 
-  var _processAnnotations = function (text) {
-    var regex = /@arenite-instance\s+["']([^"']+)["']\s*(.*);\s*(@arenite-init\s+["']([^"']+)["']\s*(.*);)*\s*(@arenite-start\s+["']([^"']+)["']\s*(.*);)*\s*\*\/\s*([\w.]+)/g;
-    var match;
-    while ((match = regex.exec(text))) {
-      _processAnnotation(match);
-    }
-  };
-
-  var _processArgAnnotation = function (match) {
-    var args = [];
-    var split = match.split(',');
-    split.forEach(function (arg) {
-      var argPair = arg.split(":");
-      var argObj = {};
-      argObj[argPair[0].trim()] = argPair[0].trim() === 'ref' ? argPair[1].trim() : eval(argPair[1].trim());
-      args.push(argObj);
-    });
-    return args;
-  };
-
-  var _processAnnotation = function (match) {
-    var instanceName = match[1];
-    var namespace = match[9];
-
-    if (!instanceName) {
-      return;
-    }
-    if (!arenite.config.context) {
-      arenite.config.context = {instances: {}};
-    }
-
-    //instance
-    arenite.config.context.instances[instanceName] = {namespace: namespace};
-    if (match[2]) {
-      arenite.config.context.instances[instanceName].args = _processArgAnnotation(match[2]);
-    }
-
-    // init
-    if (match[4]) {
-      arenite.config.context.instances[instanceName].init = {func: match[4]};
-      if (match[5]) {
-        arenite.config.context.instances[instanceName].init.args = _processArgAnnotation(match[5]);
-      }
-    }
-
-    // start
-    if (match[7]) {
-      var start = {instance: instanceName, func: match[7]};
-      if (match[8]) {
-        start.args = _processArgAnnotation(match[8]);
-      }
-      if (!arenite.config.context.start) {
-        arenite.config.context.start = [];
-      }
-      arenite.config.context.start.push(start);
-    }
-  };
-
   return {
     di: {
       loadConfig: _loadConfig,
-      getInstance: _getInstance,
-      addInstance: _addInstance,
-      processAnnotations: _processAnnotations
+      resolveArgs: _resolveArgs
     }
   };
 };

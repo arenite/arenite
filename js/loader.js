@@ -37,7 +37,7 @@ Arenite.Loader = function (arenite) {
   var _loadScriptAsResource = function (url, callback) {
     _loadResource(url, function (req) {
       //analyze the script for "annotation" type configurations
-      arenite.di.processAnnotations(req.responseText);
+      arenite.annotation.processAnnotations(req.responseText);
       var file_tag = '\n//@ sourceURL=' + window.location.origin + '/' + url + '\n//# sourceURL=' + window.location.origin + '/' + url;
       eval(req.responseText + file_tag);
       callback();
@@ -66,7 +66,7 @@ Arenite.Loader = function (arenite) {
       _loadScriptFrom(script, done);
     } else {
       _loadScriptFrom(script.url, function () {
-        arenite.di.addInstance(script.instance, window[script.window]);
+        arenite.context.add(script.instance, window[script.window]);
         delete window[script.window];
         if (typeof done === 'function') {
           done();
