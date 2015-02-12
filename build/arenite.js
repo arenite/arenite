@@ -443,8 +443,13 @@ Arenite.DI = function (arenite) {
         var imported = arenite.object.get(window, imp.namespace)();
         arenite.config = arenite.object.extend(arenite.config, imported);
         if (imported.imports) {
-          window.console.log('Arenite: Merging imports', arenite.array.extract(imported.imports, 'namespace'));
-          imports = arenite.array.merge(imports, imported.imports);
+          var newImports = arenite.array.extract(imported.imports, 'namespace');
+          window.console.log('Arenite: Merging imports', newImports);
+          if (arenite.array.contains(newImports, imp.namespace)) {
+            throw 'You have declared a circular import for "' + imp.namespace + '"';
+          } else {
+            imports = arenite.array.merge(imports, imported.imports);
+          }
         }
       }
       imp = imports.pop();
