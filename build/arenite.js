@@ -493,7 +493,8 @@ Arenite.DI = function (arenite) {
   return {
     di: {
       loadConfig: _loadConfig,
-      resolveArgs: _resolveArgs
+      resolveArgs: _resolveArgs,
+      exec: _execFunction
     }
   };
 };
@@ -697,7 +698,7 @@ Arenite.Object = function () {
     return result;
   };
 
-  var _merge = function (arr1, arr2) {
+  var _merge = function (arr1, arr2, keepDups) {
     var result = [];
     arr1.forEach(function (el) {
       result.push(el);
@@ -705,7 +706,7 @@ Arenite.Object = function () {
     arr2.forEach(function (el) {
       result.push(el);
     });
-    return _uniq(result);
+    return keepDups ? result : _uniq(result);
   };
 
   var _extract = function (obj, prop) {
@@ -799,8 +800,7 @@ Arenite.Url = function () {
     if (!query_string || force) {
       query_string = {};
       var query = window.location.search.substring(1);
-      var vars = query.split("#")[0];
-      vars = vars.split("&");
+      var vars = query.split("&");
       for (var i = 0; i < vars.length; i++) {
         var pair = vars[i].split("=");
         if (typeof query_string[pair[0]] === "undefined") {
