@@ -4,6 +4,9 @@ Arenite.Echo = function (arg) {
   return {
     init: function () {
       window.console.log('echo: init');
+    },
+    echo: function () {
+      window.console.log('echo.echo:', arguments);
     }
   };
 };

@@ -29,7 +29,8 @@ Arenite.Extensions = function () {
             },
             '/arenite/js/extensions/bus/bus.js',
             '/arenite/js/extensions/template/dot.js',
-            '/arenite/js/extensions/storage/storage.js'
+            '/arenite/js/extensions/storage/storage.js',
+            '/arenite/js/extensions/router/router.js'
           ]
         }
       },
@@ -81,6 +82,34 @@ Arenite.Extensions = function () {
             args: [{
               func: function () {
                 window.console.log('db initialized');
+              }
+            }]
+          }
+        },
+        router: {
+          namespace: 'Arenite.Router',
+          args: [{ref: 'arenite'}],
+          init: {
+            func: 'init',
+            args: [{
+              value: {
+                '/a/b/c': [{
+                  instance: 'echo',
+                  func: 'echo',
+                  args: [{value: 'routearg'}]
+                }],
+                '/:c/:a/:d': [{
+                  instance: 'echo',
+                  func: 'echo'
+                }],
+                '/1/:a/2': [{
+                  instance: 'echo',
+                  func: 'echo'
+                }],
+                '/1/:a/:b': [{
+                  instance: 'echo',
+                  func: 'echo'
+                }]
               }
             }]
           }

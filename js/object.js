@@ -112,7 +112,7 @@ Arenite.Object = function () {
     return result;
   };
 
-  var _merge = function (arr1, arr2) {
+  var _merge = function (arr1, arr2, keepDups) {
     var result = [];
     arr1.forEach(function (el) {
       result.push(el);
@@ -120,7 +120,7 @@ Arenite.Object = function () {
     arr2.forEach(function (el) {
       result.push(el);
     });
-    return _uniq(result);
+    return keepDups ? result : _uniq(result);
   };
 
   var _extract = function (obj, prop) {
