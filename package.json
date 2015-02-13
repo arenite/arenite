@@ -1,6 +1,6 @@
 {
   "name": "Arenite",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Inversion of Control / Dependency Injection Library",
   "repository": "git://github.com/lcavadas/arenite",
   "author": {
@@ -10,7 +10,7 @@
   "jshintConfig": {
     "bitwise": true,
     "curly": true,
-    "eqeqeq": true,
+    "eqeqeq": true
     "forin": true,
     "latedef": true,
     "noarg": true,
