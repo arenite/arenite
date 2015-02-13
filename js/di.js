@@ -257,7 +257,8 @@ Arenite.DI = function (arenite) {
   return {
     di: {
       loadConfig: _loadConfig,
-      resolveArgs: _resolveArgs
+      resolveArgs: _resolveArgs,
+      exec: _execFunction
     }
   };
 };
