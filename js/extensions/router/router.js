@@ -8,7 +8,7 @@ Arenite.Router = function (arenite) {
     arenite.object.keys(_routes).forEach(function (route) {
       var args = _routes[route].regex.exec(hash);
       if (args) {
-        window.console.log('Arenite.Router: Executing route "' + route + '"');
+        args.splice(0, 1);
         _routes[route].executions.forEach(function (execution) {
           var exec = JSON.parse(JSON.stringify(execution));
           if (!exec.args) {
@@ -17,6 +17,7 @@ Arenite.Router = function (arenite) {
           args.forEach(function (arg) {
             exec.args.push({value: arg});
           });
+          window.console.log('Arenite.Router: Executing route "' + route + '" with:', exec);
           arenite.di.exec(exec);
         });
       }
@@ -28,7 +29,7 @@ Arenite.Router = function (arenite) {
       document.body.onhashchange = _handleChange;
     }
     arenite.object.keys(routes).forEach(function (route) {
-      var regex = route.replace(/:\w+/g, '(\\w+)');
+      var regex = '^#' + route.replace(/:\w+/g, '(\\w+)') + "$";
       _routes[route] = {executions: routes[route], regex: new RegExp(regex)};
     });
     arenite.config.context.start.push({func: _handleChange});
