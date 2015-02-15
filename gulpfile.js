@@ -9,7 +9,7 @@
   var concat = require('gulp-concat');
   var shell = require('gulp-shell');
 
-  var DEST = 'build/';
+  var build = 'build/';
 
   gulp.task('docs', function () {
     return gulp.src('js/core.js', {read: false})
@@ -21,10 +21,10 @@
       .pipe(jshint())
       .pipe(jshint.reporter('default'))
       .pipe(concat('arenite.js'))
-      .pipe(gulp.dest(DEST))
+      .pipe(gulp.dest(build))
       .pipe(uglify({preserveComments: 'some'}))
       .pipe(rename({extname: '.min.js'}))
-      .pipe(gulp.dest(DEST));
+      .pipe(gulp.dest(build));
   });
 
   gulp.task('watch', function () {
