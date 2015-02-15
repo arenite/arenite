@@ -1,7 +1,7 @@
 /*global Arenite:true, describe:true, it:true, expect:true, spyOn:true, jasmine:true */
 describe("Arenite Core", function () {
-  it("should load the di module", function () {
-    var di = {di: jasmine.createSpyObj('di', ['loadConfig'])};
+  it("should initialize the di module", function () {
+    var di = {di: jasmine.createSpyObj('di', ['init'])};
 
     spyOn(Arenite, 'Loader');
     spyOn(Arenite, 'Async');
@@ -17,6 +17,6 @@ describe("Arenite Core", function () {
     expect(Arenite.DI).toHaveBeenCalled();
     expect(Arenite.Object).toHaveBeenCalled();
 
-    expect(di.di.loadConfig).toHaveBeenCalled();
+    expect(di.di.init).toHaveBeenCalled();
   });
 });

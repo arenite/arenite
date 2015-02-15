@@ -42,5 +42,5 @@ Arenite = function (config) {
   // the script and resource loading functionality to the sandbox.
   arenite = arenite.object.extend(arenite, new Arenite.Loader(arenite));
   // Initialize the injector by having it read the configuration object passed into this constructor.
-  arenite.di.loadConfig(config);
+  arenite.di.init(config);
 };

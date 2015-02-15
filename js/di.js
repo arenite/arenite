@@ -196,7 +196,7 @@ Arenite.DI = function (arenite) {
     seqLatch.next();
   };
 
-  var _mergeImports = function (imports) {
+  var _mergeImports = function (imports, callback) {
     var imp = imports.pop();
     var unloadedImports = [];
 
@@ -221,17 +221,17 @@ Arenite.DI = function (arenite) {
 
     if (unloadedImports.length !== 0) {
       var latch = arenite.async.latch(unloadedImports.length, function () {
-        _mergeImports(unloadedImports);
+        _mergeImports(unloadedImports, callback);
       }, 'imports');
       unloadedImports.forEach(function (subImp) {
         arenite.loader.loadScript(subImp.url, latch.countDown);
       });
     } else {
-      _loadSyncDependencies();
+      callback();
     }
   };
 
-  var _loadConfig = function (config) {
+  var _loadConfig = function (config, callback) {
     arenite.context.add('arenite', arenite);
     arenite.config = config;
     arenite.config.mode = arenite.url.query().env || 'default';
@@ -248,14 +248,23 @@ Arenite.DI = function (arenite) {
 
     if (arenite.config.imports) {
       window.console.log('Arenite: Merging imports', arenite.array.extract(arenite.config.imports, 'namespace'));
-      _mergeImports(JSON.parse(JSON.stringify(arenite.config.imports)));
+      _mergeImports(JSON.parse(JSON.stringify(arenite.config.imports)), callback);
     } else {
+      callback();
+    }
+  };
+
+  var _boot = function (config) {
+    if (arenite.config){
       _loadSyncDependencies();
+    } else {
+      _loadConfig(config, _loadSyncDependencies);
     }
   };
 
   return {
     di: {
+      init: _boot,
       loadConfig: _loadConfig,
       resolveArgs: _resolveArgs,
       exec: _execFunction
