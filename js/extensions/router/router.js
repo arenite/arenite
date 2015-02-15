@@ -32,7 +32,7 @@ Arenite.Router = function (arenite) {
       var regex = '^#' + route.replace(/:\w+/g, '(\\w+)') + "$";
       _routes[route] = {executions: routes[route], regex: new RegExp(regex)};
     });
-    arenite.config.context.start.push({func: _handleChange});
+    arenite.config.context.start.splice(0,0,{func: _handleChange});
   };
 
   return {
