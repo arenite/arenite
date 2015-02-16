@@ -5,39 +5,37 @@ var remoteSrc = require('gulp-download');
 var gulpMerge = require('gulp-merge');
 require('./build/arenite.js');
 
-global.window = {
-  XMLHttpRequest: function () {
-    return {
-      setRequestHeader: function () {
-      },
-      open: function (m, url) {
-        var _this = this;
-        fs.readFile(url, 'utf8', function (err, data) {
-          if (err) {
-            return console.log(err);
-          }
-          _this.responseText = data;
-          _this.onreadystatechange();
-        });
-      },
-      send: function () {
+global.window = global;
 
-      },
-      readyState: 4,
-      status: 200
-    };
-  },
-  location: {hostname: '', search: ''},
-  console: {
-    log: console.log,
-    groupCollapsed: console.log,
-    groupEnd: function () {
+global.window.XMLHttpRequest = function () {
+  return {
+    setRequestHeader: function () {
+    },
+    open: function (m, url) {
+      var _this = this;
+      fs.readFile(url, 'utf8', function (err, data) {
+        if (err) {
+          return console.log(err);
+        }
+        _this.responseText = data;
+        _this.onreadystatechange();
+      });
+    },
+    send: function () {
 
     },
-    trace: function () {
+    readyState: 4,
+    status: 200
+  };
+};
 
-    }
-  }
+global.window.location = {hostname: '', search: ''};
+global.window.console.groupCollapsed = global.console.log;
+global.window.console.groupEnd = function () {
+
+};
+global.window.console.trace = function () {
+
 };
 
 global.document = {
