@@ -41,7 +41,9 @@ Arenite.DI = function (arenite) {
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
-        execution.args[idx] = {ref: tempId};
+        if (!execution.factory) {
+          execution.args[idx] = {ref: tempId};
+        }
       }
     });
 
