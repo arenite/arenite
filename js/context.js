@@ -16,7 +16,7 @@ Arenite.Context = function (arenite) {
 
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
-      var args = arenite.di.resolveArgs({args: factories[name]});
+      var args = arenite.di.resolveArgs({args: factories[name]}, true);
       if (args) {
         return registry[name].apply(registry[name], args);
       } else {

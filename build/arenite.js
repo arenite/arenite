@@ -215,7 +215,7 @@ Arenite.Context = function (arenite) {
 
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
-      var args = arenite.di.resolveArgs({args: factories[name]});
+      var args = arenite.di.resolveArgs({args: factories[name]}, true);
       if (args) {
         return registry[name].apply(registry[name], args);
       } else {
@@ -277,7 +277,9 @@ Arenite.DI = function (arenite) {
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
-        execution.args[idx] = {ref: tempId};
+        if (typeof done === 'boolean' && !done) {
+          execution.args[idx] = {ref: tempId};
+        }
       }
     });
 
