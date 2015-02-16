@@ -279,6 +279,8 @@ Arenite.DI = function (arenite) {
         resolved.push(arenite.context.get(tempId));
         if (!execution.factory) {
           execution.args[idx] = {ref: tempId};
+        } else {
+          arenite.context.remove(tempId);
         }
       }
     });
