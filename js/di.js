@@ -21,7 +21,7 @@ Arenite.DI = function (arenite) {
     }
     var failure = false;
     var resolved = [];
-    execution.args.forEach(function (arg) {
+    execution.args.forEach(function (arg, idx) {
       if (typeof arg.value !== 'undefined') {
         resolved.push(arg.value);
       } else if (typeof arg.ref !== 'undefined') {
@@ -41,7 +41,7 @@ Arenite.DI = function (arenite) {
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
-        arenite.context.remove(tempId);
+        execution.args[idx] = {ref: tempId};
       }
     });
 
