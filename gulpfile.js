@@ -8,8 +8,22 @@
   var jshint = require('gulp-jshint');
   var concat = require('gulp-concat');
   var shell = require('gulp-shell');
+  var arenitesrc = require('./gulp-arenite.js');
 
   var build = 'build/';
+
+  gulp.task('gulp-test', function () {
+    arenitesrc('default', {
+      imports: [
+        {
+          url: 'js/extensions/extensions.js',
+          namespace: 'Arenite.Extensions'
+        }
+      ]
+    }, function (src) {
+      console.log(src);
+    });
+  });
 
   gulp.task('docs', function () {
     return gulp.src('js/core.js', {read: false})
