@@ -315,7 +315,7 @@ Arenite.DI = function (arenite) {
     instanceKeys.forEach(function (instance) {
       var func = arenite.object.get(window, instances[instance].namespace);
       if (func) {
-        var args = _resolveArgs(instances[instance]);
+        var args = instances[instance].factory ? instances[instance].args || [] : _resolveArgs(instances[instance]);
         if (args) {
           window.console.log('Arenite:', instance, 'wired');
           var actualInstance = instances[instance].factory ? func : func.apply(func, args);
@@ -491,7 +491,7 @@ Arenite.DI = function (arenite) {
   };
 
   var _boot = function (config) {
-    if (arenite.config){
+    if (arenite.config) {
       _loadSyncDependencies();
     } else {
       _loadConfig(config, _loadSyncDependencies);
