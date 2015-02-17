@@ -109,6 +109,11 @@ Arenite.Extensions = function () {
                 '/1/:a/:b': [{
                   instance: 'echo',
                   func: 'echo'
+                }],
+                '/abc/:c': [{
+                  func: function () {
+                    console.log('Router executing a function', arguments);
+                  }
                 }]
               }
             }]

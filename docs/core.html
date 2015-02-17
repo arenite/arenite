@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>core.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="annotation.html">
+                  annotation.js
+                </a>
+              
+                
+                <a class="source" href="async.html">
+                  async.js
+                </a>
+              
+                
+                <a class="source" href="context.html">
+                  context.js
+                </a>
+              
+                
+                <a class="source" href="core.html">
+                  core.js
+                </a>
+              
+                
+                <a class="source" href="di.html">
+                  di.js
+                </a>
+              
+                
+                <a class="source" href="bus.html">
+                  bus.js
+                </a>
+              
+                
+                <a class="source" href="extensions.html">
+                  extensions.js
+                </a>
+              
+                
+                <a class="source" href="router.html">
+                  router.js
+                </a>
+              
+                
+                <a class="source" href="storage.html">
+                  storage.js
+                </a>
+              
+                
+                <a class="source" href="dot.html">
+                  dot.js
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.js
+                </a>
+              
+                
+                <a class="source" href="loader.html">
+                  loader.js
+                </a>
+              
+                
+                <a class="source" href="object.html">
+                  object.js
+                </a>
+              
+                
+                <a class="source" href="url.html">
+                  url.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>core.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*!
+ * Arenite JavaScript Library v0.0.15
+ * https://github.com/lcavadas/arenite
+ *
+ * Copyright 2014, Luís Serralheiro
+ */</span>
+<span class="hljs-comment">/* global Arenite:true */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Arenite is an implementation of the Sandbox and Module patterns. It was designed to,
+unlike most of the existing module libraries, not affect your code making it dependant on the module library itself.</p>
+<p>Base of the arenite sandbox object. Creates the base services in the arenite sandbox object.</p>
+<p>Using the Namespace and MVP (or MVC) patterns is strongly recommended but not mandatory.</p>
+<p>You can create further extensions to the sandbox by providing new services or overriding already imported ones.</p>
+<p>There are a few extensions included in this repository and you can read more about them <a href="extensions.html">here</a>.</p>
+<p>For more information about the mentioned patterns consult the book “Javascript Patterns”
+by Stoyan Stefanov from O’Reilly Media which discusses these patterns in detail.</p>
+<h2 id="configuration">Configuration</h2>
+<p>The documentation for the configuration is presented in the <a href="../index.html">website</a>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Arenite = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(config)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3 id="arenite-object">Arenite.Object</h3>
+<p>Instance of the Sandbox is started with the <a href="object.html">Arenite.Object</a> module witch gives us access to the <code>extend</code> function used.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> arenite = <span class="hljs-keyword">new</span> Arenite.Object(arenite);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="arenite-async">Arenite.Async</h3>
+<p>Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, <span class="hljs-keyword">new</span> Arenite.Async());</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="arenite-url">Arenite.Url</h3>
+<p>Extend the instance with the <a href="url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, <span class="hljs-keyword">new</span> Arenite.Url());</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="arenite-di">Arenite.DI</h3>
+<p>Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
+the injector functionality.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, <span class="hljs-keyword">new</span> Arenite.DI(arenite));
+  arenite = arenite.object.extend(arenite, <span class="hljs-keyword">new</span> Arenite.AnnotationProcessor(arenite));
+  arenite = arenite.object.extend(arenite, <span class="hljs-keyword">new</span> Arenite.Context(arenite));</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="arenite-loader">Arenite.Loader</h3>
+<p>Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
+the script and resource loading functionality to the sandbox.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, <span class="hljs-keyword">new</span> Arenite.Loader(arenite));</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Initialize the injector by having it read the configuration object passed into this constructor.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  arenite.di.init(config);
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

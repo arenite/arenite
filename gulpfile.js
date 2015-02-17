@@ -12,25 +12,12 @@
 
   var build = 'build/';
 
-  gulp.task('gulp-test', function () {
-    arenitesrc('default', {
-      imports: [
-        {
-          url: 'js/extensions/extensions.js',
-          namespace: 'Arenite.Extensions'
-        }
-      ]
-    }, function (src) {
-      console.log(src);
-    });
-  });
-
   gulp.task('docs', function () {
     return gulp.src('js/core.js', {read: false})
-      .pipe(shell('node_modules/docco/bin/docco -o website/docs js/*.js js/extensions/*.js js/extensions/**/*.js'));
+      .pipe(shell('node_modules/docco/bin/docco -o docs js/*.js js/extensions/*.js js/extensions/**/*.js'));
   });
 
-  gulp.task('default', function () {
+  gulp.task('js', function () {
     return gulp.src(['js/core.js', 'js/**.js'])
       .pipe(jshint())
       .pipe(jshint.reporter('default'))
@@ -41,7 +28,9 @@
       .pipe(gulp.dest(build));
   });
 
+  gulp.task('default', ['js', 'docs']);
+
   gulp.task('watch', function () {
-    gulp.watch('js/**/*.js', ['default']);
+    gulp.watch('js/**/*.js', ['js']);
   });
 }());
