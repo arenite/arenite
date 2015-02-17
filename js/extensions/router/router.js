@@ -3,9 +3,26 @@ Arenite.Router = function (arenite) {
 
   var _routes = {};
 
-  var _triggerRoute = function (route, args, updateHash) {
+  var _trigger = function (hash, updateHash) {
+    if (hash.indexOf('#') !== 0) {
+      hash = '#' + hash;
+    }
+    arenite.object.keys(_routes).forEach(function (route) {
+      var args = _routes[route].regex.exec(hash);
+      if (args) {
+        args.splice(0, 1);
+        _executeRoute(route, args, updateHash ? hash : updateHash);
+      }
+    });
+  };
+
+  var _executeRoute = function (route, args, updateHash) {
     _routes[route].executions.forEach(function (execution) {
       var exec = JSON.parse(JSON.stringify(execution));
+      if (typeof execution.func === 'function') {
+        exec.func = execution.func;
+        exec.args = [{ref: 'arenite'}];
+      }
       if (!exec.args) {
         exec.args = [];
       }
@@ -14,21 +31,14 @@ Arenite.Router = function (arenite) {
       });
       window.console.log('Arenite.Router: Executing route "' + route + '" with:', exec);
       if (updateHash) {
-        window.location.hash = '#' + route;
+        window.location.hash = updateHash;
       }
       arenite.di.exec(exec);
     });
   };
 
   var _handleChange = function () {
-    var hash = window.location.hash;
-    arenite.object.keys(_routes).forEach(function (route) {
-      var args = _routes[route].regex.exec(hash);
-      if (args) {
-        args.splice(0, 1);
-        _triggerRoute(route, args);
-      }
-    });
+    _trigger(window.location.hash);
   };
 
   var _init = function (routes, passive) {
@@ -54,7 +64,6 @@ Arenite.Router = function (arenite) {
     init: _init,
     add: _add,
     remove: _remove,
-    trigger: _triggerRoute
-
+    trigger: _trigger
   };
 };

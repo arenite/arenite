@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>di.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="annotation.html">
+                  annotation.js
+                </a>
+              
+                
+                <a class="source" href="async.html">
+                  async.js
+                </a>
+              
+                
+                <a class="source" href="context.html">
+                  context.js
+                </a>
+              
+                
+                <a class="source" href="core.html">
+                  core.js
+                </a>
+              
+                
+                <a class="source" href="di.html">
+                  di.js
+                </a>
+              
+                
+                <a class="source" href="bus.html">
+                  bus.js
+                </a>
+              
+                
+                <a class="source" href="extensions.html">
+                  extensions.js
+                </a>
+              
+                
+                <a class="source" href="router.html">
+                  router.js
+                </a>
+              
+                
+                <a class="source" href="storage.html">
+                  storage.js
+                </a>
+              
+                
+                <a class="source" href="dot.html">
+                  dot.js
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.js
+                </a>
+              
+                
+                <a class="source" href="loader.html">
+                  loader.js
+                </a>
+              
+                
+                <a class="source" href="object.html">
+                  object.js
+                </a>
+              
+                
+                <a class="source" href="url.html">
+                  url.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>di.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*global Arenite:true*/</span>
+Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
+
+  <span class="hljs-keyword">var</span> _resolveFunc = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(execution)</span> </span>{
+    <span class="hljs-keyword">var</span> resolvedFunc = execution.func;
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> execution.func === <span class="hljs-string">'function'</span>) {
+      resolvedFunc = execution.func;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">if</span> (execution.extension) {
+        resolvedFunc = arenite.object.get(arenite[execution.instance], execution.func);
+      } <span class="hljs-keyword">else</span> {
+        resolvedFunc = arenite.object.get(arenite.context.get(execution.instance), execution.func);
+      }
+    }
+    <span class="hljs-keyword">return</span> resolvedFunc;
+  };
+
+  <span class="hljs-keyword">var</span> _resolveArgs = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(execution, done)</span> </span>{
+    <span class="hljs-keyword">if</span> (!execution.args) {
+      <span class="hljs-keyword">return</span> [];
+    }
+    <span class="hljs-keyword">var</span> failure = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">var</span> resolved = [];
+    execution.args.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arg, idx)</span> </span>{
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> arg.value !== <span class="hljs-string">'undefined'</span>) {
+        resolved.push(arg.value);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> arg.ref !== <span class="hljs-string">'undefined'</span>) {
+        <span class="hljs-keyword">var</span> ref = arenite.context.get(arg.ref);
+        <span class="hljs-keyword">if</span> (ref) {
+          resolved.push(ref);
+        } <span class="hljs-keyword">else</span> {
+          failure = <span class="hljs-literal">true</span>;
+        }
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> arg.func !== <span class="hljs-string">'undefined'</span>) {
+        resolved.push(arg.func);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> arg.exec !== <span class="hljs-string">'undefined'</span>) {
+        resolved.push(arg.exec(arenite));
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> arg.instance !== <span class="hljs-string">'undefined'</span>) {
+        <span class="hljs-keyword">var</span> anonymousContext = {instances: {}};
+        <span class="hljs-keyword">var</span> tempId = <span class="hljs-string">'__anonymous_temp_instance__'</span> + <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime();
+        anonymousContext.instances[tempId] = arg.instance;
+        _loadContext(anonymousContext);
+        resolved.push(arenite.context.get(tempId));
+        <span class="hljs-keyword">if</span> (!execution.factory) {
+          execution.args[idx] = {ref: tempId};
+        } <span class="hljs-keyword">else</span> {
+          arenite.context.remove(tempId);
+        }
+      }
+    });
+
+    <span class="hljs-keyword">if</span> (execution.wait &amp;&amp; <span class="hljs-keyword">typeof</span> done === <span class="hljs-string">'function'</span>) {
+      resolved.push(done);
+    }
+    <span class="hljs-keyword">return</span> failure ? <span class="hljs-literal">null</span> : resolved;
+  };
+
+  <span class="hljs-keyword">var</span> _execFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(execution, before, done)</span> </span>{
+    <span class="hljs-keyword">var</span> resolvedFunc = _resolveFunc(execution);
+    <span class="hljs-keyword">if</span> (resolvedFunc) {
+      <span class="hljs-keyword">var</span> resolvedArgs = _resolveArgs(execution, done);
+      <span class="hljs-keyword">if</span> (resolvedArgs) {
+        <span class="hljs-keyword">if</span> (execution.wait &amp;&amp; <span class="hljs-keyword">typeof</span> before === <span class="hljs-string">'function'</span>) {
+          before();
+        }
+        resolvedFunc.apply(resolvedFunc, resolvedArgs);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Unable to resolve arguments for "'</span> + execution.func + <span class="hljs-string">'" of instance "'</span> + execution.instance + <span class="hljs-string">'"'</span>;
+      }
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">throw</span> <span class="hljs-string">'Unknown function "'</span> + execution.func + <span class="hljs-string">'" for instance "'</span> + execution.instance + <span class="hljs-string">'"'</span>;
+    }
+  };
+
+  <span class="hljs-keyword">var</span> _wire = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(instances, type)</span> </span>{
+    <span class="hljs-keyword">if</span> (!instances) {
+      <span class="hljs-keyword">return</span>;
+    }
+
+    <span class="hljs-keyword">var</span> instanceKeys = arenite.object.keys(instances);
+    <span class="hljs-keyword">var</span> unresolved = {};
+
+    instanceKeys.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(instance)</span> </span>{
+      <span class="hljs-keyword">var</span> func = arenite.object.get(<span class="hljs-built_in">window</span>, instances[instance].namespace);
+      <span class="hljs-keyword">if</span> (func) {
+        <span class="hljs-keyword">var</span> args = instances[instance].factory ? instances[instance].args || [] : _resolveArgs(instances[instance]);
+        <span class="hljs-keyword">if</span> (args) {
+          <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite:'</span>, instance, <span class="hljs-string">'wired'</span>);
+          <span class="hljs-keyword">var</span> actualInstance = instances[instance].factory ? func : func.apply(func, args);
+          <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'extension'</span>) {
+            <span class="hljs-keyword">var</span> wrappedInstance = {};
+            wrappedInstance[instance] = actualInstance;
+            arenite = arenite.object.extend(arenite, wrappedInstance);
+          } <span class="hljs-keyword">else</span> {
+            arenite.context.add(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
+          }
+        } <span class="hljs-keyword">else</span> {
+          unresolved[instance] = instances[instance];
+        }
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Unknown function "'</span> + instances[instance].namespace + <span class="hljs-string">'"'</span>;
+      }
+    });
+
+    <span class="hljs-keyword">var</span> unresolvedKeys = arenite.object.keys(unresolved);
+    <span class="hljs-keyword">if</span> (unresolvedKeys.length !== arenite.object.keys(instances).length &amp;&amp; unresolvedKeys.length &gt; <span class="hljs-number">0</span>) {
+      _wire(unresolved);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">if</span> (unresolvedKeys.length !== <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Make sure you don\'t have circular dependencies, Unable to resolve the following instances: '</span> + unresolvedKeys.join(<span class="hljs-string">", "</span>);
+      }
+    }
+  };
+
+  <span class="hljs-keyword">var</span> _init = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(instances, latch, extension)</span> </span>{
+    arenite.object.keys(instances).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(instance)</span> </span>{
+      <span class="hljs-keyword">if</span> (instances[instance].init) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> instances[instance].init === <span class="hljs-string">'string'</span>) {
+          instances[instance].init = {func: instances[instance].init};
+        }
+        _execFunction(arenite.object.extend({
+          instance: instance,
+          extension: extension
+        }, instances[instance].init), <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+          latch.countUp();
+        }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+          <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite:'</span>, instance, <span class="hljs-string">'initialized'</span>);
+          latch.countDown();
+        });
+      }
+    });
+  };
+
+  <span class="hljs-keyword">var</span> _start = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(starts)</span> </span>{
+    <span class="hljs-keyword">if</span> (!starts) {
+      <span class="hljs-keyword">return</span>;
+    }
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">document</span>.readyState !== <span class="hljs-string">'complete'</span>) {
+      <span class="hljs-built_in">window</span>.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        _start(starts);
+      }, <span class="hljs-number">100</span>);
+    } <span class="hljs-keyword">else</span> {
+      starts.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(start)</span> </span>{
+        _execFunction(start);
+      });
+    }
+  };
+
+  <span class="hljs-keyword">var</span> _loadContext = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(context)</span> </span>{
+    <span class="hljs-keyword">if</span> (context) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Starting must wait for the wiring</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> wireLatch = arenite.async.latch(<span class="hljs-number">1</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: start instances'</span>);
+        _start(context.start);
+      }, <span class="hljs-string">"instances"</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>wiring of instances must wait for the extensions</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> extensionsLatch = arenite.async.latch(<span class="hljs-number">1</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: wire instances'</span>);
+        _wire(context.instances);
+        <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: init instances'</span>);
+        _init(context.instances, wireLatch);
+        wireLatch.countDown();
+      }, <span class="hljs-string">"extensions"</span>);
+
+      <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: wire extensions'</span>);
+      _wire(context.extensions, <span class="hljs-string">'extension'</span>);
+      <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: init extensions'</span>);
+      _init(context.extensions, extensionsLatch, <span class="hljs-literal">true</span>);
+      extensionsLatch.countDown();
+    }
+  };
+
+  <span class="hljs-keyword">var</span> _loadAsyncDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(dependencies)</span> </span>{
+    <span class="hljs-keyword">var</span> latch = arenite.async.latch(dependencies.async ? dependencies.async.length : <span class="hljs-number">0</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      _loadContext(arenite.config.context);
+    }, <span class="hljs-string">'dependencies'</span>);
+    dependencies.async.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(dep)</span> </span>{
+      arenite.loader.loadScript(dep, latch.countDown);
+    });
+  };
+
+  <span class="hljs-keyword">var</span> _loadSyncDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">if</span> (!arenite.config.context || !arenite.config.context.dependencies) {
+      <span class="hljs-keyword">return</span> _loadContext(arenite.config.context);
+    }
+
+    <span class="hljs-keyword">var</span> dependencies;
+    <span class="hljs-keyword">if</span> (!arenite.config.context.dependencies[arenite.config.mode]) {
+      dependencies = {sync: [], async: []};
+    } <span class="hljs-keyword">else</span> {
+      dependencies = arenite.config.context.dependencies[arenite.config.mode];
+    }
+
+    <span class="hljs-keyword">var</span> seqLatch = arenite.async.seqLatch(dependencies.sync || [], <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url)</span> </span>{
+      arenite.loader.loadScript(url, seqLatch.next);
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      _loadAsyncDependencies(dependencies);
+    });
+    seqLatch.next();
+  };
+
+  <span class="hljs-keyword">var</span> _mergeImports = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(imports, callback)</span> </span>{
+    <span class="hljs-keyword">var</span> imp = imports.pop();
+    <span class="hljs-keyword">var</span> unloadedImports = [];
+
+    <span class="hljs-keyword">while</span> (imp) {
+      <span class="hljs-keyword">if</span> (!arenite.object.get(<span class="hljs-built_in">window</span>, imp.namespace)) {
+        unloadedImports.push(imp);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">var</span> imported = arenite.object.get(<span class="hljs-built_in">window</span>, imp.namespace)();
+        arenite.config = arenite.object.extend(arenite.config, imported);
+        <span class="hljs-keyword">if</span> (imported.imports) {
+          <span class="hljs-keyword">var</span> newImports = arenite.array.extract(imported.imports, <span class="hljs-string">'namespace'</span>);
+          <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: Merging imports'</span>, newImports);
+          <span class="hljs-keyword">if</span> (arenite.array.contains(newImports, imp.namespace)) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-string">'You have declared a circular import for "'</span> + imp.namespace + <span class="hljs-string">'"'</span>;
+          } <span class="hljs-keyword">else</span> {
+            imports = arenite.array.merge(imports, imported.imports);
+          }
+        }
+      }
+      imp = imports.pop();
+    }
+
+    <span class="hljs-keyword">if</span> (unloadedImports.length !== <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">var</span> latch = arenite.async.latch(unloadedImports.length, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        _mergeImports(unloadedImports, callback);
+      }, <span class="hljs-string">'imports'</span>);
+      unloadedImports.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(subImp)</span> </span>{
+        arenite.loader.loadScript(subImp.url, latch.countDown);
+      });
+    } <span class="hljs-keyword">else</span> {
+      callback();
+    }
+  };
+
+  <span class="hljs-keyword">var</span> _loadConfig = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(config, callback)</span> </span>{
+    arenite.context.add(<span class="hljs-string">'arenite'</span>, arenite);
+    arenite.config = config;
+    arenite.config.mode = arenite.url.query().env || <span class="hljs-string">'default'</span>;
+    <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: Starting in mode'</span>, arenite.config.mode);
+    <span class="hljs-keyword">if</span> (config.expose) {
+      <span class="hljs-keyword">var</span> exposeName = config.expose;
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> config.expose === <span class="hljs-string">'function'</span>) {
+        exposeName = config.expose(arenite);
+      }
+      <span class="hljs-keyword">if</span> (exposeName) {
+        <span class="hljs-built_in">window</span>[exposeName] = arenite;
+      }
+    }
+
+    <span class="hljs-keyword">if</span> (arenite.config.imports) {
+      <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: Merging imports'</span>, arenite.array.extract(arenite.config.imports, <span class="hljs-string">'namespace'</span>));
+      _mergeImports(<span class="hljs-built_in">JSON</span>.parse(<span class="hljs-built_in">JSON</span>.stringify(arenite.config.imports)), callback);
+    } <span class="hljs-keyword">else</span> {
+      callback();
+    }
+  };
+
+  <span class="hljs-keyword">var</span> _boot = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(config)</span> </span>{
+    <span class="hljs-keyword">if</span> (arenite.config) {
+      _loadSyncDependencies();
+    } <span class="hljs-keyword">else</span> {
+      _loadConfig(config, _loadSyncDependencies);
+    }
+  };
+
+  <span class="hljs-keyword">return</span> {
+    di: {
+      init: _boot,
+      loadConfig: _loadConfig,
+      resolveArgs: _resolveArgs,
+      exec: _execFunction
+    }
+  };
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
