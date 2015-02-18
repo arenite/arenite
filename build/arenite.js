@@ -72,9 +72,6 @@ Arenite.AnnotationProcessor = function (arenite) {
     var instanceName = match[1];
     var namespace = match[9];
 
-    if (!instanceName) {
-      return;
-    }
     if (!arenite.config.context) {
       arenite.config.context = {instances: {}};
     }

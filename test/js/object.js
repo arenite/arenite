@@ -114,4 +114,8 @@ describe("Arenite.Object", function () {
   it("should do nothing when array has no duplicate entries", function () {
     expect(obj.array.uniq(sample.a.z)).toEqual(sample.a.z);
   });
+
+  it("should merge arrays and return new with unique", function () {
+    expect(obj.array.merge(['a','b'],['b','c'])).toEqual(['a','b','c']);
+  });
 });
