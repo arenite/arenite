@@ -1,4 +1,4 @@
-/*global Arenite:true, describe:true, it:true, expect:true*/
+/*global Arenite:true, describe:true, it:true, expect:true, jasmine:true*/
 describe('Arenite.Context', function () {
   it("should be able to add and retrieve instances from the context", function () {
     var context = Arenite.Context({
@@ -68,5 +68,40 @@ describe('Arenite.Context', function () {
       }
     });
     expect(context.context.get('instanceName')).toBe(undefined);
+  });
+
+  it("should remove instance if instance exists", function () {
+    var objectDelete = jasmine.createSpy('delete');
+    var context = Arenite.Context({
+      di: {
+        resolveArgs: function () {
+          return [];
+        }
+      },
+      object: {
+        delete: objectDelete
+      }
+    });
+    context.context.add('a', 'a');
+    context.context.remove('a');
+    expect(objectDelete).toHaveBeenCalledWith({a: 'a'}, 'a');
+  });
+
+  it("factories should throw exception when args cannot be resolved", function () {
+    var context = Arenite.Context({
+      di: {
+        resolveArgs: function () {
+
+        }
+      }
+    });
+
+    context.context.add('instanceName', function (arg) {
+      return arg;
+    }, true, [{ref: 'ohno'}]);
+
+    expect(function () {
+      context.context.get('instanceName');
+    }).toThrow('Unable to resolve arguments for "instanceName"');
   });
 });
