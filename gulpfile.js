@@ -14,7 +14,7 @@
 
   gulp.task('docs', function () {
     return gulp.src('js/core.js', {read: false})
-      .pipe(shell('node_modules/docco/bin/docco -o docs js/*.js js/extensions/*.js js/extensions/**/*.js'));
+      .pipe(shell('node_modules/docco/bin/docco -o docs js/*.js js/extensions/**/*.js'));
   });
 
   gulp.task('js', function () {
