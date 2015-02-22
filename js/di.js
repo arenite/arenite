@@ -85,7 +85,6 @@ Arenite.DI = function (arenite) {
       if (func) {
         var args = instances[instance].factory ? instances[instance].args || [] : _resolveArgs(instances[instance]);
         if (args) {
-          window.console.log('Arenite:', instance, 'wired');
           var actualInstance = instances[instance].factory ? func : func.apply(func, args);
           if (type === 'extension') {
             var wrappedInstance = {};
@@ -124,7 +123,6 @@ Arenite.DI = function (arenite) {
         }, instances[instance].init), function () {
           latch.countUp();
         }, function () {
-          window.console.log('Arenite:', instance, 'initialized');
           latch.countDown();
         });
       }
@@ -147,25 +145,22 @@ Arenite.DI = function (arenite) {
   };
 
   var _loadContext = function (context) {
+    window.console.time('Arenite context load');
     if (context) {
       //Starting must wait for the wiring
       var wireLatch = arenite.async.latch(1, function () {
-        window.console.log('Arenite: start instances');
+        window.console.timeEnd('Arenite context load');
         _start(context.start);
       }, "instances");
 
       //wiring of instances must wait for the extensions
       var extensionsLatch = arenite.async.latch(1, function () {
-        window.console.log('Arenite: wire instances');
         _wire(context.instances);
-        window.console.log('Arenite: init instances');
         _init(context.instances, wireLatch);
         wireLatch.countDown();
       }, "extensions");
 
-      window.console.log('Arenite: wire extensions');
       _wire(context.extensions, 'extension');
-      window.console.log('Arenite: init extensions');
       _init(context.extensions, extensionsLatch, true);
       extensionsLatch.countDown();
     }
