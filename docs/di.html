@@ -200,7 +200,6 @@ Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</sp
       <span class="hljs-keyword">if</span> (func) {
         <span class="hljs-keyword">var</span> args = instances[instance].factory ? instances[instance].args || [] : _resolveArgs(instances[instance]);
         <span class="hljs-keyword">if</span> (args) {
-          <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite:'</span>, instance, <span class="hljs-string">'wired'</span>);
           <span class="hljs-keyword">var</span> actualInstance = instances[instance].factory ? func : func.apply(func, args);
           <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'extension'</span>) {
             <span class="hljs-keyword">var</span> wrappedInstance = {};
@@ -239,7 +238,6 @@ Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</sp
         }, instances[instance].init), <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
           latch.countUp();
         }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-          <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite:'</span>, instance, <span class="hljs-string">'initialized'</span>);
           latch.countDown();
         });
       }
@@ -262,6 +260,7 @@ Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</sp
   };
 
   <span class="hljs-keyword">var</span> _loadContext = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(context)</span> </span>{
+    <span class="hljs-built_in">window</span>.console.time(<span class="hljs-string">'Arenite context load'</span>);
     <span class="hljs-keyword">if</span> (context) {</pre></div></div>
             
         </li>
@@ -278,7 +277,7 @@ Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</sp
             </div>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> wireLatch = arenite.async.latch(<span class="hljs-number">1</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-        <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: start instances'</span>);
+        <span class="hljs-built_in">window</span>.console.timeEnd(<span class="hljs-string">'Arenite context load'</span>);
         _start(context.start);
       }, <span class="hljs-string">"instances"</span>);</pre></div></div>
             
@@ -296,16 +295,12 @@ Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</sp
             </div>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> extensionsLatch = arenite.async.latch(<span class="hljs-number">1</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-        <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: wire instances'</span>);
         _wire(context.instances);
-        <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: init instances'</span>);
         _init(context.instances, wireLatch);
         wireLatch.countDown();
       }, <span class="hljs-string">"extensions"</span>);
 
-      <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: wire extensions'</span>);
       _wire(context.extensions, <span class="hljs-string">'extension'</span>);
-      <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: init extensions'</span>);
       _init(context.extensions, extensionsLatch, <span class="hljs-literal">true</span>);
       extensionsLatch.countDown();
     }

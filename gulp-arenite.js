@@ -56,14 +56,18 @@ var Loader = function (config, cb) {
   arenite = arenite.object.extend(arenite, new Arenite.Context(arenite));
   arenite = arenite.object.extend(arenite, new Arenite.Loader(arenite));
   arenite.di.loadConfig(config, function () {
-    cb(arenite.config);
+    cb(arenite, arenite.config);
   });
 };
 
-module.exports = function (mode, config, cb) {
-  Loader(config, function (config) {
+module.exports = function (options, config, cb) {
+  Loader(config, function (arenite, config) {
     var local = [];
     var remote = [];
+    options = arenite.object.extend({env: 'dev', base: ''}, options);
+    if (options.base.length && options.base[options.base.length - 1] !== '/') {
+      options.base = options.base + '/';
+    }
 
     var _parse = function (urls) {
       urls.forEach(function (script) {
@@ -71,7 +75,7 @@ module.exports = function (mode, config, cb) {
         if (typeof script === 'object') {
           script = script.url;
         }
-        script = script.indexOf("//") === 0 ? 'http:' + script : script;
+        script = script.indexOf("//") === 0 ? 'http:' + script : options.base + script;
         var match = regex.exec(script);
         if (match) {
           remote.push(match[0]);
@@ -84,11 +88,11 @@ module.exports = function (mode, config, cb) {
     if (config.imports) {
       _parse(config.imports);
     }
-    if (config.context.dependencies[mode].sync) {
-      _parse(config.context.dependencies[mode].sync);
+    if (config.context.dependencies[options.env].sync) {
+      _parse(config.context.dependencies[options.env].sync);
     }
-    if (config.context.dependencies[mode].async) {
-      _parse(config.context.dependencies[mode].async);
+    if (config.context.dependencies[options.env].async) {
+      _parse(config.context.dependencies[options.env].async);
     }
 
     cb(gulpMerge(remoteSrc(remote), gulp.src(local)));
