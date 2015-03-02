@@ -201,6 +201,12 @@ Arenite.Object = function () {
       //</pre></code>
       //where *<b>arr1</b>* and *<b>arr2</b>* are the arrays to be merged
       merge: _merge,
+      //###array.extract
+      // Extract an array composed of a specified property of the subobjects of a given object
+      //<pre><code>
+      // extract(object, property)
+      //</pre></code>
+      //where *<b>object</b>* is the object whose members will be analysed *<b>property</b>* the property to be extracted from those members
       extract: _extract
     }
   };

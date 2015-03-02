@@ -35,7 +35,13 @@ Arenite = function (config) {
   // Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
   // the injector functionality.
   arenite = arenite.object.extend(arenite, new Arenite.DI(arenite));
+  //### Arenite.AnnotationProcessor
+  // Extend the instance with the <a href="annotation.html">Arenite.AnnotationProcessor</a> extension which provides
+  // the parsing and hanlding of annotations.
   arenite = arenite.object.extend(arenite, new Arenite.AnnotationProcessor(arenite));
+  //### Arenite.Context
+  // Extend the instance with the <a href="context.html">Arenite.Context</a> extension which provides
+  // the context to manage the instances.
   arenite = arenite.object.extend(arenite, new Arenite.Context(arenite));
   //### Arenite.Loader
   // Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
@@ -792,6 +798,12 @@ Arenite.Object = function () {
       //</pre></code>
       //where *<b>arr1</b>* and *<b>arr2</b>* are the arrays to be merged
       merge: _merge,
+      //###array.extract
+      // Extract an array composed of a specified property of the subobjects of a given object
+      //<pre><code>
+      // extract(object, property)
+      //</pre></code>
+      //where *<b>object</b>* is the object whose members will be analysed *<b>property</b>* the property to be extracted from those members
       extract: _extract
     }
   };

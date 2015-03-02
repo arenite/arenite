@@ -31,6 +31,6 @@
   gulp.task('default', ['js', 'docs']);
 
   gulp.task('watch', function () {
-    gulp.watch('js/**/*.js', ['js']);
+    gulp.watch('js/**/*.js', ['js', 'docs']);
   });
 }());
