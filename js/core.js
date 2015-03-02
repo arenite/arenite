@@ -35,7 +35,13 @@ Arenite = function (config) {
   // Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
   // the injector functionality.
   arenite = arenite.object.extend(arenite, new Arenite.DI(arenite));
+  //### Arenite.AnnotationProcessor
+  // Extend the instance with the <a href="annotation.html">Arenite.AnnotationProcessor</a> extension which provides
+  // the parsing and hanlding of annotations.
   arenite = arenite.object.extend(arenite, new Arenite.AnnotationProcessor(arenite));
+  //### Arenite.Context
+  // Extend the instance with the <a href="context.html">Arenite.Context</a> extension which provides
+  // the context to manage the instances.
   arenite = arenite.object.extend(arenite, new Arenite.Context(arenite));
   //### Arenite.Loader
   // Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
