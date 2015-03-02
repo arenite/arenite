@@ -472,7 +472,7 @@ Arenite.DI = function (arenite) {
   var _loadConfig = function (config, callback) {
     arenite.context.add('arenite', arenite);
     arenite.config = config;
-    arenite.config.mode = arenite.url.query().env || 'default';
+    arenite.config.mode = arenite.url.query().mode || 'default';
     window.console.log('Arenite: Starting in mode', arenite.config.mode);
     if (config.expose) {
       var exposeName = config.expose;

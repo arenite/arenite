@@ -368,7 +368,7 @@ Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</sp
   <span class="hljs-keyword">var</span> _loadConfig = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(config, callback)</span> </span>{
     arenite.context.add(<span class="hljs-string">'arenite'</span>, arenite);
     arenite.config = config;
-    arenite.config.mode = arenite.url.query().env || <span class="hljs-string">'default'</span>;
+    arenite.config.mode = arenite.url.query().mode || <span class="hljs-string">'default'</span>;
     <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: Starting in mode'</span>, arenite.config.mode);
     <span class="hljs-keyword">if</span> (config.expose) {
       <span class="hljs-keyword">var</span> exposeName = config.expose;
