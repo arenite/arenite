@@ -108,8 +108,22 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*global Arenite:true*/</span>
-Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*global Arenite:true*/</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Collection of utility functions wire the instances and load the configured resources.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
 
   <span class="hljs-keyword">var</span> _resolveFunc = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(execution)</span> </span>{
     <span class="hljs-keyword">var</span> resolvedFunc = execution.func;
@@ -261,11 +275,11 @@ Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</sp
         </li>
         
         
-        <li id="section-2">
+        <li id="section-3">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>Starting must wait for the wiring</p>
 
@@ -279,11 +293,11 @@ Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</sp
         </li>
         
         
-        <li id="section-3">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>wiring of instances must wait for the extensions</p>
 
@@ -397,11 +411,89 @@ Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</sp
   };
 
   <span class="hljs-keyword">return</span> {
-    di: {
-      init: _boot,
-      loadConfig: _loadConfig,
-      resolveArgs: _resolveArgs,
-      exec: _execFunction
+    di: {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="di-init">di.init</h3>
+<p>Start arenite with the given configuration</p>
+<p><pre><code>
+init(config)
+</pre></code>
+where <em><b>config</b></em> is the complete or partial configuration (with the imports)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      init: _boot,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="di-loadconfig">di.loadConfig</h3>
+<p>Resolve the imports and merge them into arenite’s internal config object</p>
+<p><pre><code>
+loadConfig(config, callback)
+</pre></code>
+where <em><b>config</b></em> is the partial configuration with the imports and <em><b>callback</b></em> is the callback after
+the import has extended the config.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      loadConfig: _loadConfig,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="di-resolveargs">di.resolveArgs</h3>
+<p>Resolve the arguments defined in an instance definition AKA execution defined in the arenite configuration format</p>
+<p><pre><code>
+resolveArgs(execution, done)
+</pre></code>
+where <em><b>execution</b></em> is the object describing the execution and <em><b>done</b></em> is the callback after the execution.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      resolveArgs: _resolveArgs,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3 id="di-exec">di.exec</h3>
+<p>Execute an instance definition AKA execution defined in the arenite configuration format</p>
+<p><pre><code>
+exec(execution, before, done)
+</pre></code>
+where <em><b>execution</b></em> is the object describing the execution, <em><b>before</b></em> is an optional function to be executed
+before the actual execution and <em><b>done</b></em> is the callback after the execution.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      exec: _execFunction
     }
   };
 };</pre></div></div>
