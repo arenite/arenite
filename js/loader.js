@@ -1,5 +1,6 @@
 /*global Arenite:true*/
 /*jshint evil:true*/
+// Collection of utility functions to handle loading resources.
 Arenite.Loader = function (arenite) {
 
   var _loadResource = function (url, callback, error) {
@@ -79,7 +80,23 @@ Arenite.Loader = function (arenite) {
 
   return {
     loader: {
+      //###loader.loadResource
+      // Load a given resource using ajax.
+      //<pre><code>
+      // loadResource(url, callback, error)
+      //</pre></code>
+      //where *<b>url</b>* is the url to fetch from,  *<b>callback</b>* is a function called with the ajax request after
+      // it's succesful completion and *<b>error</b>* is an optional callback to handle errors when fetching the resource
       loadResource: _loadResource,
+      //###loader.loadScript
+      // Load a script. This method will choose the best method to load the script (using tag or ajax) depending on the
+      // origin of the script. Additionally it can extract variables exposed in the window object and register them as
+      // instances in arenite.
+      //<pre><code>
+      // loadScript(script, callback)
+      //</pre></code>
+      //where *<b>script</b>* is either a url string or a structure defining a url and instances to be extracted from
+      // the window object into arenite and *<b>callback</b>* is the callback for when the script is loaded.
       loadScript: _loadScript
     }
   };

@@ -53,6 +53,7 @@ Arenite = function (config) {
 
 /*global Arenite:true*/
 /*jshint evil:true*/
+// Utility function to interpret the annotations.
 Arenite.AnnotationProcessor = function (arenite) {
   var _processAnnotations = function (text) {
     var regex = /@arenite-instance\s+["']([^"']+)["']\s*(.*);\s*(@arenite-init\s+["']([^"']+)["']\s*(.*);)*\s*(@arenite-start\s+["']([^"']+)["']\s*(.*);)*\s*\*\/\s*([\w.]+)/g;
@@ -111,6 +112,12 @@ Arenite.AnnotationProcessor = function (arenite) {
 
   return {
     annotation: {
+      //###annotation.processAnnotations
+      // Interpret the annotations specified in a given source.
+      //<pre><code>
+      // processAnnotations(text)
+      //</pre></code>
+      //where *<b>text</b>* is the text(source) to be analysed
       processAnnotations: _processAnnotations
     }
   };
@@ -201,6 +208,7 @@ Arenite.Async = function () {
   };
 };
 /*global Arenite:true*/
+// The context(registry) of the instances.
 Arenite.Context = function (arenite) {
   var registry = {};
   var factories = {};
@@ -231,13 +239,35 @@ Arenite.Context = function (arenite) {
 
   return {
     context: {
+      //###context.get
+      // Get an registered instance from arenite.
+      //<pre><code>
+      // get(instance)
+      //</pre></code>
+      //where *<b>instance</b>* is the name of the instance to be retrieved
       get: _getInstance,
+      //###context.add
+      // Register an instance in arenite
+      //<pre><code>
+      // add(name, instance, factory, args)
+      //</pre></code>
+      //where *<b>name</b>* is the alias by which the instance should be known, *<b>instance</b>* is the actual instance
+      // to register or the factory function in case it's a factory, *<b>factory</b>* is a flag stating if a new
+      // instance should be generated each time it is requested and *<b>args</b>* is the arguments to use in case
+      // the instance is a factory.
       add: _addInstance,
+      //###context.remove
+      // Removes an instance from the arenite context
+      //<pre><code>
+      // remove(instance)
+      //</pre></code>
+      //where *<b>instance</b>* is the name of the instance to be de-registered from arenite.
       remove: _removeInstance
     }
   };
 };
 /*global Arenite:true*/
+// Collection of utility functions wire the instances and load the configured resources.
 Arenite.DI = function (arenite) {
 
   var _resolveFunc = function (execution) {
@@ -502,15 +532,42 @@ Arenite.DI = function (arenite) {
 
   return {
     di: {
+      //###di.init
+      // Start arenite with the given configuration
+      //<pre><code>
+      // init(config)
+      //</pre></code>
+      //where *<b>config</b>* is the complete or partial configuration (with the imports)
       init: _boot,
+      //###di.loadConfig
+      // Resolve the imports and merge them into arenite's internal config object
+      //<pre><code>
+      // loadConfig(config, callback)
+      //</pre></code>
+      //where *<b>config</b>* is the partial configuration with the imports and *<b>callback</b>* is the callback after
+      // the import has extended the config.
       loadConfig: _loadConfig,
+      //###di.resolveArgs
+      // Resolve the arguments defined in an instance definition AKA execution defined in the arenite configuration format
+      //<pre><code>
+      // resolveArgs(execution, done)
+      //</pre></code>
+      //where *<b>execution</b>* is the object describing the execution and *<b>done</b>* is the callback after the execution.
       resolveArgs: _resolveArgs,
+      //###di.exec
+      // Execute an instance definition AKA execution defined in the arenite configuration format
+      //<pre><code>
+      // exec(execution, before, done)
+      //</pre></code>
+      //where *<b>execution</b>* is the object describing the execution, *<b>before</b>* is an optional function to be executed
+      // before the actual execution and *<b>done</b>* is the callback after the execution.
       exec: _execFunction
     }
   };
 };
 /*global Arenite:true*/
 /*jshint evil:true*/
+// Collection of utility functions to handle loading resources.
 Arenite.Loader = function (arenite) {
 
   var _loadResource = function (url, callback, error) {
@@ -590,7 +647,23 @@ Arenite.Loader = function (arenite) {
 
   return {
     loader: {
+      //###loader.loadResource
+      // Load a given resource using ajax.
+      //<pre><code>
+      // loadResource(url, callback, error)
+      //</pre></code>
+      //where *<b>url</b>* is the url to fetch from,  *<b>callback</b>* is a function called with the ajax request after
+      // it's succesful completion and *<b>error</b>* is an optional callback to handle errors when fetching the resource
       loadResource: _loadResource,
+      //###loader.loadScript
+      // Load a script. This method will choose the best method to load the script (using tag or ajax) depending on the
+      // origin of the script. Additionally it can extract variables exposed in the window object and register them as
+      // instances in arenite.
+      //<pre><code>
+      // loadScript(script, callback)
+      //</pre></code>
+      //where *<b>script</b>* is either a url string or a structure defining a url and instances to be extracted from
+      // the window object into arenite and *<b>callback</b>* is the callback for when the script is loaded.
       loadScript: _loadScript
     }
   };

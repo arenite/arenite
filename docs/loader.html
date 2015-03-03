@@ -109,8 +109,22 @@
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*global Arenite:true*/</span>
-<span class="hljs-comment">/*jshint evil:true*/</span>
-Arenite.Loader = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
+<span class="hljs-comment">/*jshint evil:true*/</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Collection of utility functions to handle loading resources.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Arenite.Loader = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
 
   <span class="hljs-keyword">var</span> _loadResource = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, callback, error)</span> </span>{
     <span class="hljs-keyword">var</span> req = <span class="hljs-keyword">new</span> <span class="hljs-built_in">window</span>.XMLHttpRequest();
@@ -150,11 +164,11 @@ Arenite.Loader = <span class="hljs-function"><span class="hljs-keyword">function
         </li>
         
         
-        <li id="section-2">
+        <li id="section-3">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>analyze the script for “annotation” type configurations</p>
 
@@ -201,9 +215,51 @@ Arenite.Loader = <span class="hljs-function"><span class="hljs-keyword">function
   };
 
   <span class="hljs-keyword">return</span> {
-    loader: {
-      loadResource: _loadResource,
-      loadScript: _loadScript
+    loader: {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="loader-loadresource">loader.loadResource</h3>
+<p>Load a given resource using ajax.</p>
+<p><pre><code>
+loadResource(url, callback, error)
+</pre></code>
+where <em><b>url</b></em> is the url to fetch from,  <em><b>callback</b></em> is a function called with the ajax request after
+it’s succesful completion and <em><b>error</b></em> is an optional callback to handle errors when fetching the resource</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      loadResource: _loadResource,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="loader-loadscript">loader.loadScript</h3>
+<p>Load a script. This method will choose the best method to load the script (using tag or ajax) depending on the
+origin of the script. Additionally it can extract variables exposed in the window object and register them as
+instances in arenite.</p>
+<p><pre><code>
+loadScript(script, callback)
+</pre></code>
+where <em><b>script</b></em> is either a url string or a structure defining a url and instances to be extracted from
+the window object into arenite and <em><b>callback</b></em> is the callback for when the script is loaded.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      loadScript: _loadScript
     }
   };
 };</pre></div></div>
