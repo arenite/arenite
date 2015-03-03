@@ -108,8 +108,22 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*global Arenite:true*/</span>
-Arenite.Context = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*global Arenite:true*/</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>The context(registry) of the instances.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Arenite.Context = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
   <span class="hljs-keyword">var</span> registry = {};
   <span class="hljs-keyword">var</span> factories = {};
 
@@ -138,10 +152,70 @@ Arenite.Context = <span class="hljs-function"><span class="hljs-keyword">functio
   };
 
   <span class="hljs-keyword">return</span> {
-    context: {
-      get: _getInstance,
-      add: _addInstance,
-      remove: _removeInstance
+    context: {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3 id="context-get">context.get</h3>
+<p>Get an registered instance from arenite.</p>
+<p><pre><code>
+get(instance)
+</pre></code>
+where <em><b>instance</b></em> is the name of the instance to be retrieved</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      get: _getInstance,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="context-add">context.add</h3>
+<p>Register an instance in arenite</p>
+<p><pre><code>
+add(name, instance, factory, args)
+</pre></code>
+where <em><b>name</b></em> is the alias by which the instance should be known, <em><b>instance</b></em> is the actual instance
+to register or the factory function in case it’s a factory, <em><b>factory</b></em> is a flag stating if a new
+instance should be generated each time it is requested and <em><b>args</b></em> is the arguments to use in case
+the instance is a factory.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      add: _addInstance,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="context-remove">context.remove</h3>
+<p>Removes an instance from the arenite context</p>
+<p><pre><code>
+remove(instance)
+</pre></code>
+where <em><b>instance</b></em> is the name of the instance to be de-registered from arenite.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      remove: _removeInstance
     }
   };
 };</pre></div></div>
