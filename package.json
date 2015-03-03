@@ -1,6 +1,6 @@
 {
   "name": "gulp-arenite-src",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Inversion of Control / Dependency Injection Library",
   "repository": "git://github.com/lcavadas/arenite",
   "author": {
