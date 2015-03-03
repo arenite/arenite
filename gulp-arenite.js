@@ -88,11 +88,11 @@ module.exports = function (options, config, cb) {
     if (config.imports) {
       _parse(config.imports);
     }
-    if (config.context.dependencies[options.env].sync) {
-      _parse(config.context.dependencies[options.env].sync);
+    if (config.context.dependencies[options.mode].sync) {
+      _parse(config.context.dependencies[options.mode].sync);
     }
-    if (config.context.dependencies[options.env].async) {
-      _parse(config.context.dependencies[options.env].async);
+    if (config.context.dependencies[options.mode].async) {
+      _parse(config.context.dependencies[options.mode].async);
     }
 
     cb(gulpMerge(remoteSrc(remote), gulp.src(local)));
