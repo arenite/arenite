@@ -1,5 +1,6 @@
 /*global Arenite:true*/
 /*jshint evil:true*/
+// Utility function to interpret the annotations.
 Arenite.AnnotationProcessor = function (arenite) {
   var _processAnnotations = function (text) {
     var regex = /@arenite-instance\s+["']([^"']+)["']\s*(.*);\s*(@arenite-init\s+["']([^"']+)["']\s*(.*);)*\s*(@arenite-start\s+["']([^"']+)["']\s*(.*);)*\s*\*\/\s*([\w.]+)/g;
@@ -58,6 +59,12 @@ Arenite.AnnotationProcessor = function (arenite) {
 
   return {
     annotation: {
+      //###annotation.processAnnotations
+      // Interpret the annotations specified in a given source.
+      //<pre><code>
+      // processAnnotations(text)
+      //</pre></code>
+      //where *<b>text</b>* is the text(source) to be analysed
       processAnnotations: _processAnnotations
     }
   };

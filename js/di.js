@@ -1,4 +1,5 @@
 /*global Arenite:true*/
+// Collection of utility functions wire the instances and load the configured resources.
 Arenite.DI = function (arenite) {
 
   var _resolveFunc = function (execution) {
@@ -263,9 +264,35 @@ Arenite.DI = function (arenite) {
 
   return {
     di: {
+      //###di.init
+      // Start arenite with the given configuration
+      //<pre><code>
+      // init(config)
+      //</pre></code>
+      //where *<b>config</b>* is the complete or partial configuration (with the imports)
       init: _boot,
+      //###di.loadConfig
+      // Resolve the imports and merge them into arenite's internal config object
+      //<pre><code>
+      // loadConfig(config, callback)
+      //</pre></code>
+      //where *<b>config</b>* is the partial configuration with the imports and *<b>callback</b>* is the callback after
+      // the import has extended the config.
       loadConfig: _loadConfig,
+      //###di.resolveArgs
+      // Resolve the arguments defined in an instance definition AKA execution defined in the arenite configuration format
+      //<pre><code>
+      // resolveArgs(execution, done)
+      //</pre></code>
+      //where *<b>execution</b>* is the object describing the execution and *<b>done</b>* is the callback after the execution.
       resolveArgs: _resolveArgs,
+      //###di.exec
+      // Execute an instance definition AKA execution defined in the arenite configuration format
+      //<pre><code>
+      // exec(execution, before, done)
+      //</pre></code>
+      //where *<b>execution</b>* is the object describing the execution, *<b>before</b>* is an optional function to be executed
+      // before the actual execution and *<b>done</b>* is the callback after the execution.
       exec: _execFunction
     }
   };
