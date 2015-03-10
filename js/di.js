@@ -146,11 +146,15 @@ Arenite.DI = function (arenite) {
   };
 
   var _loadContext = function (context) {
-    window.console.time('Arenite context load');
+    if(arenite.config.debug){
+      window.console.time('Arenite context load');
+    }
     if (context) {
       //Starting must wait for the wiring
       var wireLatch = arenite.async.latch(1, function () {
-        window.console.timeEnd('Arenite context load');
+        if(arenite.config.debug){
+          window.console.timeEnd('Arenite context load');
+        }
         _start(context.start);
       }, "instances");
 
@@ -236,6 +240,11 @@ Arenite.DI = function (arenite) {
     arenite.config = config;
     arenite.config.mode = arenite.url.query().mode || 'default';
     window.console.log('Arenite: Starting in mode', arenite.config.mode);
+    if (config.debug) {
+      if (typeof config.debug === 'function') {
+        config.debug = config.debug(arenite);
+      }
+    }
     if (config.expose) {
       var exposeName = config.expose;
       if (typeof config.expose === 'function') {

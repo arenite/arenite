@@ -1,6 +1,6 @@
 /*global Arenite:true*/
 //Asynchronous tools
-Arenite.Async = function () {
+Arenite.Async = function (arenite) {
   var _sequencialLatch = function (values, callback, finalCallback) {
     var index = 0;
     var length = values.length;
@@ -20,24 +20,34 @@ Arenite.Async = function () {
 
   var _latch = function (times, callback, name) {
     var id = name || new Date().getTime();
-    window.console.groupCollapsed('Latch: Starting latch "' + id + '" for', times, 'times');
-    window.console.trace();
-    window.console.groupEnd();
+    if (arenite.config.debug) {
+      window.console.groupCollapsed('Latch: Starting latch "' + id + '" for', times, 'times');
+      window.console.trace();
+      window.console.groupEnd();
+    }
     var executions = 0;
     return {
       countDown: function () {
         executions++;
-        window.console.log('Latch: Counting down latch "' + id + '" ,', times - executions, 'remaining');
+        if (arenite.config.debug) {
+          window.console.log('Latch: Counting down latch "' + id + '" ,', times - executions, 'remaining');
+        }
         if (executions === times) {
-          window.console.log('Latch: Triggering latch "' + id + '"');
+          if (arenite.config.debug) {
+            window.console.log('Latch: Triggering latch "' + id + '"');
+          }
           callback(executions);
         }
       },
       countUp: function () {
         executions--;
-        window.console.log('Latch: Counting up latch "' + id + '" ,', times - executions, 'remaining');
+        if (arenite.config.debug) {
+          window.console.log('Latch: Counting up latch "' + id + '" ,', times - executions, 'remaining');
+        }
         if (executions === times) {
-          window.console.log('Latch: Triggering latch "' + id + '"');
+          if (arenite.config.debug) {
+            window.console.log('Latch: Triggering latch "' + id + '"');
+          }
           callback(executions);
         }
       }

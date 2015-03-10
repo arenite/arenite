@@ -27,10 +27,10 @@ Arenite = function (config) {
   var arenite = new Arenite.Object(arenite);
   //### Arenite.Async
   // Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
-  arenite = arenite.object.extend(arenite, new Arenite.Async());
+  arenite = arenite.object.extend(arenite, new Arenite.Async(arenite));
   //### Arenite.Url
   // Extend the instance with the <a href="url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.
-  arenite = arenite.object.extend(arenite, new Arenite.Url());
+  arenite = arenite.object.extend(arenite, new Arenite.Url(arenite));
   //### Arenite.DI
   // Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
   // the injector functionality.
@@ -125,7 +125,7 @@ Arenite.AnnotationProcessor = function (arenite) {
 };
 /*global Arenite:true*/
 //Asynchronous tools
-Arenite.Async = function () {
+Arenite.Async = function (arenite) {
   var _sequencialLatch = function (values, callback, finalCallback) {
     var index = 0;
     var length = values.length;
@@ -145,24 +145,34 @@ Arenite.Async = function () {
 
   var _latch = function (times, callback, name) {
     var id = name || new Date().getTime();
-    window.console.groupCollapsed('Latch: Starting latch "' + id + '" for', times, 'times');
-    window.console.trace();
-    window.console.groupEnd();
+    if (arenite.config.debug) {
+      window.console.groupCollapsed('Latch: Starting latch "' + id + '" for', times, 'times');
+      window.console.trace();
+      window.console.groupEnd();
+    }
     var executions = 0;
     return {
       countDown: function () {
         executions++;
-        window.console.log('Latch: Counting down latch "' + id + '" ,', times - executions, 'remaining');
+        if (arenite.config.debug) {
+          window.console.log('Latch: Counting down latch "' + id + '" ,', times - executions, 'remaining');
+        }
         if (executions === times) {
-          window.console.log('Latch: Triggering latch "' + id + '"');
+          if (arenite.config.debug) {
+            window.console.log('Latch: Triggering latch "' + id + '"');
+          }
           callback(executions);
         }
       },
       countUp: function () {
         executions--;
-        window.console.log('Latch: Counting up latch "' + id + '" ,', times - executions, 'remaining');
+        if (arenite.config.debug) {
+          window.console.log('Latch: Counting up latch "' + id + '" ,', times - executions, 'remaining');
+        }
         if (executions === times) {
-          window.console.log('Latch: Triggering latch "' + id + '"');
+          if (arenite.config.debug) {
+            window.console.log('Latch: Triggering latch "' + id + '"');
+          }
           callback(executions);
         }
       }
@@ -414,11 +424,15 @@ Arenite.DI = function (arenite) {
   };
 
   var _loadContext = function (context) {
-    window.console.time('Arenite context load');
+    if(arenite.config.debug){
+      window.console.time('Arenite context load');
+    }
     if (context) {
       //Starting must wait for the wiring
       var wireLatch = arenite.async.latch(1, function () {
-        window.console.timeEnd('Arenite context load');
+        if(arenite.config.debug){
+          window.console.timeEnd('Arenite context load');
+        }
         _start(context.start);
       }, "instances");
 
@@ -504,6 +518,11 @@ Arenite.DI = function (arenite) {
     arenite.config = config;
     arenite.config.mode = arenite.url.query().mode || 'default';
     window.console.log('Arenite: Starting in mode', arenite.config.mode);
+    if (config.debug) {
+      if (typeof config.debug === 'function') {
+        config.debug = config.debug(arenite);
+      }
+    }
     if (config.expose) {
       var exposeName = config.expose;
       if (typeof config.expose === 'function') {
