@@ -269,7 +269,9 @@
   };
 
   <span class="hljs-keyword">var</span> _loadContext = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(context)</span> </span>{
-    <span class="hljs-built_in">window</span>.console.time(<span class="hljs-string">'Arenite context load'</span>);
+    <span class="hljs-keyword">if</span>(arenite.config.debug){
+      <span class="hljs-built_in">window</span>.console.time(<span class="hljs-string">'Arenite context load'</span>);
+    }
     <span class="hljs-keyword">if</span> (context) {</pre></div></div>
             
         </li>
@@ -286,7 +288,9 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> wireLatch = arenite.async.latch(<span class="hljs-number">1</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-        <span class="hljs-built_in">window</span>.console.timeEnd(<span class="hljs-string">'Arenite context load'</span>);
+        <span class="hljs-keyword">if</span>(arenite.config.debug){
+          <span class="hljs-built_in">window</span>.console.timeEnd(<span class="hljs-string">'Arenite context load'</span>);
+        }
         _start(context.start);
       }, <span class="hljs-string">"instances"</span>);</pre></div></div>
             
@@ -384,6 +388,11 @@
     arenite.config = config;
     arenite.config.mode = arenite.url.query().mode || <span class="hljs-string">'default'</span>;
     <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: Starting in mode'</span>, arenite.config.mode);
+    <span class="hljs-keyword">if</span> (config.debug) {
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> config.debug === <span class="hljs-string">'function'</span>) {
+        config.debug = config.debug(arenite);
+      }
+    }
     <span class="hljs-keyword">if</span> (config.expose) {
       <span class="hljs-keyword">var</span> exposeName = config.expose;
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> config.expose === <span class="hljs-string">'function'</span>) {

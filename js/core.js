@@ -27,10 +27,10 @@ Arenite = function (config) {
   var arenite = new Arenite.Object(arenite);
   //### Arenite.Async
   // Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
-  arenite = arenite.object.extend(arenite, new Arenite.Async());
+  arenite = arenite.object.extend(arenite, new Arenite.Async(arenite));
   //### Arenite.Url
   // Extend the instance with the <a href="url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.
-  arenite = arenite.object.extend(arenite, new Arenite.Url());
+  arenite = arenite.object.extend(arenite, new Arenite.Url(arenite));
   //### Arenite.DI
   // Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
   // the injector functionality.
