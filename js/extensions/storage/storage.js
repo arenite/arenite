@@ -8,7 +8,11 @@ Arenite.Storage = function (arenite, storage) {
   var _init = function (cb) {
     if (_local !== null) {
 
-      var latch = arenite.async.latch(3, cb, 'storage');
+      var latch = arenite.async.latch(3, function () {
+        if (typeof cb === 'function') {
+          cb();
+        }
+      }, 'storage');
 
       storage(function (sjs) {
         _local = sjs;
