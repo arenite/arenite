@@ -118,7 +118,11 @@ Arenite.Storage = <span class="hljs-function"><span class="hljs-keyword">functio
   <span class="hljs-keyword">var</span> _init = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(cb)</span> </span>{
     <span class="hljs-keyword">if</span> (_local !== <span class="hljs-literal">null</span>) {
 
-      <span class="hljs-keyword">var</span> latch = arenite.async.latch(<span class="hljs-number">3</span>, cb, <span class="hljs-string">'storage'</span>);
+      <span class="hljs-keyword">var</span> latch = arenite.async.latch(<span class="hljs-number">3</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> cb === <span class="hljs-string">'function'</span>) {
+          cb();
+        }
+      }, <span class="hljs-string">'storage'</span>);
 
       storage(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(sjs)</span> </span>{
         _local = sjs;
