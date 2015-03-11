@@ -2,6 +2,8 @@
 // Collection of utility functions wire the instances and load the configured resources.
 Arenite.DI = function (arenite) {
 
+  var anonymous_id = 1;
+
   var _resolveFunc = function (execution) {
     var resolvedFunc = execution.func;
     if (typeof execution.func === 'function') {
@@ -38,7 +40,7 @@ Arenite.DI = function (arenite) {
         resolved.push(arg.exec(arenite));
       } else if (typeof arg.instance !== 'undefined') {
         var anonymousContext = {instances: {}};
-        var tempId = '__anonymous_temp_instance__' + new Date().getTime();
+        var tempId = '__anonymous_temp_instance__' + anonymous_id++;
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
@@ -146,13 +148,13 @@ Arenite.DI = function (arenite) {
   };
 
   var _loadContext = function (context) {
-    if(arenite.config.debug){
+    if (arenite.config.debug) {
       window.console.time('Arenite context load');
     }
     if (context) {
       //Starting must wait for the wiring
       var wireLatch = arenite.async.latch(1, function () {
-        if(arenite.config.debug){
+        if (arenite.config.debug) {
           window.console.timeEnd('Arenite context load');
         }
         _start(context.start);
