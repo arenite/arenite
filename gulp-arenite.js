@@ -49,8 +49,8 @@ global.document = {
 
 var Loader = function (config, cb) {
   var arenite = Arenite.Object(arenite);
-  arenite = arenite.object.extend(arenite, new Arenite.Async());
-  arenite = arenite.object.extend(arenite, new Arenite.Url());
+  arenite = arenite.object.extend(arenite, new Arenite.Async(arenite));
+  arenite = arenite.object.extend(arenite, new Arenite.Url(arenite));
   arenite = arenite.object.extend(arenite, new Arenite.DI(arenite));
   arenite = arenite.object.extend(arenite, new Arenite.AnnotationProcessor(arenite));
   arenite = arenite.object.extend(arenite, new Arenite.Context(arenite));
