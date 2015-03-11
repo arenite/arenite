@@ -125,6 +125,8 @@
             
             <div class="content"><div class='highlight'><pre>Arenite.DI = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
 
+  <span class="hljs-keyword">var</span> anonymous_id = <span class="hljs-number">1</span>;
+
   <span class="hljs-keyword">var</span> _resolveFunc = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(execution)</span> </span>{
     <span class="hljs-keyword">var</span> resolvedFunc = execution.func;
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> execution.func === <span class="hljs-string">'function'</span>) {
@@ -161,7 +163,7 @@
         resolved.push(arg.exec(arenite));
       } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> arg.instance !== <span class="hljs-string">'undefined'</span>) {
         <span class="hljs-keyword">var</span> anonymousContext = {instances: {}};
-        <span class="hljs-keyword">var</span> tempId = <span class="hljs-string">'__anonymous_temp_instance__'</span> + <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime();
+        <span class="hljs-keyword">var</span> tempId = <span class="hljs-string">'__anonymous_temp_instance__'</span> + anonymous_id++;
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
@@ -269,7 +271,7 @@
   };
 
   <span class="hljs-keyword">var</span> _loadContext = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(context)</span> </span>{
-    <span class="hljs-keyword">if</span>(arenite.config.debug){
+    <span class="hljs-keyword">if</span> (arenite.config.debug) {
       <span class="hljs-built_in">window</span>.console.time(<span class="hljs-string">'Arenite context load'</span>);
     }
     <span class="hljs-keyword">if</span> (context) {</pre></div></div>
@@ -288,7 +290,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> wireLatch = arenite.async.latch(<span class="hljs-number">1</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-        <span class="hljs-keyword">if</span>(arenite.config.debug){
+        <span class="hljs-keyword">if</span> (arenite.config.debug) {
           <span class="hljs-built_in">window</span>.console.timeEnd(<span class="hljs-string">'Arenite context load'</span>);
         }
         _start(context.start);
