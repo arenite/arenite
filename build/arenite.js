@@ -49,6 +49,7 @@ Arenite = function (config) {
   arenite = arenite.object.extend(arenite, new Arenite.Loader(arenite));
   // Initialize the injector by having it read the configuration object passed into this constructor.
   arenite.di.init(config);
+  return arenite;
 };
 
 /*global Arenite:true*/
@@ -222,11 +223,13 @@ Arenite.Async = function (arenite) {
 Arenite.Context = function (arenite) {
   var registry = {};
   var factories = {};
+  var factory_id = 1;
 
-  var _addInstance = function (name, instance, factory, args) {
-    registry[name] = instance;
+  var _addInstance = function (name, instance, factory) {
     if (factory) {
-      factories[name] = args || [];
+      factories[name] = instance;
+    } else {
+      registry[name] = instance;
     }
   };
 
@@ -236,12 +239,11 @@ Arenite.Context = function (arenite) {
 
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
-      var args = arenite.di.resolveArgs({factory: true, args: factories[name]});
-      if (args) {
-        return registry[name].apply(registry[name], args);
-      } else {
-        throw 'Unable to resolve arguments for "' + name + '"';
-      }
+      var tempId = '__factory_instance_' + name + '__' + factory_id++;
+      var tempContext = {}
+      tempContext[tempId] = arenite.object.extend(factories[name], {factory: false});
+      arenite.di.wire(tempContext);
+      return registry[tempId];
     } else {
       return registry[name];
     }
@@ -362,23 +364,27 @@ Arenite.DI = function (arenite) {
     var unresolved = {};
 
     instanceKeys.forEach(function (instance) {
-      var func = arenite.object.get(window, instances[instance].namespace);
-      if (func) {
-        var args = instances[instance].factory ? instances[instance].args || [] : _resolveArgs(instances[instance]);
-        if (args) {
-          var actualInstance = instances[instance].factory ? func : func.apply(func, args);
-          if (type === 'extension') {
-            var wrappedInstance = {};
-            wrappedInstance[instance] = actualInstance;
-            arenite = arenite.object.extend(arenite, wrappedInstance);
+      if (instances[instance].factory) {
+        arenite.context.add(instance, instances[instance], true)
+      } else {
+        var func = arenite.object.get(window, instances[instance].namespace);
+        if (func) {
+          var args = _resolveArgs(instances[instance]);
+          if (args) {
+            var actualInstance = instances[instance].factory ? func : func.apply(func, args);
+            if (type === 'extension') {
+              var wrappedInstance = {};
+              wrappedInstance[instance] = actualInstance;
+              arenite = arenite.object.extend(arenite, wrappedInstance);
+            } else {
+              arenite.context.add(instance, actualInstance);
+            }
           } else {
-            arenite.context.add(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
+            unresolved[instance] = instances[instance];
           }
         } else {
-          unresolved[instance] = instances[instance];
+          throw 'Unknown function "' + instances[instance].namespace + '"';
         }
-      } else {
-        throw 'Unknown function "' + instances[instance].namespace + '"';
       }
     });
 
@@ -394,7 +400,7 @@ Arenite.DI = function (arenite) {
 
   var _init = function (instances, latch, extension) {
     arenite.object.keys(instances).forEach(function (instance) {
-      if (instances[instance].init) {
+      if (instances[instance].init && !instances[instance].factory) {
         if (typeof instances[instance].init === 'string') {
           instances[instance].init = {func: instances[instance].init};
         }
@@ -551,6 +557,11 @@ Arenite.DI = function (arenite) {
     }
   };
 
+  var _wireFactory = function (instances) {
+    _wire(instances);
+    _init(instances);
+  };
+
   return {
     di: {
       //###di.init
@@ -582,7 +593,14 @@ Arenite.DI = function (arenite) {
       //</pre></code>
       //where *<b>execution</b>* is the object describing the execution, *<b>before</b>* is an optional function to be executed
       // before the actual execution and *<b>done</b>* is the callback after the execution.
-      exec: _execFunction
+      exec: _execFunction,
+      //###di.wire
+      // Wire a new instance at runtime (used for factories)
+      //<pre><code>
+      // wire(instanceDefinitions)
+      //</pre></code>
+      //where *<b>instanceDefinitions</b>* is a list of instance definition objects to be instantiated and initialized.
+      wire: _wireFactory
     }
   };
 };
