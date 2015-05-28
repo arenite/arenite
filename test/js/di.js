@@ -485,7 +485,7 @@ describe("Arenite.DI", function () {
           one: {
             factory: true,
             namespace: 'Arenite.Extra',
-            init:'init'
+            init: 'init'
           }
         }
       }
@@ -510,7 +510,37 @@ describe("Arenite.DI", function () {
         }
       }
     });
+
     arenite.context.get('one');
     expect(funcSpy).toHaveBeenCalled();
+  });
+
+  it('should create factory anonymous arguments every time', function () {
+    var extra = spyOn(Arenite, 'Extra').and.returnValue({});
+    var extra2 = spyOn(Arenite, 'Extra2').and.returnValue({});
+
+    var arenite = Arenite({
+      context: {
+        instances: {
+          one: {
+            factory: true,
+            namespace: 'Arenite.Extra',
+            args: [{
+              namespace: 'Arenite.Extra2'
+            }]
+          }
+        }
+      }
+    });
+    expect(extra).not.toHaveBeenCalled();
+    expect(extra2).not.toHaveBeenCalled();
+    arenite.context.get('one');
+
+    expect(extra).toHaveBeenCalled();
+    expect(extra2).toHaveBeenCalled();
+    arenite.context.get('one');
+
+    expect(extra.calls.count()).toEqual(2);
+    expect(extra2.calls.count()).toEqual(2);
   });
 });

@@ -167,11 +167,7 @@
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
-        <span class="hljs-keyword">if</span> (!execution.factory) {
-          execution.args[idx] = {ref: tempId};
-        } <span class="hljs-keyword">else</span> {
-          arenite.context.remove(tempId);
-        }
+        arenite.context.remove(tempId);
       }
     });
 
@@ -208,7 +204,7 @@
 
     instanceKeys.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(instance)</span> </span>{
       <span class="hljs-keyword">if</span> (instances[instance].factory) {
-        arenite.context.add(instance, instances[instance], <span class="hljs-literal">true</span>)
+        arenite.context.add(instance, instances[instance], <span class="hljs-literal">true</span>);
       } <span class="hljs-keyword">else</span> {
         <span class="hljs-keyword">var</span> func = arenite.object.get(<span class="hljs-built_in">window</span>, instances[instance].namespace);
         <span class="hljs-keyword">if</span> (func) {

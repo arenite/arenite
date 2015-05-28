@@ -112,6 +112,18 @@
 Arenite.Templates = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite, doT)</span> </span>{
   <span class="hljs-keyword">var</span> _templates = {};
 
+  <span class="hljs-keyword">var</span> _addText = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(text)</span> </span>{
+    <span class="hljs-keyword">var</span> templateContainer = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'div'</span>);
+    templateContainer.innerHTML = text;
+    <span class="hljs-built_in">document</span>.body.appendChild(templateContainer);
+
+    <span class="hljs-keyword">var</span> scriptTags = templateContainer.getElementsByTagName(<span class="hljs-string">'script'</span>);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; scriptTags.length; i++) {
+      _templates[scriptTags[i].id] = doT.template(scriptTags[i].innerHTML);
+    }
+    <span class="hljs-built_in">document</span>.body.removeChild(templateContainer);
+  };
+
   <span class="hljs-keyword">var</span> _add = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(urls, callback)</span> </span>{
     <span class="hljs-keyword">var</span> templateLatch = arenite.async.latch(urls.length, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> callback === <span class="hljs-string">'function'</span>) {
@@ -120,16 +132,7 @@ Arenite.Templates = <span class="hljs-function"><span class="hljs-keyword">funct
     }, <span class="hljs-string">"template loader"</span>);
     urls.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url)</span> </span>{
       arenite.loader.loadResource(url, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(template)</span> </span>{
-        <span class="hljs-keyword">var</span> templateContainer = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'div'</span>);
-        templateContainer.innerHTML = template.responseText;
-        <span class="hljs-built_in">document</span>.body.appendChild(templateContainer);
-
-        <span class="hljs-keyword">var</span> scriptTags = templateContainer.getElementsByTagName(<span class="hljs-string">'script'</span>);
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; scriptTags.length; i++) {
-          _templates[scriptTags[i].id] = doT.template(scriptTags[i].innerHTML);
-        }
-
-        <span class="hljs-built_in">document</span>.body.removeChild(templateContainer);
+        _addText(template.responseText);
         templateLatch.countDown();
       });
     });
@@ -144,6 +147,7 @@ Arenite.Templates = <span class="hljs-function"><span class="hljs-keyword">funct
 
   <span class="hljs-keyword">return</span> {
     add: _add,
+    addText: _addText,
     apply: _apply
   };
 };</pre></div></div>

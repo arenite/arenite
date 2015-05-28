@@ -13,7 +13,7 @@ Arenite.Loader = function (arenite) {
     } else {
       xhr = null;
     }
-    if (arenite.config.withCredentials){
+    if (arenite.config.withCredentials) {
       xhr.withCredentials = true;
     }
     return xhr;

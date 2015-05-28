@@ -1,12 +1,12 @@
 /*global Arenite:true, describe:true, it:true, expect:true, jasmine:true */
 describe("Arenite.Loader", function () {
   it("should invoke callback on successful load using ajax", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials']);
 
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
-    var loader = Arenite.Loader();
+    var loader = Arenite.Loader({config: {}});
 
     var callback = jasmine.createSpy('callback');
     loader.loader.loadResource('asd', callback);
@@ -17,12 +17,12 @@ describe("Arenite.Loader", function () {
   });
 
   it("should invoke error callback on unsuccessful load using ajax", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials']);
 
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
-    var loader = Arenite.Loader();
+    var loader = Arenite.Loader({config: {}});
 
     var callback = jasmine.createSpy('callback');
     var error = jasmine.createSpy('error');
@@ -34,12 +34,12 @@ describe("Arenite.Loader", function () {
   });
 
   it("should not generate exception on error when error callback is not defined on an unsuccessful load using ajax", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials']);
 
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
-    var loader = Arenite.Loader();
+    var loader = Arenite.Loader({config: {}});
 
     var callback = jasmine.createSpy('callback');
     loader.loader.loadResource('asd', callback);
@@ -68,12 +68,13 @@ describe("Arenite.Loader", function () {
   });
 
   it("should use ajax when resource has same origin", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials']);
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
     var loader = Arenite.Loader({
-      annotation: jasmine.createSpyObj('annotationProcessor', ['processAnnotations'])
+      annotation: jasmine.createSpyObj('annotationProcessor', ['processAnnotations']),
+      config: {}
     });
     var callback = jasmine.createSpy('callback');
     loader.loader.loadScript('asd', callback);
@@ -84,12 +85,13 @@ describe("Arenite.Loader", function () {
   });
 
   it("should invoke annotation processor when script is loaded", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials']);
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
     var loader = Arenite.Loader({
-      annotation: jasmine.createSpyObj('annotationProcessor', ['processAnnotations'])
+      annotation: jasmine.createSpyObj('annotationProcessor', ['processAnnotations']),
+      config: {}
     });
     var callback = jasmine.createSpy('callback');
     loader.loader.loadScript('asd', callback);
@@ -100,13 +102,14 @@ describe("Arenite.Loader", function () {
   });
 
   it("should extract variables from window when structure is used for load", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials']);
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
     var arenite = Arenite.Object();
     arenite = arenite.object.extend(arenite, {
-      annotation: jasmine.createSpyObj('annotationProcessor', ['processAnnotations'])
+      annotation: jasmine.createSpyObj('annotationProcessor', ['processAnnotations']),
+      config:{}
     });
     arenite = arenite.object.extend(arenite, Arenite.Context());
     console.log('asd', arenite);

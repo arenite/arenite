@@ -44,11 +44,7 @@ Arenite.DI = function (arenite) {
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
-        if (!execution.factory) {
-          execution.args[idx] = {ref: tempId};
-        } else {
-          arenite.context.remove(tempId);
-        }
+        arenite.context.remove(tempId);
       }
     });
 
@@ -85,7 +81,7 @@ Arenite.DI = function (arenite) {
 
     instanceKeys.forEach(function (instance) {
       if (instances[instance].factory) {
-        arenite.context.add(instance, instances[instance], true)
+        arenite.context.add(instance, instances[instance], true);
       } else {
         var func = arenite.object.get(window, instances[instance].namespace);
         if (func) {
