@@ -3,11 +3,13 @@
 Arenite.Context = function (arenite) {
   var registry = {};
   var factories = {};
+  var factory_id = 1;
 
-  var _addInstance = function (name, instance, factory, args) {
-    registry[name] = instance;
+  var _addInstance = function (name, instance, factory) {
     if (factory) {
-      factories[name] = args || [];
+      factories[name] = instance;
+    } else {
+      registry[name] = instance;
     }
   };
 
@@ -17,12 +19,11 @@ Arenite.Context = function (arenite) {
 
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
-      var args = arenite.di.resolveArgs({factory: true, args: factories[name]});
-      if (args) {
-        return registry[name].apply(registry[name], args);
-      } else {
-        throw 'Unable to resolve arguments for "' + name + '"';
-      }
+      var tempId = '__factory_instance_' + name + '__' + factory_id++;
+      var tempContext = {}
+      tempContext[tempId] = arenite.object.extend(factories[name], {factory: false});
+      arenite.di.wire(tempContext);
+      return registry[tempId];
     } else {
       return registry[name];
     }
