@@ -611,9 +611,24 @@ Arenite.DI = function (arenite) {
 // Collection of utility functions to handle loading resources.
 Arenite.Loader = function (arenite) {
 
+  var _createCORSRequest = function (method, url) {
+    var xhr = new XMLHttpRequest();
+    if ('withCredentials' in xhr) {
+      xhr.open(method, url, true);
+    } else if (typeof XDomainRequest !== 'undefined') {
+      xhr = new XDomainRequest();
+      xhr.open(method, url);
+    } else {
+      xhr = null;
+    }
+    if (arenite.config.withCredentials){
+      xhr.withCredentials = true;
+    }
+    return xhr;
+  };
+
   var _loadResource = function (url, callback, error) {
-    var req = new window.XMLHttpRequest();
-    req.open('GET', url, true);
+    var req = _createCORSRequest('GET', url);
     req.onreadystatechange = function () {
       if (req.readyState === 4) {
         if (req.status % 100 < 4) {
