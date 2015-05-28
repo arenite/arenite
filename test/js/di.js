@@ -518,7 +518,6 @@ describe("Arenite.DI", function () {
   it('should create factory anonymous arguments every time', function () {
     var extra = spyOn(Arenite, 'Extra').and.returnValue({});
     var extra2 = spyOn(Arenite, 'Extra2').and.returnValue({});
-
     var arenite = Arenite({
       context: {
         instances: {
@@ -526,7 +525,9 @@ describe("Arenite.DI", function () {
             factory: true,
             namespace: 'Arenite.Extra',
             args: [{
-              namespace: 'Arenite.Extra2'
+              instance:{
+                namespace: 'Arenite.Extra2'
+              }
             }]
           }
         }
@@ -540,7 +541,7 @@ describe("Arenite.DI", function () {
     expect(extra2).toHaveBeenCalled();
     arenite.context.get('one');
 
-    expect(extra.calls.count()).toEqual(2);
-    expect(extra2.calls.count()).toEqual(2);
+    expect(extra.calls.count()).toEqual(2,'Extra calls');
+    expect(extra2.calls.count()).toEqual(2,'Extra2 calls');
   });
 });
