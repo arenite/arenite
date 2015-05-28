@@ -30,7 +30,9 @@ Arenite.Loader = function (arenite) {
         callback();
       }
     };
-    script.onload = callback;
+    if(navigator.appVersion.indexOf("MSIE 9")===-1){ //IE 9 calls the callback twice
+      script.onload = callback;
+    }
     script.src = url;
     head.appendChild(script);
   };

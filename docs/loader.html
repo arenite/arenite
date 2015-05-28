@@ -153,7 +153,9 @@
         callback();
       }
     };
-    script.onload = callback;
+    <span class="hljs-keyword">if</span>(navigator.appVersion.indexOf(<span class="hljs-string">"MSIE 9"</span>)===-<span class="hljs-number">1</span>){ <span class="hljs-comment">//IE 9 calls the callback twice</span>
+      script.onload = callback;
+    }
     script.src = url;
     head.appendChild(script);
   };

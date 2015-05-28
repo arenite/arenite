@@ -142,13 +142,15 @@
   };
 
   <span class="hljs-keyword">var</span> _latch = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(times, callback, name)</span> </span>{
+    <span class="hljs-keyword">var</span> executions = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">var</span> id = name || <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime();
+
     <span class="hljs-keyword">if</span> (arenite.config.debug) {
       <span class="hljs-built_in">window</span>.console.groupCollapsed(<span class="hljs-string">'Latch: Starting latch "'</span> + id + <span class="hljs-string">'" for'</span>, times, <span class="hljs-string">'times'</span>);
       <span class="hljs-built_in">window</span>.console.trace();
       <span class="hljs-built_in">window</span>.console.groupEnd();
     }
-    <span class="hljs-keyword">var</span> executions = <span class="hljs-number">0</span>;
+
     <span class="hljs-keyword">return</span> {
       countDown: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
         executions++;
