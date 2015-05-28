@@ -207,23 +207,27 @@
     <span class="hljs-keyword">var</span> unresolved = {};
 
     instanceKeys.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(instance)</span> </span>{
-      <span class="hljs-keyword">var</span> func = arenite.object.get(<span class="hljs-built_in">window</span>, instances[instance].namespace);
-      <span class="hljs-keyword">if</span> (func) {
-        <span class="hljs-keyword">var</span> args = instances[instance].factory ? instances[instance].args || [] : _resolveArgs(instances[instance]);
-        <span class="hljs-keyword">if</span> (args) {
-          <span class="hljs-keyword">var</span> actualInstance = instances[instance].factory ? func : func.apply(func, args);
-          <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'extension'</span>) {
-            <span class="hljs-keyword">var</span> wrappedInstance = {};
-            wrappedInstance[instance] = actualInstance;
-            arenite = arenite.object.extend(arenite, wrappedInstance);
+      <span class="hljs-keyword">if</span> (instances[instance].factory) {
+        arenite.context.add(instance, instances[instance], <span class="hljs-literal">true</span>)
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">var</span> func = arenite.object.get(<span class="hljs-built_in">window</span>, instances[instance].namespace);
+        <span class="hljs-keyword">if</span> (func) {
+          <span class="hljs-keyword">var</span> args = _resolveArgs(instances[instance]);
+          <span class="hljs-keyword">if</span> (args) {
+            <span class="hljs-keyword">var</span> actualInstance = instances[instance].factory ? func : func.apply(func, args);
+            <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'extension'</span>) {
+              <span class="hljs-keyword">var</span> wrappedInstance = {};
+              wrappedInstance[instance] = actualInstance;
+              arenite = arenite.object.extend(arenite, wrappedInstance);
+            } <span class="hljs-keyword">else</span> {
+              arenite.context.add(instance, actualInstance);
+            }
           } <span class="hljs-keyword">else</span> {
-            arenite.context.add(instance, actualInstance, instances[instance].factory, instances[instance].args || []);
+            unresolved[instance] = instances[instance];
           }
         } <span class="hljs-keyword">else</span> {
-          unresolved[instance] = instances[instance];
+          <span class="hljs-keyword">throw</span> <span class="hljs-string">'Unknown function "'</span> + instances[instance].namespace + <span class="hljs-string">'"'</span>;
         }
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Unknown function "'</span> + instances[instance].namespace + <span class="hljs-string">'"'</span>;
       }
     });
 
@@ -239,7 +243,7 @@
 
   <span class="hljs-keyword">var</span> _init = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(instances, latch, extension)</span> </span>{
     arenite.object.keys(instances).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(instance)</span> </span>{
-      <span class="hljs-keyword">if</span> (instances[instance].init) {
+      <span class="hljs-keyword">if</span> (instances[instance].init &amp;&amp; !instances[instance].factory) {
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> instances[instance].init === <span class="hljs-string">'string'</span>) {
           instances[instance].init = {func: instances[instance].init};
         }
@@ -421,6 +425,11 @@
     }
   };
 
+  <span class="hljs-keyword">var</span> _wireFactory = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(instances)</span> </span>{
+    _wire(instances);
+    _init(instances);
+  };
+
   <span class="hljs-keyword">return</span> {
     di: {</pre></div></div>
             
@@ -504,7 +513,27 @@ before the actual execution and <em><b>done</b></em> is the callback after the e
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      exec: _execFunction
+            <div class="content"><div class='highlight'><pre>      exec: _execFunction,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3 id="di-wire">di.wire</h3>
+<p>Wire a new instance at runtime (used for factories)</p>
+<p><pre><code>
+wire(instanceDefinitions)
+</pre></code>
+where <em><b>instanceDefinitions</b></em> is a list of instance definition objects to be instantiated and initialized.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      wire: _wireFactory
     }
   };
 };</pre></div></div>

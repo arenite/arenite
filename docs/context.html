@@ -126,11 +126,13 @@
             <div class="content"><div class='highlight'><pre>Arenite.Context = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
   <span class="hljs-keyword">var</span> registry = {};
   <span class="hljs-keyword">var</span> factories = {};
+  <span class="hljs-keyword">var</span> factory_id = <span class="hljs-number">1</span>;
 
-  <span class="hljs-keyword">var</span> _addInstance = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name, instance, factory, args)</span> </span>{
-    registry[name] = instance;
+  <span class="hljs-keyword">var</span> _addInstance = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name, instance, factory)</span> </span>{
     <span class="hljs-keyword">if</span> (factory) {
-      factories[name] = args || [];
+      factories[name] = instance;
+    } <span class="hljs-keyword">else</span> {
+      registry[name] = instance;
     }
   };
 
@@ -140,12 +142,11 @@
 
   <span class="hljs-keyword">var</span> _getInstance = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name)</span> </span>{
     <span class="hljs-keyword">if</span> (factories.hasOwnProperty(name)) {
-      <span class="hljs-keyword">var</span> args = arenite.di.resolveArgs({factory: <span class="hljs-literal">true</span>, args: factories[name]});
-      <span class="hljs-keyword">if</span> (args) {
-        <span class="hljs-keyword">return</span> registry[name].apply(registry[name], args);
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Unable to resolve arguments for "'</span> + name + <span class="hljs-string">'"'</span>;
-      }
+      <span class="hljs-keyword">var</span> tempId = <span class="hljs-string">'__factory_instance_'</span> + name + <span class="hljs-string">'__'</span> + factory_id++;
+      <span class="hljs-keyword">var</span> tempContext = {}
+      tempContext[tempId] = arenite.object.extend(factories[name], {factory: <span class="hljs-literal">false</span>});
+      arenite.di.wire(tempContext);
+      <span class="hljs-keyword">return</span> registry[tempId];
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">return</span> registry[name];
     }
