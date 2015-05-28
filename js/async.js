@@ -19,13 +19,15 @@ Arenite.Async = function (arenite) {
   };
 
   var _latch = function (times, callback, name) {
+    var executions = 0;
     var id = name || new Date().getTime();
+
     if (arenite.config.debug) {
       window.console.groupCollapsed('Latch: Starting latch "' + id + '" for', times, 'times');
       window.console.trace();
       window.console.groupEnd();
     }
-    var executions = 0;
+
     return {
       countDown: function () {
         executions++;
