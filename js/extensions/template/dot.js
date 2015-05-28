@@ -2,6 +2,18 @@
 Arenite.Templates = function (arenite, doT) {
   var _templates = {};
 
+  var _addText = function (text) {
+    var templateContainer = document.createElement('div');
+    templateContainer.innerHTML = text;
+    document.body.appendChild(templateContainer);
+
+    var scriptTags = templateContainer.getElementsByTagName('script');
+    for (var i = 0; i < scriptTags.length; i++) {
+      _templates[scriptTags[i].id] = doT.template(scriptTags[i].innerHTML);
+    }
+    document.body.removeChild(templateContainer);
+  };
+
   var _add = function (urls, callback) {
     var templateLatch = arenite.async.latch(urls.length, function () {
       if (typeof callback === 'function') {
@@ -10,16 +22,7 @@ Arenite.Templates = function (arenite, doT) {
     }, "template loader");
     urls.forEach(function (url) {
       arenite.loader.loadResource(url, function (template) {
-        var templateContainer = document.createElement('div');
-        templateContainer.innerHTML = template.responseText;
-        document.body.appendChild(templateContainer);
-
-        var scriptTags = templateContainer.getElementsByTagName('script');
-        for (var i = 0; i < scriptTags.length; i++) {
-          _templates[scriptTags[i].id] = doT.template(scriptTags[i].innerHTML);
-        }
-
-        document.body.removeChild(templateContainer);
+        _addText(template.responseText);
         templateLatch.countDown();
       });
     });
@@ -34,6 +37,7 @@ Arenite.Templates = function (arenite, doT) {
 
   return {
     add: _add,
+    addText: _addText,
     apply: _apply
   };
 };
