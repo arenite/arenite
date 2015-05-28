@@ -25,14 +25,14 @@ Arenite.Loader = function (arenite) {
     var script = document.createElement('script');
     script.async = true;
     script.type = 'text/javascript';
-    script.onreadystatechange = function () {
-      if (this.readyState === 'complete') {
-        callback();
-      }
-    };
-    if(navigator.appVersion.indexOf("MSIE 9")===-1){ //IE 9 calls the callback twice
-      script.onload = callback;
+    if (navigator.appVersion.indexOf("MSIE 9") === -1) { //IE 9 calls the callback twice
+      script.onreadystatechange = function () {
+        if (this.readyState === 'complete') {
+          callback();
+        }
+      };
     }
+    script.onload = callback;
     script.src = url;
     head.appendChild(script);
   };

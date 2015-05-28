@@ -148,14 +148,14 @@
     <span class="hljs-keyword">var</span> script = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'script'</span>);
     script.async = <span class="hljs-literal">true</span>;
     script.type = <span class="hljs-string">'text/javascript'</span>;
-    script.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.readyState === <span class="hljs-string">'complete'</span>) {
-        callback();
-      }
-    };
-    <span class="hljs-keyword">if</span>(navigator.appVersion.indexOf(<span class="hljs-string">"MSIE 9"</span>)===-<span class="hljs-number">1</span>){ <span class="hljs-comment">//IE 9 calls the callback twice</span>
-      script.onload = callback;
+    <span class="hljs-keyword">if</span> (navigator.appVersion.indexOf(<span class="hljs-string">"MSIE 9"</span>) === -<span class="hljs-number">1</span>) { <span class="hljs-comment">//IE 9 calls the callback twice</span>
+      script.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.readyState === <span class="hljs-string">'complete'</span>) {
+          callback();
+        }
+      };
     }
+    script.onload = callback;
     script.src = url;
     head.appendChild(script);
   };
