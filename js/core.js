@@ -49,4 +49,5 @@ Arenite = function (config) {
   arenite = arenite.object.extend(arenite, new Arenite.Loader(arenite));
   // Initialize the injector by having it read the configuration object passed into this constructor.
   arenite.di.init(config);
+  return arenite;
 };

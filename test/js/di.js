@@ -452,7 +452,6 @@ describe("Arenite.DI", function () {
     });
     expect(function () {
       Arenite({
-        expose: 'arenite',
         context: {
           instances: {
             one: {
@@ -472,5 +471,46 @@ describe("Arenite.DI", function () {
         }
       });
     }).toThrow('Unable to resolve arguments for "start" of instance "one"');
+  });
+
+  it('should not create factory instances on boot', function () {
+    var funcSpy = jasmine.createSpy('init');
+    var extra = spyOn(Arenite, 'Extra').and.returnValue({
+      init: funcSpy
+    });
+    Arenite({
+      expose: 'arenite',
+      context: {
+        instances: {
+          one: {
+            factory: true,
+            namespace: 'Arenite.Extra',
+            init:'init'
+          }
+        }
+      }
+    });
+    expect(extra).not.toHaveBeenCalled();
+    expect(funcSpy).not.toHaveBeenCalled();
+  });
+
+  it('should execute factory init if one is defined', function () {
+    var funcSpy = jasmine.createSpy('init');
+    spyOn(Arenite, 'Extra').and.returnValue({
+      init: funcSpy
+    });
+    var arenite = Arenite({
+      context: {
+        instances: {
+          one: {
+            factory: true,
+            namespace: 'Arenite.Extra',
+            init: 'init'
+          }
+        }
+      }
+    });
+    arenite.context.get('one');
+    expect(funcSpy).toHaveBeenCalled();
   });
 });
