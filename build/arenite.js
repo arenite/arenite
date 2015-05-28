@@ -242,10 +242,12 @@ Arenite.Context = function (arenite) {
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
       var tempId = '__factory_instance_' + name + '__' + factory_id++;
-      var tempContext = {}
+      var tempContext = {};
       tempContext[tempId] = arenite.object.extend(factories[name], {factory: false});
       arenite.di.wire(tempContext);
-      return registry[tempId];
+      var instance = registry[tempId];
+      _removeInstance(tempId);
+      return instance;
     } else {
       return registry[name];
     }
@@ -326,11 +328,7 @@ Arenite.DI = function (arenite) {
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
-        if (!execution.factory) {
-          execution.args[idx] = {ref: tempId};
-        } else {
-          arenite.context.remove(tempId);
-        }
+        arenite.context.remove(tempId);
       }
     });
 
@@ -367,7 +365,7 @@ Arenite.DI = function (arenite) {
 
     instanceKeys.forEach(function (instance) {
       if (instances[instance].factory) {
-        arenite.context.add(instance, instances[instance], true)
+        arenite.context.add(instance, instances[instance], true);
       } else {
         var func = arenite.object.get(window, instances[instance].namespace);
         if (func) {
@@ -621,7 +619,7 @@ Arenite.Loader = function (arenite) {
     } else {
       xhr = null;
     }
-    if (arenite.config.withCredentials){
+    if (arenite.config.withCredentials) {
       xhr.withCredentials = true;
     }
     return xhr;
