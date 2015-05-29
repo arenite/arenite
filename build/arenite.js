@@ -611,18 +611,20 @@ Arenite.Loader = function (arenite) {
 
   var _createCORSRequest = function (method, url) {
     var xhr = new XMLHttpRequest();
-    if ('withCredentials' in xhr) {
-      xhr.open(method, url, true);
-    } else if (typeof XDomainRequest !== 'undefined') {
-      xhr = new XDomainRequest();
-      xhr.open(method, url);
-      xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-      xhr.setRequestHeader("Access-Control-Allow-Origin", window.location.origin);
+    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", window.location.origin);
+    if (arenite.config.withCredentials){
+      if ('withCredentials' in xhr) {
+        xhr.open(method, url, true);
+        xhr.withCredentials = true;
+      } else if (typeof XDomainRequest !== 'undefined') {
+        xhr = new XDomainRequest();
+        xhr.open(method, url);  
+      } else {
+        xhr=null
+      }
     } else {
-      xhr = null;
-    }
-    if (arenite.config.withCredentials && typeof xhr.withCredentials !== 'undefined') {
-      xhr.withCredentials = true;
+      xhr.open(method, url, true);
     }
     return xhr;
   };
