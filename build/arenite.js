@@ -629,7 +629,7 @@ Arenite.Loader = function (arenite) {
 
   var _loadResource = function (url, callback, error) {
     var req = _createCORSRequest('GET', url);
-    req.onreadystatechange = req.onload = function () {
+    req.onreadystatechange = function () {
       if (req.readyState === 4) {
         if (req.status % 100 < 4) {
           callback(req);
@@ -637,6 +637,9 @@ Arenite.Loader = function (arenite) {
           error(req);
         }
       }
+    };
+    req.onload = function(){
+      callback(req);
     };
     req.send();
   };
