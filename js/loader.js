@@ -9,10 +9,10 @@ Arenite.Loader = function (arenite) {
     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
     xhr.setRequestHeader("Access-Control-Allow-Origin", window.location.origin);
     xhr.onreadystatechange = function () {
-      if (req.readyState === 4) {
-        if (req.status % 100 < 4) {
+      if (xhr.readyState === 4) {
+        if (xhr.status % 100 < 4) {
           success();
-        } else if (typeof error === 'function') {
+        } else {
           failure();
         }
       }
@@ -33,7 +33,7 @@ Arenite.Loader = function (arenite) {
   };
 
   var _loadResource = function (url, callback, error) {
-    var req = _createCORSRequest('GET', url, function(){callback(req);}, function(){error(req);});
+    var req = _createCORSRequest('GET', url, function(){callback(req);}, function(){ if (typeof error === 'function') error(req);});
     req.send();
   };
 
