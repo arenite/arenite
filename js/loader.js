@@ -15,7 +15,7 @@ Arenite.Loader = function (arenite) {
     } else {
       xhr = null;
     }
-    if (arenite.config.withCredentials && xhr.withCredentials) {
+    if (arenite.config.withCredentials && typeof xhr.withCredentials !== 'undefined') {
       xhr.withCredentials = true;
     }
     return xhr;
