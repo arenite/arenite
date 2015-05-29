@@ -10,10 +10,12 @@ Arenite.Loader = function (arenite) {
     } else if (typeof XDomainRequest !== 'undefined') {
       xhr = new XDomainRequest();
       xhr.open(method, url);
+      xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+      xhr.setRequestHeader("Access-Control-Allow-Origin", window.location.origin);
     } else {
       xhr = null;
     }
-    if (arenite.config.withCredentials) {
+    if (arenite.config.withCredentials && xhr.withCredentials) {
       xhr.withCredentials = true;
     }
     return xhr;
@@ -30,8 +32,6 @@ Arenite.Loader = function (arenite) {
         }
       }
     };
-    req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-    req.setRequestHeader("Access-Control-Allow-Origin", window.location.origin);
     req.send();
   };
 
