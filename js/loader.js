@@ -23,7 +23,7 @@ Arenite.Loader = function (arenite) {
 
   var _loadResource = function (url, callback, error) {
     var req = _createCORSRequest('GET', url);
-    req.onreadystatechange = function () {
+    req.onreadystatechange = req.onload = function () {
       if (req.readyState === 4) {
         if (req.status % 100 < 4) {
           callback(req);
