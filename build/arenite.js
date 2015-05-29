@@ -609,17 +609,28 @@ Arenite.DI = function (arenite) {
 // Collection of utility functions to handle loading resources.
 Arenite.Loader = function (arenite) {
 
-  var _createCORSRequest = function (method, url) {
+  var _createCORSRequest = function (method, url, success, failure) {
     var xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
     xhr.setRequestHeader("Access-Control-Allow-Origin", window.location.origin);
+    xhr.onreadystatechange = function () {
+      if (req.readyState === 4) {
+        if (req.status % 100 < 4) {
+          success();
+        } else if (typeof error === 'function') {
+          failure();
+        }
+      }
+    };
     if (arenite.config.withCredentials){
       if ('withCredentials' in xhr) {
         xhr.withCredentials = true;
       } else if (typeof XDomainRequest !== 'undefined') {
         xhr = new XDomainRequest();
         xhr.open(method, url);  
+        xhr.onload = success;
+        xhr.onerror = failure;
       } else {
         xhr=null
       }
@@ -628,19 +639,7 @@ Arenite.Loader = function (arenite) {
   };
 
   var _loadResource = function (url, callback, error) {
-    var req = _createCORSRequest('GET', url);
-    req.onreadystatechange = function () {
-      if (req.readyState === 4) {
-        if (req.status % 100 < 4) {
-          callback(req);
-        } else if (typeof error === 'function') {
-          error(req);
-        }
-      }
-    };
-    req.onload = function(){
-      callback(req);
-    };
+    var req = _createCORSRequest('GET', url, function(){callback(req);}, function(){error(req);});
     req.send();
   };
 
