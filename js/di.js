@@ -278,7 +278,7 @@ Arenite.DI = function (arenite) {
   };
 
   var _wireFactory = function (instances) {
-    _wire(instances);
+    _wire(instances, 'factory');
     _init(instances);
   };
 
