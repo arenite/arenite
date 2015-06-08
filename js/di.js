@@ -18,7 +18,7 @@ Arenite.DI = function (arenite) {
     return resolvedFunc;
   };
 
-  var _resolveArgs = function (execution, done) {
+  var _resolveArgs = function (execution, done, type) {
     if (!execution.args) {
       return [];
     }
@@ -43,8 +43,12 @@ Arenite.DI = function (arenite) {
         var tempId = '__anonymous_temp_instance__' + anonymous_id++;
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
-        execution.args.splice(idx, 1, {ref:tempId});
         resolved.push(arenite.context.get(tempId));
+        if(type==='factory'){
+          arenite.context.remove(tempId);
+        } else {
+          execution.args.splice(idx, 1, {ref:tempId});
+        }
       }
     });
 
@@ -85,9 +89,9 @@ Arenite.DI = function (arenite) {
       } else {
         var func = arenite.object.get(window, instances[instance].namespace);
         if (func) {
-          var args = _resolveArgs(instances[instance]);
+          var args = _resolveArgs(instances[instance], null, type);
           if (args) {
-            var actualInstance = instances[instance].factory ? func : func.apply(func, args);
+            var actualInstance = func.apply(func, args);
             if (type === 'extension') {
               var wrappedInstance = {};
               wrappedInstance[instance] = actualInstance;
