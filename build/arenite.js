@@ -328,7 +328,7 @@ Arenite.DI = function (arenite) {
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
-        arenite.context.remove(tempId);
+        // arenite.context.remove(tempId);
       }
     });
 
