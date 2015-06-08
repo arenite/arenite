@@ -43,8 +43,8 @@ Arenite.DI = function (arenite) {
         var tempId = '__anonymous_temp_instance__' + anonymous_id++;
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
+        execution.args.splice(idx, 1, {ref:tempId});
         resolved.push(arenite.context.get(tempId));
-        // arenite.context.remove(tempId);
       }
     });
 
