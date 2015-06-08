@@ -323,12 +323,12 @@ Arenite.DI = function (arenite) {
       } else if (typeof arg.exec !== 'undefined') {
         resolved.push(arg.exec(arenite));
       } else if (typeof arg.instance !== 'undefined') {
-        var anonymousContext = {instances: {}};
+		var anonymousContext = {instances: {}};
         var tempId = '__anonymous_temp_instance__' + anonymous_id++;
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
+        execution.args.splice(idx, 1, {ref:tempId});
         resolved.push(arenite.context.get(tempId));
-        // arenite.context.remove(tempId);
       }
     });
 
