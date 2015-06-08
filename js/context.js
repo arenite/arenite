@@ -22,7 +22,7 @@ Arenite.Context = function (arenite) {
       var tempId = '__factory_instance_' + name + '__' + factory_id++;
       var tempContext = {};
       tempContext[tempId] = arenite.object.extend(factories[name], {factory: false});
-      arenite.di.wire(tempContext, 'factory');
+      arenite.di.wire(tempContext);
       var instance = registry[tempId];
       _removeInstance(tempId);
       return instance;
