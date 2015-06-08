@@ -244,7 +244,7 @@ Arenite.Context = function (arenite) {
       var tempId = '__factory_instance_' + name + '__' + factory_id++;
       var tempContext = {};
       tempContext[tempId] = arenite.object.extend(factories[name], {factory: false});
-      arenite.di.wire(tempContext);
+      arenite.di.wire(tempContext, 'factory');
       var instance = registry[tempId];
       _removeInstance(tempId);
       return instance;
@@ -302,7 +302,7 @@ Arenite.DI = function (arenite) {
     return resolvedFunc;
   };
 
-  var _resolveArgs = function (execution, done) {
+  var _resolveArgs = function (execution, done, type) {
     if (!execution.args) {
       return [];
     }
@@ -323,12 +323,16 @@ Arenite.DI = function (arenite) {
       } else if (typeof arg.exec !== 'undefined') {
         resolved.push(arg.exec(arenite));
       } else if (typeof arg.instance !== 'undefined') {
-		var anonymousContext = {instances: {}};
+        var anonymousContext = {instances: {}};
         var tempId = '__anonymous_temp_instance__' + anonymous_id++;
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
-        execution.args.splice(idx, 1, {ref:tempId});
         resolved.push(arenite.context.get(tempId));
+        if(type==='factory'){
+          arenite.context.remove(tempId);
+        } else {
+          execution.args.splice(idx, 1, {ref:tempId});
+        }
       }
     });
 
@@ -355,7 +359,7 @@ Arenite.DI = function (arenite) {
     }
   };
 
-  var _wire = function (instances, type) {
+   var _wire = function (instances, type) {
     if (!instances) {
       return;
     }
@@ -369,9 +373,9 @@ Arenite.DI = function (arenite) {
       } else {
         var func = arenite.object.get(window, instances[instance].namespace);
         if (func) {
-          var args = _resolveArgs(instances[instance]);
+          var args = _resolveArgs(instances[instance], null, type);
           if (args) {
-            var actualInstance = instances[instance].factory ? func : func.apply(func, args);
+            var actualInstance = func.apply(func, args);
             if (type === 'extension') {
               var wrappedInstance = {};
               wrappedInstance[instance] = actualInstance;
