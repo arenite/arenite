@@ -132,7 +132,35 @@ Arenite.Object = function () {
     }
     return result;
   };
+  
+  var _obj = function (arr, key) {
+    var obj = {};
+    arr.forEach(function (elem) {
+      obj[_getInObject(elem, key)] = elem;
+    });
+    return obj;
+  };
 
+  var _forEach = function (obj, func) {
+    var key;
+    for (key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        func(obj[key], key);
+      }
+    }
+  };
+
+  var _values = function (obj) {
+    var key;
+    var arr = [];
+    for (key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        arr.push(obj[key]);
+      }
+    }
+    return arr;
+  };
+  
   return {
     object: {
       //###object.get
@@ -171,6 +199,20 @@ Arenite.Object = function () {
       //</pre></code>
       //where *<b>object</b>* is the object from which the properties will be extracted.
       keys: _keys,
+      //###object.forEach
+      //Iterates through the object the equivalent to the way forEach works for arrays.
+      //<pre><code>
+      // forEach(object, func(elem, key))
+      //</pre></code>
+      //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
+      forEach: _forEach,
+      //###object.values
+      //Returns all the values available to an object in the form of an array.
+      //<pre><code>
+      // keys(object)
+      //</pre></code>
+      //where *<b>object</b>* is the object from which the elements will be extracted.
+      values: _values,
       //###object.contains
       // Determines if a element is present in an array or a key exists in an object:
       //<pre><code>
@@ -207,7 +249,14 @@ Arenite.Object = function () {
       // extract(object, property)
       //</pre></code>
       //where *<b>object</b>* is the object whose members will be analysed *<b>property</b>* the property to be extracted from those members
-      extract: _extract
+      extract: _extract,
+      //###array.obj
+      // Extract an object indexed by a given key
+      //<pre><code>
+      // obj(array, property)
+      //</pre></code>
+      //where *<b>array</b>* is the array whose members will be analysed *<b>property</b>* the property of each element to be turned into the key of that element in the resulting object
+      obj: _obj
     }
   };
 };
