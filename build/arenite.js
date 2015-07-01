@@ -795,7 +795,7 @@ Arenite.Object = function () {
     for (var f in target) {
       if (target.hasOwnProperty(f)) {
         if (source[f] && typeof source[f] === 'object') {
-          if (source[f].constructor === Array && target[f].constructor === Array) {
+          if (source[f].constructor === Array && target[f] && target[f].constructor === Array) {
             source[f] = _uniq(source[f].concat(target[f]));
           } else {
             _extend(source[f], target[f]);
@@ -867,7 +867,7 @@ Arenite.Object = function () {
     }
     return result;
   };
-  
+
   var _obj = function (arr, key) {
     var obj = {};
     arr.forEach(function (elem) {
@@ -895,7 +895,25 @@ Arenite.Object = function () {
     }
     return arr;
   };
-  
+
+  var _array = function (obj) {
+    var arr = [];
+    _forEach(obj, function (el) {
+      arr.push(el);
+    });
+    return arr;
+  };
+
+  var _filter = function (obj, keys) {
+    var filtered = {};
+    keys.forEach(function (key) {
+      if (obj.hasOwnProperty(key)) {
+        filtered[key] = obj[key];
+      }
+    });
+    return filtered;
+  };
+
   return {
     object: {
       //###object.get
@@ -954,7 +972,21 @@ Arenite.Object = function () {
       // contains(object, key)
       //</pre></code>
       //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
-      contains: _contains
+      contains: _contains,
+      //###object.array
+      // Transforms the object to an array using the values for each key:
+      //<pre><code>
+      // array(object)
+      //</pre></code>
+      //where *<b>object</b>* is the object to be transformed into the array.
+      array: _array,
+      //###object.filter
+      // Returns a filtered version of the object:
+      //<pre><code>
+      // filter(object, keys)
+      //</pre></code>
+      //where *<b>object</b>* is the object to be filtered and *<b>keys</b>* an array of keys to maintain.
+      filter: _filter
     },
     array: {
       //###array.contains
