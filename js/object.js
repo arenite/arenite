@@ -291,4 +291,4 @@ Arenite.Object = function () {
       obj: _obj
     }
   };
-}
+};

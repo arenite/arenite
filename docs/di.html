@@ -70,6 +70,11 @@
                 </a>
               
                 
+                <a class="source" href="html.html">
+                  html.js
+                </a>
+              
+                
                 <a class="source" href="loader.html">
                   loader.js
                 </a>
@@ -141,7 +146,7 @@
     <span class="hljs-keyword">return</span> resolvedFunc;
   };
 
-  <span class="hljs-keyword">var</span> _resolveArgs = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(execution, done)</span> </span>{
+  <span class="hljs-keyword">var</span> _resolveArgs = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(execution, done, type)</span> </span>{
     <span class="hljs-keyword">if</span> (!execution.args) {
       <span class="hljs-keyword">return</span> [];
     }
@@ -167,7 +172,11 @@
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
-        arenite.context.remove(tempId);
+        <span class="hljs-keyword">if</span>(type===<span class="hljs-string">'factory'</span>){
+          arenite.context.remove(tempId);
+        } <span class="hljs-keyword">else</span> {
+          execution.args.splice(idx, <span class="hljs-number">1</span>, {ref:tempId});
+        }
       }
     });
 
@@ -208,9 +217,9 @@
       } <span class="hljs-keyword">else</span> {
         <span class="hljs-keyword">var</span> func = arenite.object.get(<span class="hljs-built_in">window</span>, instances[instance].namespace);
         <span class="hljs-keyword">if</span> (func) {
-          <span class="hljs-keyword">var</span> args = _resolveArgs(instances[instance]);
+          <span class="hljs-keyword">var</span> args = _resolveArgs(instances[instance], <span class="hljs-literal">null</span>, type);
           <span class="hljs-keyword">if</span> (args) {
-            <span class="hljs-keyword">var</span> actualInstance = instances[instance].factory ? func : func.apply(func, args);
+            <span class="hljs-keyword">var</span> actualInstance = func.apply(func, args);
             <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'extension'</span>) {
               <span class="hljs-keyword">var</span> wrappedInstance = {};
               wrappedInstance[instance] = actualInstance;
@@ -422,7 +431,7 @@
   };
 
   <span class="hljs-keyword">var</span> _wireFactory = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(instances)</span> </span>{
-    _wire(instances);
+    _wire(instances, <span class="hljs-string">'factory'</span>);
     _init(instances);
   };
 

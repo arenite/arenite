@@ -17,23 +17,27 @@ Arenite.Loader = function (arenite) {
         }
       }
     };
-    if (arenite.config.withCredentials){
+    if (arenite.config.withCredentials) {
       if ('withCredentials' in xhr) {
         xhr.withCredentials = true;
       } else if (typeof XDomainRequest !== 'undefined') {
         xhr = new XDomainRequest();
-        xhr.open(method, url);  
+        xhr.open(method, url);
         xhr.onload = success;
         xhr.onerror = failure;
       } else {
-        xhr=null
+        xhr = null
       }
     }
     return xhr;
   };
 
   var _loadResource = function (url, callback, error) {
-    var req = _createCORSRequest('GET', url, function(){callback(req);}, function(){ if (typeof error === 'function') error(req);});
+    var req = _createCORSRequest('GET', url, function () {
+      callback(req);
+    }, function () {
+      if (typeof error === 'function') error(req);
+    });
     req.send();
   };
 

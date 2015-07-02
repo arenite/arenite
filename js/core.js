@@ -1,5 +1,5 @@
 /*!
- * Arenite JavaScript Library v1.0.1
+ * Arenite JavaScript Library v1.1.0
  * https://github.com/lcavadas/arenite
  *
  * Copyright 2014, Luís Serralheiro
@@ -25,6 +25,9 @@ Arenite = function (config) {
   //### Arenite.Object
   // Instance of the Sandbox is started with the <a href="object.html">Arenite.Object</a> module witch gives us access to the <code>extend</code> function used.
   var arenite = new Arenite.Object(arenite);
+  //### Arenite.Html
+  // Extend the instance with the <a href="async.html">Arenite.Html</a> extension providing the html helper tooks.
+  arenite = arenite.object.extend(arenite, new Arenite.Html(arenite));
   //### Arenite.Async
   // Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
   arenite = arenite.object.extend(arenite, new Arenite.Async(arenite));

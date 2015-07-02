@@ -1,5 +1,5 @@
 /*!
- * Arenite JavaScript Library v1.0.1
+ * Arenite JavaScript Library v1.1.0
  * https://github.com/lcavadas/arenite
  *
  * Copyright 2014, Luís Serralheiro
@@ -25,6 +25,9 @@ Arenite = function (config) {
   //### Arenite.Object
   // Instance of the Sandbox is started with the <a href="object.html">Arenite.Object</a> module witch gives us access to the <code>extend</code> function used.
   var arenite = new Arenite.Object(arenite);
+  //### Arenite.Html
+  // Extend the instance with the <a href="async.html">Arenite.Html</a> extension providing the html helper tooks.
+  arenite = arenite.object.extend(arenite, new Arenite.Html(arenite));
   //### Arenite.Async
   // Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
   arenite = arenite.object.extend(arenite, new Arenite.Async(arenite));
@@ -251,7 +254,7 @@ Arenite.Context = function (arenite) {
     } else {
       return registry[name];
     }
-  }; 
+  };
 
   return {
     context: {
@@ -282,6 +285,7 @@ Arenite.Context = function (arenite) {
     }
   };
 };
+
 /*global Arenite:true*/
 // Collection of utility functions wire the instances and load the configured resources.
 Arenite.DI = function (arenite) {
@@ -359,7 +363,7 @@ Arenite.DI = function (arenite) {
     }
   };
 
-   var _wire = function (instances, type) {
+  var _wire = function (instances, type) {
     if (!instances) {
       return;
     }
@@ -608,6 +612,30 @@ Arenite.DI = function (arenite) {
     }
   };
 };
+
+/*global Arenite:true*/
+// Collection of utility functions to handle html.
+Arenite.Html = function (arenite) {
+
+  var _escape = function (text) {
+    var span = document.createElement('span');
+    span.innerText = text;
+    return span.innerHTML;
+  };
+
+  var _unescape = function (text) {
+    var span = document.createElement('span');
+    span.innerHTML = text;
+    return span.innerText;
+  };
+
+  return {
+    html: {
+      escape: _escape,
+      unescape: _unescape
+    }
+  };
+};
 /*global Arenite:true*/
 /*jshint evil:true*/
 // Collection of utility functions to handle loading resources.
@@ -627,23 +655,27 @@ Arenite.Loader = function (arenite) {
         }
       }
     };
-    if (arenite.config.withCredentials){
+    if (arenite.config.withCredentials) {
       if ('withCredentials' in xhr) {
         xhr.withCredentials = true;
       } else if (typeof XDomainRequest !== 'undefined') {
         xhr = new XDomainRequest();
-        xhr.open(method, url);  
+        xhr.open(method, url);
         xhr.onload = success;
         xhr.onerror = failure;
       } else {
-        xhr=null
+        xhr = null
       }
     }
     return xhr;
   };
 
   var _loadResource = function (url, callback, error) {
-    var req = _createCORSRequest('GET', url, function(){callback(req);}, function(){ if (typeof error === 'function') error(req);});
+    var req = _createCORSRequest('GET', url, function () {
+      callback(req);
+    }, function () {
+      if (typeof error === 'function') error(req);
+    });
     req.send();
   };
 
@@ -733,6 +765,7 @@ Arenite.Loader = function (arenite) {
     }
   };
 };
+
 /*global Arenite:true*/
 // Collection of utility functions to handle objects.
 // This is an integral part for the usage of the Namespace pattern since this provides the ability to, for example,
@@ -1027,6 +1060,7 @@ Arenite.Object = function () {
     }
   };
 };
+
 /*global Arenite:true*/
 //Utility function for interpreting url query parameters
 Arenite.Url = function () {
