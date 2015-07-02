@@ -70,6 +70,11 @@
                 </a>
               
                 
+                <a class="source" href="html.html">
+                  html.js
+                </a>
+              
+                
                 <a class="source" href="loader.html">
                   loader.js
                 </a>
@@ -126,35 +131,41 @@
             
             <div class="content"><div class='highlight'><pre>Arenite.Loader = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
 
-  <span class="hljs-keyword">var</span> _createCORSRequest = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(method, url)</span> </span>{
+  <span class="hljs-keyword">var</span> _createCORSRequest = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(method, url, success, failure)</span> </span>{
     <span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();
-    <span class="hljs-keyword">if</span> (<span class="hljs-string">'withCredentials'</span> <span class="hljs-keyword">in</span> xhr) {
-      xhr.open(method, url, <span class="hljs-literal">true</span>);
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> XDomainRequest !== <span class="hljs-string">'undefined'</span>) {
-      xhr = <span class="hljs-keyword">new</span> XDomainRequest();
-      xhr.open(method, url);
-    } <span class="hljs-keyword">else</span> {
-      xhr = <span class="hljs-literal">null</span>;
-    }
+    xhr.open(method, url, <span class="hljs-literal">true</span>);
+    xhr.setRequestHeader(<span class="hljs-string">"X-Requested-With"</span>, <span class="hljs-string">"XMLHttpRequest"</span>);
+    xhr.setRequestHeader(<span class="hljs-string">"Access-Control-Allow-Origin"</span>, <span class="hljs-built_in">window</span>.location.origin);
+    xhr.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">if</span> (xhr.readyState === <span class="hljs-number">4</span>) {
+        <span class="hljs-keyword">if</span> (xhr.status % <span class="hljs-number">100</span> &lt; <span class="hljs-number">4</span>) {
+          success();
+        } <span class="hljs-keyword">else</span> {
+          failure();
+        }
+      }
+    };
     <span class="hljs-keyword">if</span> (arenite.config.withCredentials) {
-      xhr.withCredentials = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">if</span> (<span class="hljs-string">'withCredentials'</span> <span class="hljs-keyword">in</span> xhr) {
+        xhr.withCredentials = <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> XDomainRequest !== <span class="hljs-string">'undefined'</span>) {
+        xhr = <span class="hljs-keyword">new</span> XDomainRequest();
+        xhr.open(method, url);
+        xhr.onload = success;
+        xhr.onerror = failure;
+      } <span class="hljs-keyword">else</span> {
+        xhr = <span class="hljs-literal">null</span>
+      }
     }
     <span class="hljs-keyword">return</span> xhr;
   };
 
   <span class="hljs-keyword">var</span> _loadResource = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, callback, error)</span> </span>{
-    <span class="hljs-keyword">var</span> req = _createCORSRequest(<span class="hljs-string">'GET'</span>, url);
-    req.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-      <span class="hljs-keyword">if</span> (req.readyState === <span class="hljs-number">4</span>) {
-        <span class="hljs-keyword">if</span> (req.status % <span class="hljs-number">100</span> &lt; <span class="hljs-number">4</span>) {
-          callback(req);
-        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> error === <span class="hljs-string">'function'</span>) {
-          error(req);
-        }
-      }
-    };
-    req.setRequestHeader(<span class="hljs-string">"X-Requested-With"</span>, <span class="hljs-string">"XMLHttpRequest"</span>);
-    req.setRequestHeader(<span class="hljs-string">"Access-Control-Allow-Origin"</span>, <span class="hljs-built_in">window</span>.location.origin);
+    <span class="hljs-keyword">var</span> req = _createCORSRequest(<span class="hljs-string">'GET'</span>, url, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      callback(req);
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> error === <span class="hljs-string">'function'</span>) error(req);
+    });
     req.send();
   };
 
