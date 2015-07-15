@@ -1,4 +1,8 @@
+## What is it
+
 Inversion of Control / Dependency Injection Library
+
+## Links
 
 Visit the webpage <a href="//lcavadas.github.io/arenite">here</a>
 
