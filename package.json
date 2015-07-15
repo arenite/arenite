@@ -33,7 +33,7 @@
     "gulp-shell": "^0.2.11",
     "gulp-merge": "^0.1.0",
     "gulp-download": "^0.0.1"
-    "gulp-jasmine-phantom":"^1.2.0",
+    "gulp-jasmine2-phantomjs": "^0.2.0",
     "docco": "^0.7.0"
   }
 }
