@@ -21,8 +21,6 @@
     "unused": true,
     "browser": true
   },
-  "dependencies":{
-  },
   "devDependencies": {
     "express":"^4.12.4",
     "gulp": "^3.8.10",
