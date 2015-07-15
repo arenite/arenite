@@ -1,5 +1,5 @@
 Master: [![Build Status](https://travis-ci.org/lcavadas/arenite.svg?branch=master)](https://travis-ci.org/lcavadas/arenite)
-1.1.0: [![Build Status](https://travis-ci.org/lcavadas/arenite.svg?branch=1.1.0)](https://travis-ci.org/lcavadas/arenite)
+1.1.1: [![Build Status](https://travis-ci.org/lcavadas/arenite.svg?branch=1.1.1)](https://travis-ci.org/lcavadas/arenite)
 
 Inversion of Control / Dependency Injection Library
 
