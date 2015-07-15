@@ -9,8 +9,13 @@
   var concat = require('gulp-concat');
   var shell = require('gulp-shell');
   var arenitesrc = require('./gulp-arenite.js');
+  var jasminePhantomJs = require('gulp-jasmine2-phantomjs');
 
   var build = 'build/';
+
+  gulp.task('test', function(){
+    return gulp.src('test/test.html').pipe(jasminePhantomJs());
+  });
 
   gulp.task('docs', function () {
     return gulp.src('js/core.js', {read: false})
