@@ -1,4 +1,4 @@
-master:<a href="https://travis-ci.org/lcavadas/arenite"><img src="https://travis-ci.org/lcavadas/arenite.svg?branch=master" alt="Build Status"></a>
+[![Build Status](https://travis-ci.org/lcavadas/arenite.svg?branch=master)](https://travis-ci.org/lcavadas/arenite)
 
 Inversion of Control / Dependency Injection Library
 
