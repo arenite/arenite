@@ -15,3 +15,7 @@ Visit the Demo TodoMVC app built with arenite <a href="//cdn.rawgit.com/lcavadas
 ## Status
 Master: [![Build Status](https://travis-ci.org/lcavadas/arenite.svg?branch=master)](https://travis-ci.org/lcavadas/arenite)
 1.1.1: [![Build Status](https://travis-ci.org/lcavadas/arenite.svg?branch=1.1.1)](https://travis-ci.org/lcavadas/arenite)
+
+
+Master: [![Coverage Status](https://coveralls.io/repos/lcavadas/arenite/badge.svg?branch=master&service=github)](https://coveralls.io/github/lcavadas/arenite?branch=master)
+1.1.1: [![Coverage Status](https://coveralls.io/repos/lcavadas/arenite/badge.svg?branch=1.1.1&service=github)](https://coveralls.io/github/lcavadas/arenite?branch=1.1.1)
