@@ -641,6 +641,8 @@ Arenite.Html = function (arenite) {
 // Collection of utility functions to handle loading resources.
 Arenite.Loader = function (arenite) {
 
+  var firefoxOs = navigator.userAgent.indexOf('Firefox') > -1 && navigator.userAgent.indexOf("Mobile") > -1;
+
   var _createCORSRequest = function (method, url, success, failure) {
     var xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
@@ -664,7 +666,7 @@ Arenite.Loader = function (arenite) {
         xhr.onload = success;
         xhr.onerror = failure;
       } else {
-        xhr = null
+        xhr = null;
       }
     }
     return xhr;
@@ -674,7 +676,9 @@ Arenite.Loader = function (arenite) {
     var req = _createCORSRequest('GET', url, function () {
       callback(req);
     }, function () {
-      if (typeof error === 'function') error(req);
+      if (typeof error === 'function') {
+        error(req);
+      }
     });
     req.send();
   };
@@ -716,7 +720,7 @@ Arenite.Loader = function (arenite) {
   };
 
   var _loadScriptFrom = function (url, callback) {
-    if (_sameOrigin(url)) {
+    if (_sameOrigin(url) && !firefoxOs) {
       _loadScriptAsResource(url, callback);
     } else {
       _loadScriptWithTag(url, callback);

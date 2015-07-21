@@ -139,8 +139,14 @@ Arenite.Templates = <span class="hljs-function"><span class="hljs-keyword">funct
       arenite.loader.loadResource(url, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(template)</span> </span>{
         _addText(template.responseText);
         templateLatch.countDown();
+      }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
+        <span class="hljs-built_in">window</span>.console.error(e);
       });
     });
+  };
+
+  <span class="hljs-keyword">var</span> _addCompiled = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name, func)</span> </span>{
+    _templates[name] = func;
   };
 
   <span class="hljs-keyword">var</span> _apply = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name, arg)</span> </span>{
@@ -153,6 +159,7 @@ Arenite.Templates = <span class="hljs-function"><span class="hljs-keyword">funct
   <span class="hljs-keyword">return</span> {
     add: _add,
     addText: _addText,
+    addCompiled: _addCompiled,
     apply: _apply
   };
 };</pre></div></div>

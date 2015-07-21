@@ -24,8 +24,14 @@ Arenite.Templates = function (arenite, doT) {
       arenite.loader.loadResource(url, function (template) {
         _addText(template.responseText);
         templateLatch.countDown();
+      }, function (e) {
+        window.console.error(e);
       });
     });
+  };
+
+  var _addCompiled = function (name, func) {
+    _templates[name] = func;
   };
 
   var _apply = function (name, arg) {
@@ -38,6 +44,7 @@ Arenite.Templates = function (arenite, doT) {
   return {
     add: _add,
     addText: _addText,
+    addCompiled: _addCompiled,
     apply: _apply
   };
 };

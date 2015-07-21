@@ -131,6 +131,8 @@
             
             <div class="content"><div class='highlight'><pre>Arenite.Loader = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
 
+  <span class="hljs-keyword">var</span> firefoxOs = navigator.userAgent.indexOf(<span class="hljs-string">'Firefox'</span>) &gt; -<span class="hljs-number">1</span> &amp;&amp; navigator.userAgent.indexOf(<span class="hljs-string">"Mobile"</span>) &gt; -<span class="hljs-number">1</span>;
+
   <span class="hljs-keyword">var</span> _createCORSRequest = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(method, url, success, failure)</span> </span>{
     <span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();
     xhr.open(method, url, <span class="hljs-literal">true</span>);
@@ -154,7 +156,7 @@
         xhr.onload = success;
         xhr.onerror = failure;
       } <span class="hljs-keyword">else</span> {
-        xhr = <span class="hljs-literal">null</span>
+        xhr = <span class="hljs-literal">null</span>;
       }
     }
     <span class="hljs-keyword">return</span> xhr;
@@ -164,7 +166,9 @@
     <span class="hljs-keyword">var</span> req = _createCORSRequest(<span class="hljs-string">'GET'</span>, url, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
       callback(req);
     }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> error === <span class="hljs-string">'function'</span>) error(req);
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> error === <span class="hljs-string">'function'</span>) {
+        error(req);
+      }
     });
     req.send();
   };
@@ -219,7 +223,7 @@
   };
 
   <span class="hljs-keyword">var</span> _loadScriptFrom = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, callback)</span> </span>{
-    <span class="hljs-keyword">if</span> (_sameOrigin(url)) {
+    <span class="hljs-keyword">if</span> (_sameOrigin(url) &amp;&amp; !firefoxOs) {
       _loadScriptAsResource(url, callback);
     } <span class="hljs-keyword">else</span> {
       _loadScriptWithTag(url, callback);

@@ -1,20 +1,22 @@
 /*global require:true */
 (function () {
   'use strict';
-
+  var exec = require('child_process').exec;
   var gulp = require('gulp');
   var rename = require('gulp-rename');
   var uglify = require('gulp-uglify');
   var jshint = require('gulp-jshint');
   var concat = require('gulp-concat');
   var shell = require('gulp-shell');
-  var arenitesrc = require('./gulp-arenite.js');
-  var jasminePhantomJs = require('gulp-jasmine2-phantomjs');
 
   var build = 'build/';
 
-  gulp.task('test', function(){
-    return gulp.src('test/test.html').pipe(jasminePhantomJs());
+  gulp.task('test', function (cb) {
+    exec('phantomjs test/lib/run-jasmine.js test/test.html', function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+      cb(err);
+    });
   });
 
   gulp.task('docs', function () {

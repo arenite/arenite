@@ -1,3 +1,4 @@
+/*globals require:true, phantom:true, console:true*/
 var system = require('system');
 
 /**
@@ -33,7 +34,7 @@ function waitFor(testFx, onReady, timeOutMillis) {
         }
       }
     }, 100); //< repeat check every 100ms
-};
+}
 
 
 if (system.args.length !== 2) {
@@ -41,7 +42,6 @@ if (system.args.length !== 2) {
   phantom.exit(1);
 }
 
-var fs = require('fs');
 var page = require('webpage').create();
 var finished = false;
 var failures = 0;
@@ -58,20 +58,10 @@ page.onConsoleMessage = function (msg) {
 };
 
 page.open(system.args[1], function (status) {
-  if (status !== "success") {
-    console.log("Unable to access network");
-    phantom.exit();
-  } else {
-    waitFor(function () {
-      return finished;
-    }, function () {
-      var result = page.evaluate(function () {
-        return document.body.querySelector('#coverage-report').innerText.replace(/<br>/g, '\n');
-      });
-      fs.write("build/test-coverage.dat", result, 'w');
-      fs.write("build/test-result.html", page.content, 'w');
-      console.log(failures + ' failed tests');
-      phantom.exit(failures);
-    });
-  }
+  waitFor(function () {
+    return finished;
+  }, function () {
+    console.log(failures + ' failed tests');
+    phantom.exit(failures);
+  });
 });
