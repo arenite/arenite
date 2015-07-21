@@ -51,7 +51,7 @@ page.onConsoleMessage = function (msg) {
   if (msg.match(/Finished in \d+ seconds/)) {
     finished = true;
   }
-  var exec = /\d+ specs*, (\d+) failures* in/.exec(msg);
+  var exec = /\d+ specs*, (\d+) failures*/.exec(msg);
   if (exec) {
     failures = exec[1];
   }
