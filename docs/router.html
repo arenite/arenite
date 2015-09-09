@@ -126,12 +126,12 @@ Arenite.Router = <span class="hljs-function"><span class="hljs-keyword">function
       <span class="hljs-keyword">var</span> args = _routes[route].regex.exec(hash);
       <span class="hljs-keyword">if</span> (args) {
         args.splice(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
-        _executeRoute(route, args, updateHash ? hash : updateHash);
+        _executeRoute(route, args, _routes[route].vars, updateHash ? hash : updateHash);
       }
     });
   };
 
-  <span class="hljs-keyword">var</span> _executeRoute = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(route, args, updateHash)</span> </span>{
+  <span class="hljs-keyword">var</span> _executeRoute = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(route, args, vars, updateHash)</span> </span>{
     _routes[route].executions.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(execution)</span> </span>{
       <span class="hljs-keyword">var</span> exec = <span class="hljs-built_in">JSON</span>.parse(<span class="hljs-built_in">JSON</span>.stringify(execution));
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> execution.func === <span class="hljs-string">'function'</span>) {
@@ -141,9 +141,11 @@ Arenite.Router = <span class="hljs-function"><span class="hljs-keyword">function
       <span class="hljs-keyword">if</span> (!exec.args) {
         exec.args = [];
       }
-      args.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arg)</span> </span>{
-        exec.args.push({value: arg});
+      <span class="hljs-keyword">var</span> values = {};
+      args.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arg, i)</span> </span>{
+        values[vars[i]] = arg;
       });
+      exec.args.push({value:values});
       <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite.Router: Executing route "'</span> + route + <span class="hljs-string">'" with:'</span>, exec);
       <span class="hljs-keyword">if</span> (updateHash) {
         <span class="hljs-built_in">window</span>.location.hash = updateHash;
@@ -167,8 +169,12 @@ Arenite.Router = <span class="hljs-function"><span class="hljs-keyword">function
   };
 
   <span class="hljs-keyword">var</span> _add = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(route, executions)</span> </span>{
-    <span class="hljs-keyword">var</span> regex = <span class="hljs-string">'^#'</span> + route.replace(<span class="hljs-regexp">/:\w+/g</span>, <span class="hljs-string">'(\\w+)'</span>) + <span class="hljs-string">"$"</span>;
-    _routes[route] = {executions: executions, regex: <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(regex)};
+    <span class="hljs-keyword">var</span> regex = <span class="hljs-string">'^#'</span> + route.replace(<span class="hljs-regexp">/:[^/]+/g</span>, <span class="hljs-string">'([^/]+)'</span>) + <span class="hljs-string">"$"</span>;
+    <span class="hljs-keyword">var</span> vars = route.match(<span class="hljs-regexp">/:[^/]+/g</span>);
+    vars.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(v, i)</span> </span>{
+      vars[i] = v.substring(<span class="hljs-number">1</span>);
+    });
+    _routes[route] = {executions: executions, regex: <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(regex), vars: vars};
   };
 
   <span class="hljs-keyword">var</span> _remove = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(route)</span> </span>{

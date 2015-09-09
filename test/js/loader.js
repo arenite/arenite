@@ -68,7 +68,7 @@ describe("Arenite.Loader", function () {
   });
 
   it("should use ajax when resource has same origin", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials', 'onreadystatechange']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials']);
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
@@ -85,7 +85,7 @@ describe("Arenite.Loader", function () {
   });
 
   it("should invoke annotation processor when script is loaded", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials', 'onreadystatechange']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials']);
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
@@ -102,14 +102,14 @@ describe("Arenite.Loader", function () {
   });
 
   it("should extract variables from window when structure is used for load", function () {
-    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials', 'onreadystatechange']);
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials']);
     window.XMLHttpRequest = function () {
       return xmlHttpReq;
     };
     var arenite = Arenite.Object();
     arenite = arenite.object.extend(arenite, {
       annotation: jasmine.createSpyObj('annotationProcessor', ['processAnnotations']),
-      config: {}
+      config:{}
     });
     arenite = arenite.object.extend(arenite, Arenite.Context());
     console.log('asd', arenite);

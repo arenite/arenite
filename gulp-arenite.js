@@ -62,8 +62,7 @@ var Loader = function (config, cb) {
 
 module.exports = function (options, config, cb) {
   Loader(config, function (arenite, config) {
-    var local = [];
-    var remote = [];
+    var merged;
     options = arenite.object.extend({env: 'dev', base: ''}, options);
     if (options.base.length && options.base[options.base.length - 1] !== '/') {
       options.base = options.base + '/';
@@ -78,9 +77,9 @@ module.exports = function (options, config, cb) {
         script = script.indexOf("//") === 0 ? 'http:' + script : options.base + script;
         var match = regex.exec(script);
         if (match) {
-          remote.push(match[0]);
+          merged = gulpMerge(remoteSrc([match[0]]), merged);
         } else {
-          local.push(script);
+          merged = gulpMerge(gulp.src(script), merged);
         }
       });
     };
@@ -95,6 +94,6 @@ module.exports = function (options, config, cb) {
       _parse(config.context.dependencies[options.mode].async);
     }
 
-    cb(gulpMerge(remoteSrc(remote), gulp.src(local)));
+    cb(merged);
   });
 };
