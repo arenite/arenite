@@ -7,6 +7,8 @@ require('./build/arenite.js');
 
 var _options;
 
+global.navigator = {userAgent: 'node'};
+
 global.window = global;
 
 global.window.XMLHttpRequest = function () {
