@@ -11,12 +11,12 @@ Arenite.Router = function (arenite) {
       var args = _routes[route].regex.exec(hash);
       if (args) {
         args.splice(0, 1);
-        _executeRoute(route, args, updateHash ? hash : updateHash);
+        _executeRoute(route, args, _routes[route].vars, updateHash ? hash : updateHash);
       }
     });
   };
 
-  var _executeRoute = function (route, args, updateHash) {
+  var _executeRoute = function (route, args, vars, updateHash) {
     _routes[route].executions.forEach(function (execution) {
       var exec = JSON.parse(JSON.stringify(execution));
       if (typeof execution.func === 'function') {
@@ -26,9 +26,11 @@ Arenite.Router = function (arenite) {
       if (!exec.args) {
         exec.args = [];
       }
-      args.forEach(function (arg) {
-        exec.args.push({value: arg});
+      var values = {};
+      args.forEach(function (arg, i) {
+        values[vars[i]] = arg;
       });
+      exec.args.push({value:values});
       window.console.log('Arenite.Router: Executing route "' + route + '" with:', exec);
       if (updateHash) {
         window.location.hash = updateHash;
@@ -53,7 +55,11 @@ Arenite.Router = function (arenite) {
 
   var _add = function (route, executions) {
     var regex = '^#' + route.replace(/:\w+/g, '(\\w+)') + "$";
-    _routes[route] = {executions: executions, regex: new RegExp(regex)};
+    var vars = route.match(/:\w+/g);
+    vars.forEach(function (v, i) {
+      vars[i] = v.substring(1);
+    });
+    _routes[route] = {executions: executions, regex: new RegExp(regex), vars: vars};
   };
 
   var _remove = function (route) {
