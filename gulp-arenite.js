@@ -15,7 +15,7 @@ global.window.XMLHttpRequest = function () {
     },
     open: function (m, url) {
       var _this = this;
-      fs.readFile(_options.base + url, 'utf8', function (err, data) {
+      fs.readFile(_options.base + url.replace(/\?.*$/, ''), 'utf8', function (err, data) {
         if (err) {
           return console.log(err);
         }
@@ -78,6 +78,7 @@ module.exports = function (options, config, cb) {
           script = script.url;
         }
         script = script.indexOf("//") === 0 ? 'http:' + script : options.base + script;
+        script = script.replace(/\?.*$/, '');
         var match = regex.exec(script);
         if (match) {
           merged = gulpMerge(remoteSrc([match[0]]), merged);
