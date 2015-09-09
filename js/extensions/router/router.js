@@ -54,8 +54,8 @@ Arenite.Router = function (arenite) {
   };
 
   var _add = function (route, executions) {
-    var regex = '^#' + route.replace(/:\w+/g, '(\\w+)') + "$";
-    var vars = route.match(/:\w+/g);
+    var regex = '^#' + route.replace(/:[^/]+/g, '([^/]+)') + "$";
+    var vars = route.match(/:[^/]+/g);
     vars.forEach(function (v, i) {
       vars[i] = v.substring(1);
     });
