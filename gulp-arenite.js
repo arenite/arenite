@@ -83,9 +83,17 @@ module.exports = function (options, config, cb) {
         script = script.replace(/\?.*$/, '');
         var match = regex.exec(script);
         if (match) {
-          merged = gulpMerge(remoteSrc([match[0]]), merged);
+          if (!merged) {
+            merged = remoteSrc([match[0]]);
+          } else {
+            gulpMerge(merged, remoteSrc([match[0]]));
+          }
         } else {
-          merged = gulpMerge(gulp.src(script), merged);
+          if (!merged) {
+            merged = gulp.src(script);
+          } else {
+            gulpMerge(merged, gulp.src(script));
+          }
         }
       });
     };
