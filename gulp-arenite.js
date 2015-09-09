@@ -84,15 +84,15 @@ module.exports = function (options, config, cb) {
         var match = regex.exec(script);
         if (match) {
           if (!merged) {
-            merged = remoteSrc([match[0]]);
+            merged = remoteSrc(script);
           } else {
-            gulpMerge(merged, remoteSrc([match[0]]));
+            merged = gulpMerge(merged, remoteSrc(script));
           }
         } else {
           if (!merged) {
             merged = gulp.src(script);
           } else {
-            gulpMerge(merged, gulp.src(script));
+            merged = gulpMerge(merged, gulp.src(script));
           }
         }
       });
