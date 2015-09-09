@@ -5,6 +5,8 @@ var remoteSrc = require('gulp-download');
 var gulpMerge = require('gulp-merge');
 require('./build/arenite.js');
 
+var _options;
+
 global.window = global;
 
 global.window.XMLHttpRequest = function () {
@@ -13,7 +15,7 @@ global.window.XMLHttpRequest = function () {
     },
     open: function (m, url) {
       var _this = this;
-      fs.readFile(url, 'utf8', function (err, data) {
+      fs.readFile(_options.base + url, 'utf8', function (err, data) {
         if (err) {
           return console.log(err);
         }
@@ -47,8 +49,13 @@ global.document = {
   }
 };
 
-var Loader = function (config, cb) {
+var Loader = function (config, options, cb) {
+  if (options.base.length && options.base[options.base.length - 1] !== '/') {
+    options.base = options.base + '/';
+  }
+
   var arenite = Arenite.Object(arenite);
+  _options = arenite.object.extend({env: 'dev', base: ''}, options);
   arenite = arenite.object.extend(arenite, new Arenite.Async(arenite));
   arenite = arenite.object.extend(arenite, new Arenite.Url(arenite));
   arenite = arenite.object.extend(arenite, new Arenite.DI(arenite));
@@ -61,12 +68,8 @@ var Loader = function (config, cb) {
 };
 
 module.exports = function (options, config, cb) {
-  Loader(config, function (arenite, config) {
+  Loader(config, options, function (arenite, config) {
     var merged;
-    options = arenite.object.extend({env: 'dev', base: ''}, options);
-    if (options.base.length && options.base[options.base.length - 1] !== '/') {
-      options.base = options.base + '/';
-    }
 
     var _parse = function (urls) {
       urls.forEach(function (script) {
