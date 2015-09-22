@@ -30,6 +30,11 @@
                 </a>
               
                 
+                <a class="source" href="bus.html">
+                  bus.js
+                </a>
+              
+                
                 <a class="source" href="context.html">
                   context.js
                 </a>
@@ -42,31 +47,6 @@
                 
                 <a class="source" href="di.html">
                   di.js
-                </a>
-              
-                
-                <a class="source" href="bus.html">
-                  bus.js
-                </a>
-              
-                
-                <a class="source" href="router.html">
-                  router.js
-                </a>
-              
-                
-                <a class="source" href="storage.html">
-                  storage.js
-                </a>
-              
-                
-                <a class="source" href="dot.html">
-                  dot.js
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.js
                 </a>
               
                 
@@ -114,19 +94,19 @@
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*global Arenite:true*/</span>
-Arenite.Bus = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+Arenite.Bus = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
   <span class="hljs-keyword">var</span> bus = {};
 
-  <span class="hljs-keyword">var</span> _subscribe = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(subject, func)</span> </span>{
+  <span class="hljs-keyword">var</span> _subscribe = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">subject, func</span>) </span>{
     <span class="hljs-keyword">if</span> (!bus[subject]) {
       bus[subject] = [];
     }
     bus[subject].push(func);
   };
 
-  <span class="hljs-keyword">var</span> _unsubscribe = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(subject, func)</span> </span>{
+  <span class="hljs-keyword">var</span> _unsubscribe = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">subject, func</span>) </span>{
     <span class="hljs-keyword">if</span> (bus[subject]) {
-      bus[subject].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(handler, idx)</span> </span>{
+      bus[subject].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">handler, idx</span>) </span>{
         <span class="hljs-keyword">if</span> (handler === func) {
           bus[subject].splice(idx, <span class="hljs-number">1</span>);
         }
@@ -134,13 +114,13 @@ Arenite.Bus = <span class="hljs-function"><span class="hljs-keyword">function</s
     }
   };
 
-  <span class="hljs-keyword">var</span> _publish = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(subject, args)</span> </span>{
+  <span class="hljs-keyword">var</span> _publish = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">subject, args</span>) </span>{
     <span class="hljs-built_in">window</span>.console.groupCollapsed(<span class="hljs-string">"sending event:\""</span> + subject + <span class="hljs-string">"\" with "</span>, args);
     <span class="hljs-built_in">window</span>.console.trace();
     <span class="hljs-built_in">window</span>.console.groupEnd();
     <span class="hljs-keyword">if</span> (bus[subject]) {
-      bus[subject].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(handler)</span> </span>{
-        <span class="hljs-built_in">window</span>.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ <span class="hljs-comment">//make the calls asynchronous</span>
+      bus[subject].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">handler</span>) </span>{
+        <span class="hljs-built_in">window</span>.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-comment">//make the calls asynchronous</span>
           handler(args);
         }, <span class="hljs-number">0</span>);
       });

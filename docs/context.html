@@ -30,6 +30,11 @@
                 </a>
               
                 
+                <a class="source" href="bus.html">
+                  bus.js
+                </a>
+              
+                
                 <a class="source" href="context.html">
                   context.js
                 </a>
@@ -42,31 +47,6 @@
                 
                 <a class="source" href="di.html">
                   di.js
-                </a>
-              
-                
-                <a class="source" href="bus.html">
-                  bus.js
-                </a>
-              
-                
-                <a class="source" href="router.html">
-                  router.js
-                </a>
-              
-                
-                <a class="source" href="storage.html">
-                  storage.js
-                </a>
-              
-                
-                <a class="source" href="dot.html">
-                  dot.js
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.js
                 </a>
               
                 
@@ -128,12 +108,12 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Arenite.Context = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
+            <div class="content"><div class='highlight'><pre>Arenite.Context = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arenite</span>) </span>{
   <span class="hljs-keyword">var</span> registry = {};
   <span class="hljs-keyword">var</span> factories = {};
   <span class="hljs-keyword">var</span> factory_id = <span class="hljs-number">1</span>;
 
-  <span class="hljs-keyword">var</span> _addInstance = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name, instance, factory)</span> </span>{
+  <span class="hljs-keyword">var</span> _addInstance = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, instance, factory</span>) </span>{
     <span class="hljs-keyword">if</span> (factory) {
       factories[name] = instance;
     } <span class="hljs-keyword">else</span> {
@@ -141,11 +121,11 @@
     }
   };
 
-  <span class="hljs-keyword">var</span> _removeInstance = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name)</span> </span>{
+  <span class="hljs-keyword">var</span> _removeInstance = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name</span>) </span>{
     arenite.object.delete(registry, name);
   };
 
-  <span class="hljs-keyword">var</span> _getInstance = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name)</span> </span>{
+  <span class="hljs-keyword">var</span> _getInstance = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name</span>) </span>{
     <span class="hljs-keyword">if</span> (factories.hasOwnProperty(name)) {
       <span class="hljs-keyword">var</span> tempId = <span class="hljs-string">'__factory_instance_'</span> + name + <span class="hljs-string">'__'</span> + factory_id++;
       <span class="hljs-keyword">var</span> tempContext = {};
@@ -171,8 +151,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <h3 id="context-get">context.get</h3>
-<p>Get an registered instance from arenite.</p>
+              <p>###context.get
+Get an registered instance from arenite.</p>
 <p><pre><code>
 get(instance)
 </pre></code>
@@ -191,8 +171,8 @@ where <em><b>instance</b></em> is the name of the instance to be retrieved</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h3 id="context-add">context.add</h3>
-<p>Register an instance in arenite</p>
+              <p>###context.add
+Register an instance in arenite</p>
 <p><pre><code>
 add(name, instance, factory, args)
 </pre></code>
@@ -214,8 +194,8 @@ the instance is a factory.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <h3 id="context-remove">context.remove</h3>
-<p>Removes an instance from the arenite context</p>
+              <p>###context.remove
+Removes an instance from the arenite context</p>
 <p><pre><code>
 remove(instance)
 </pre></code>

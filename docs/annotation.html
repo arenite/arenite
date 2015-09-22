@@ -30,6 +30,11 @@
                 </a>
               
                 
+                <a class="source" href="bus.html">
+                  bus.js
+                </a>
+              
+                
                 <a class="source" href="context.html">
                   context.js
                 </a>
@@ -42,31 +47,6 @@
                 
                 <a class="source" href="di.html">
                   di.js
-                </a>
-              
-                
-                <a class="source" href="bus.html">
-                  bus.js
-                </a>
-              
-                
-                <a class="source" href="router.html">
-                  router.js
-                </a>
-              
-                
-                <a class="source" href="storage.html">
-                  storage.js
-                </a>
-              
-                
-                <a class="source" href="dot.html">
-                  dot.js
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.js
                 </a>
               
                 
@@ -129,8 +109,8 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Arenite.AnnotationProcessor = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
-  <span class="hljs-keyword">var</span> _processAnnotations = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(text)</span> </span>{
+            <div class="content"><div class='highlight'><pre>Arenite.AnnotationProcessor = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arenite</span>) </span>{
+  <span class="hljs-keyword">var</span> _processAnnotations = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">text</span>) </span>{
     <span class="hljs-keyword">var</span> regex = <span class="hljs-regexp">/@arenite-instance\s+["']([^"']+)["']\s*(.*);\s*(@arenite-init\s+["']([^"']+)["']\s*(.*);)*\s*(@arenite-start\s+["']([^"']+)["']\s*(.*);)*\s*\*\/\s*([\w.]+)/g</span>;
     <span class="hljs-keyword">var</span> match;
     <span class="hljs-keyword">while</span> ((match = regex.exec(text))) {
@@ -138,10 +118,10 @@
     }
   };
 
-  <span class="hljs-keyword">var</span> _processArgAnnotation = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(match)</span> </span>{
+  <span class="hljs-keyword">var</span> _processArgAnnotation = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">match</span>) </span>{
     <span class="hljs-keyword">var</span> args = [];
     <span class="hljs-keyword">var</span> split = match.split(<span class="hljs-string">','</span>);
-    split.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arg)</span> </span>{
+    split.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arg</span>) </span>{
       <span class="hljs-keyword">var</span> argPair = arg.split(<span class="hljs-string">":"</span>);
       <span class="hljs-keyword">var</span> argObj = {};
       argObj[argPair[<span class="hljs-number">0</span>].trim()] = argPair[<span class="hljs-number">0</span>].trim() === <span class="hljs-string">'ref'</span> ? argPair[<span class="hljs-number">1</span>].trim() : <span class="hljs-built_in">eval</span>(argPair[<span class="hljs-number">1</span>].trim());
@@ -150,7 +130,7 @@
     <span class="hljs-keyword">return</span> args;
   };
 
-  <span class="hljs-keyword">var</span> _processAnnotation = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(match)</span> </span>{
+  <span class="hljs-keyword">var</span> _processAnnotation = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">match</span>) </span>{
     <span class="hljs-keyword">var</span> instanceName = match[<span class="hljs-number">1</span>];
     <span class="hljs-keyword">var</span> namespace = match[<span class="hljs-number">9</span>];
 
@@ -233,8 +213,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <h3 id="annotation-processannotations">annotation.processAnnotations</h3>
-<p>Interpret the annotations specified in a given source.</p>
+              <p>###annotation.processAnnotations
+Interpret the annotations specified in a given source.</p>
 <p><pre><code>
 processAnnotations(text)
 </pre></code>

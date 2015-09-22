@@ -30,6 +30,11 @@
                 </a>
               
                 
+                <a class="source" href="bus.html">
+                  bus.js
+                </a>
+              
+                
                 <a class="source" href="context.html">
                   context.js
                 </a>
@@ -42,31 +47,6 @@
                 
                 <a class="source" href="di.html">
                   di.js
-                </a>
-              
-                
-                <a class="source" href="bus.html">
-                  bus.js
-                </a>
-              
-                
-                <a class="source" href="router.html">
-                  router.js
-                </a>
-              
-                
-                <a class="source" href="storage.html">
-                  storage.js
-                </a>
-              
-                
-                <a class="source" href="dot.html">
-                  dot.js
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.js
                 </a>
               
                 
@@ -143,7 +123,7 @@ by Stoyan Stefanov from O’Reilly Media which discusses these patterns in detai
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Arenite = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(config)</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre>Arenite = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">config</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -285,6 +265,23 @@ the script and resource loading functionality to the sandbox.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h3 id="arenite-bus">Arenite.Bus</h3>
+<p>Extend the instance with the <a href="bus.html">Arenite.Bus</a> extension which provides
+an event bus.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, <span class="hljs-keyword">new</span> Arenite.Bus(arenite));</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Initialize the injector by having it read the configuration object passed into this constructor.</p>
 

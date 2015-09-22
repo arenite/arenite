@@ -30,6 +30,11 @@
                 </a>
               
                 
+                <a class="source" href="bus.html">
+                  bus.js
+                </a>
+              
+                
                 <a class="source" href="context.html">
                   context.js
                 </a>
@@ -42,31 +47,6 @@
                 
                 <a class="source" href="di.html">
                   di.js
-                </a>
-              
-                
-                <a class="source" href="bus.html">
-                  bus.js
-                </a>
-              
-                
-                <a class="source" href="router.html">
-                  router.js
-                </a>
-              
-                
-                <a class="source" href="storage.html">
-                  storage.js
-                </a>
-              
-                
-                <a class="source" href="dot.html">
-                  dot.js
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.js
                 </a>
               
                 
@@ -128,15 +108,15 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Arenite.Html = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
+            <div class="content"><div class='highlight'><pre>Arenite.Html = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arenite</span>) </span>{
 
-  <span class="hljs-keyword">var</span> _escape = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(text)</span> </span>{
+  <span class="hljs-keyword">var</span> _escape = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">text</span>) </span>{
     <span class="hljs-keyword">var</span> span = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'span'</span>);
     span.innerText = text;
     <span class="hljs-keyword">return</span> span.innerHTML;
   };
 
-  <span class="hljs-keyword">var</span> _unescape = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(text)</span> </span>{
+  <span class="hljs-keyword">var</span> _unescape = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">text</span>) </span>{
     <span class="hljs-keyword">var</span> span = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'span'</span>);
     span.innerHTML = text;
     <span class="hljs-keyword">return</span> span.innerText;

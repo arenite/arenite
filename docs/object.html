@@ -30,6 +30,11 @@
                 </a>
               
                 
+                <a class="source" href="bus.html">
+                  bus.js
+                </a>
+              
+                
                 <a class="source" href="context.html">
                   context.js
                 </a>
@@ -42,31 +47,6 @@
                 
                 <a class="source" href="di.html">
                   di.js
-                </a>
-              
-                
-                <a class="source" href="bus.html">
-                  bus.js
-                </a>
-              
-                
-                <a class="source" href="router.html">
-                  router.js
-                </a>
-              
-                
-                <a class="source" href="storage.html">
-                  storage.js
-                </a>
-              
-                
-                <a class="source" href="dot.html">
-                  dot.js
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.js
                 </a>
               
                 
@@ -130,9 +110,9 @@ retrieve the functions by namespace.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Arenite.Object = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+            <div class="content"><div class='highlight'><pre>Arenite.Object = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
 
-  <span class="hljs-keyword">var</span> _navigateToBeforeLast = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object, path)</span> </span>{
+  <span class="hljs-keyword">var</span> _navigateToBeforeLast = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">object, path</span>) </span>{
     <span class="hljs-keyword">if</span> (!object) {
       <span class="hljs-keyword">return</span>;
     }
@@ -141,7 +121,7 @@ retrieve the functions by namespace.</p>
     <span class="hljs-keyword">var</span> last = split.splice(split.length - <span class="hljs-number">1</span>, <span class="hljs-number">1</span>);
 
     <span class="hljs-keyword">var</span> result = object;
-    split.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(pathEl)</span> </span>{
+    split.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">pathEl</span>) </span>{
       <span class="hljs-keyword">if</span> (!result) {
         <span class="hljs-keyword">return</span>;
       }
@@ -153,14 +133,14 @@ retrieve the functions by namespace.</p>
     <span class="hljs-keyword">return</span> {object: result, path: last};
   };
 
-  <span class="hljs-keyword">var</span> _getInObject = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object, path)</span> </span>{
+  <span class="hljs-keyword">var</span> _getInObject = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">object, path</span>) </span>{
     <span class="hljs-keyword">if</span> (!object) {
       <span class="hljs-keyword">return</span>;
     }
 
     <span class="hljs-keyword">var</span> split = path.split(<span class="hljs-string">"."</span>);
     <span class="hljs-keyword">var</span> result = object;
-    split.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(pathEl)</span> </span>{
+    split.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">pathEl</span>) </span>{
       <span class="hljs-keyword">if</span> (!result) {
         <span class="hljs-keyword">return</span>;
       }
@@ -169,7 +149,7 @@ retrieve the functions by namespace.</p>
     <span class="hljs-keyword">return</span> result;
   };
 
-  <span class="hljs-keyword">var</span> _setInObject = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object, path, element)</span> </span>{
+  <span class="hljs-keyword">var</span> _setInObject = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">object, path, element</span>) </span>{
     <span class="hljs-keyword">var</span> beforeLast = _navigateToBeforeLast(object, path);
     <span class="hljs-keyword">if</span> (beforeLast &amp;&amp; beforeLast.object) {
       beforeLast.object[beforeLast.path] = element;
@@ -177,14 +157,14 @@ retrieve the functions by namespace.</p>
     }
   };
 
-  <span class="hljs-keyword">var</span> _deleteInObject = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object, path)</span> </span>{
+  <span class="hljs-keyword">var</span> _deleteInObject = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">object, path</span>) </span>{
     <span class="hljs-keyword">var</span> beforeLast = _navigateToBeforeLast(object, path);
     <span class="hljs-keyword">if</span> (beforeLast &amp;&amp; beforeLast.object) {
       <span class="hljs-keyword">delete</span> beforeLast.object[beforeLast.path];
     }
   };
 
-  <span class="hljs-keyword">var</span> _extend = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(source, target)</span> </span>{
+  <span class="hljs-keyword">var</span> _extend = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source, target</span>) </span>{
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> f <span class="hljs-keyword">in</span> target) {
       <span class="hljs-keyword">if</span> (target.hasOwnProperty(f)) {
         <span class="hljs-keyword">if</span> (source[f] &amp;&amp; <span class="hljs-keyword">typeof</span> source[f] === <span class="hljs-string">'object'</span>) {
@@ -201,7 +181,7 @@ retrieve the functions by namespace.</p>
     <span class="hljs-keyword">return</span> source;
   };
 
-  <span class="hljs-keyword">var</span> _keys = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(obj)</span> </span>{
+  <span class="hljs-keyword">var</span> _keys = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj</span>) </span>{
     <span class="hljs-keyword">var</span> keys = [], key;
     <span class="hljs-keyword">for</span> (key <span class="hljs-keyword">in</span> obj) {
       <span class="hljs-keyword">if</span> (obj.hasOwnProperty(key)) {
@@ -211,10 +191,10 @@ retrieve the functions by namespace.</p>
     <span class="hljs-keyword">return</span> keys;
   };
 
-  <span class="hljs-keyword">var</span> _contains = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(obj, key)</span> </span>{
+  <span class="hljs-keyword">var</span> _contains = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj, key</span>) </span>{
     <span class="hljs-keyword">if</span> (obj.length) {
       <span class="hljs-keyword">var</span> result = <span class="hljs-literal">false</span>;
-      obj.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(_key)</span> </span>{
+      obj.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">_key</span>) </span>{
         result = result || _key === key;
       });
       <span class="hljs-keyword">return</span> result;
@@ -230,9 +210,9 @@ retrieve the functions by namespace.</p>
     <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
   };
 
-  <span class="hljs-keyword">var</span> _uniq = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arr)</span> </span>{
+  <span class="hljs-keyword">var</span> _uniq = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arr</span>) </span>{
     <span class="hljs-keyword">var</span> result = [];
-    arr.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(el)</span> </span>{
+    arr.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">el</span>) </span>{
       <span class="hljs-keyword">if</span> (result.indexOf(el) &lt; <span class="hljs-number">0</span>) {
         result.push(el);
       }
@@ -240,18 +220,18 @@ retrieve the functions by namespace.</p>
     <span class="hljs-keyword">return</span> result;
   };
 
-  <span class="hljs-keyword">var</span> _merge = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arr1, arr2, keepDups)</span> </span>{
+  <span class="hljs-keyword">var</span> _merge = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arr1, arr2, keepDups</span>) </span>{
     <span class="hljs-keyword">var</span> result = [];
-    arr1.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(el)</span> </span>{
+    arr1.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">el</span>) </span>{
       result.push(el);
     });
-    arr2.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(el)</span> </span>{
+    arr2.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">el</span>) </span>{
       result.push(el);
     });
     <span class="hljs-keyword">return</span> keepDups ? result : _uniq(result);
   };
 
-  <span class="hljs-keyword">var</span> _extract = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(obj, prop)</span> </span>{
+  <span class="hljs-keyword">var</span> _extract = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj, prop</span>) </span>{
     <span class="hljs-keyword">var</span> result = [];
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _key <span class="hljs-keyword">in</span> obj) {
       <span class="hljs-keyword">if</span> (obj.hasOwnProperty(_key)) {
@@ -261,15 +241,15 @@ retrieve the functions by namespace.</p>
     <span class="hljs-keyword">return</span> result;
   };
 
-  <span class="hljs-keyword">var</span> _obj = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arr, key)</span> </span>{
+  <span class="hljs-keyword">var</span> _obj = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arr, key</span>) </span>{
     <span class="hljs-keyword">var</span> obj = {};
-    arr.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(elem)</span> </span>{
+    arr.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">elem</span>) </span>{
       obj[_getInObject(elem, key)] = elem;
     });
     <span class="hljs-keyword">return</span> obj;
   };
 
-  <span class="hljs-keyword">var</span> _forEach = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(obj, func)</span> </span>{
+  <span class="hljs-keyword">var</span> _forEach = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj, func</span>) </span>{
     <span class="hljs-keyword">var</span> key;
     <span class="hljs-keyword">for</span> (key <span class="hljs-keyword">in</span> obj) {
       <span class="hljs-keyword">if</span> (obj.hasOwnProperty(key)) {
@@ -278,7 +258,7 @@ retrieve the functions by namespace.</p>
     }
   };
 
-  <span class="hljs-keyword">var</span> _values = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(obj)</span> </span>{
+  <span class="hljs-keyword">var</span> _values = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj</span>) </span>{
     <span class="hljs-keyword">var</span> key;
     <span class="hljs-keyword">var</span> arr = [];
     <span class="hljs-keyword">for</span> (key <span class="hljs-keyword">in</span> obj) {
@@ -289,17 +269,17 @@ retrieve the functions by namespace.</p>
     <span class="hljs-keyword">return</span> arr;
   };
 
-  <span class="hljs-keyword">var</span> _array = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(obj)</span> </span>{
+  <span class="hljs-keyword">var</span> _array = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj</span>) </span>{
     <span class="hljs-keyword">var</span> arr = [];
-    _forEach(obj, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(el)</span> </span>{
+    _forEach(obj, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">el</span>) </span>{
       arr.push(el);
     });
     <span class="hljs-keyword">return</span> arr;
   };
 
-  <span class="hljs-keyword">var</span> _filter = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(obj, keys)</span> </span>{
+  <span class="hljs-keyword">var</span> _filter = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj, keys</span>) </span>{
     <span class="hljs-keyword">var</span> filtered = {};
-    keys.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(key)</span> </span>{
+    keys.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">key</span>) </span>{
       <span class="hljs-keyword">if</span> (obj.hasOwnProperty(key)) {
         filtered[key] = obj[key];
       }
@@ -319,8 +299,8 @@ retrieve the functions by namespace.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <h3 id="object-get">object.get</h3>
-<p>Retrieves a property from an object. The property is expressed as a string, denoting a path.</p>
+              <p>###object.get
+Retrieves a property from an object. The property is expressed as a string, denoting a path.</p>
 <p><pre><code>
 get(object, path)
 </pre></code>
@@ -339,8 +319,8 @@ where <em><b>object</b></em> is the target object and <em><b>path</b></em> is th
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h3 id="object-set">object.set</h3>
-<p>Sets a property in an object. The property is expressed as a string, denoting a path.</p>
+              <p>###object.set
+Sets a property in an object. The property is expressed as a string, denoting a path.</p>
 <p><pre><code>
 set(object, path, value)
 </pre></code>
@@ -360,8 +340,8 @@ where <em><b>object</b></em> is the target object,
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <h3 id="object-delete">object.delete</h3>
-<p>Removes a property from an object. The property is expressed as a string, denoting a path.</p>
+              <p>###object.delete
+Removes a property from an object. The property is expressed as a string, denoting a path.</p>
 <p><pre><code>
 get(object, path)
 </pre></code>
@@ -380,8 +360,8 @@ where <em><b>object</b></em> is the target object and <em><b>path</b></em> is th
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <h3 id="object-extend">object.extend</h3>
-<p>Extend merges to objects. The second object will “override” properties also existing in the first.</p>
+              <p>###object.extend
+Extend merges to objects. The second object will “override” properties also existing in the first.</p>
 <p><pre><code>
 extend(object, other)
 </pre></code>
@@ -400,8 +380,8 @@ where <em><b>object</b></em> is the object to be merged and extended by <em><b>o
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <h3 id="object-keys">object.keys</h3>
-<p>Returns all the properties available to an object in the form of an array.</p>
+              <p>###object.keys
+Returns all the properties available to an object in the form of an array.</p>
 <p><pre><code>
 keys(object)
 </pre></code>
@@ -420,8 +400,8 @@ where <em><b>object</b></em> is the object from which the properties will be ext
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <h3 id="object-foreach">object.forEach</h3>
-<p>Iterates through the object the equivalent to the way forEach works for arrays.</p>
+              <p>###object.forEach
+Iterates through the object the equivalent to the way forEach works for arrays.</p>
 <p><pre><code>
 forEach(object, func(elem, key))
 </pre></code>
@@ -440,8 +420,8 @@ where <em><b>object</b></em> is the object to iterate. <em><b>func(elem, key)</b
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <h3 id="object-values">object.values</h3>
-<p>Returns all the values available to an object in the form of an array.</p>
+              <p>###object.values
+Returns all the values available to an object in the form of an array.</p>
 <p><pre><code>
 keys(object)
 </pre></code>
@@ -460,8 +440,8 @@ where <em><b>object</b></em> is the object from which the elements will be extra
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <h3 id="object-contains">object.contains</h3>
-<p>Determines if a element is present in an array or a key exists in an object:</p>
+              <p>###object.contains
+Determines if a element is present in an array or a key exists in an object:</p>
 <p><pre><code>
 contains(object, key)
 </pre></code>
@@ -480,8 +460,8 @@ where <em><b>object</b></em> is the object to test for the presence of key and <
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <h3 id="object-array">object.array</h3>
-<p>Transforms the object to an array using the values for each key:</p>
+              <p>###object.array
+Transforms the object to an array using the values for each key:</p>
 <p><pre><code>
 array(object)
 </pre></code>
@@ -500,8 +480,8 @@ where <em><b>object</b></em> is the object to be transformed into the array.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <h3 id="object-filter">object.filter</h3>
-<p>Returns a filtered version of the object:</p>
+              <p>###object.filter
+Returns a filtered version of the object:</p>
 <p><pre><code>
 filter(object, keys)
 </pre></code>
@@ -522,8 +502,8 @@ where <em><b>object</b></em> is the object to be filtered and <em><b>keys</b></e
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <h3 id="array-contains">array.contains</h3>
-<p>Determines if a element is present in an array or a key exists in an object:</p>
+              <p>###array.contains
+Determines if a element is present in an array or a key exists in an object:</p>
 <p><pre><code>
 contains(object, key)
 </pre></code>
@@ -542,8 +522,8 @@ where <em><b>object</b></em> is the object to test for the presence of key and <
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <h3 id="array-uniq">array.uniq</h3>
-<p>Filters an array returning a new one with the unique values.</p>
+              <p>###array.uniq
+Filters an array returning a new one with the unique values.</p>
 <p><pre><code>
 contains(array)
 </pre></code>
@@ -562,8 +542,8 @@ where <em><b>array</b></em> is the array to be stripped o duplicate values</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <h3 id="array-merge">array.merge</h3>
-<p>Merges two arrays returning a new one with the unique values.</p>
+              <p>###array.merge
+Merges two arrays returning a new one with the unique values.</p>
 <p><pre><code>
 merge(arr1, arr2)
 </pre></code>
@@ -582,8 +562,8 @@ where <em><b>arr1</b></em> and <em><b>arr2</b></em> are the arrays to be merged<
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <h3 id="array-extract">array.extract</h3>
-<p>Extract an array composed of a specified property of the subobjects of a given object</p>
+              <p>###array.extract
+Extract an array composed of a specified property of the subobjects of a given object</p>
 <p><pre><code>
 extract(object, property)
 </pre></code>
@@ -602,8 +582,8 @@ where <em><b>object</b></em> is the object whose members will be analysed <em><b
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <h3 id="array-obj">array.obj</h3>
-<p>Extract an object indexed by a given key</p>
+              <p>###array.obj
+Extract an object indexed by a given key</p>
 <p><pre><code>
 obj(array, property)
 </pre></code>

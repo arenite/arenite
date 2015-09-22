@@ -50,6 +50,10 @@ Arenite = function (config) {
   // Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
   // the script and resource loading functionality to the sandbox.
   arenite = arenite.object.extend(arenite, new Arenite.Loader(arenite));
+  //### Arenite.Bus
+  // Extend the instance with the <a href="bus.html">Arenite.Bus</a> extension which provides
+  // an event bus.
+  arenite = arenite.object.extend(arenite, new Arenite.Bus(arenite));
   // Initialize the injector by having it read the configuration object passed into this constructor.
   arenite.di.init(config);
   return arenite;

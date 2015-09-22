@@ -30,6 +30,11 @@
                 </a>
               
                 
+                <a class="source" href="bus.html">
+                  bus.js
+                </a>
+              
+                
                 <a class="source" href="context.html">
                   context.js
                 </a>
@@ -42,31 +47,6 @@
                 
                 <a class="source" href="di.html">
                   di.js
-                </a>
-              
-                
-                <a class="source" href="bus.html">
-                  bus.js
-                </a>
-              
-                
-                <a class="source" href="router.html">
-                  router.js
-                </a>
-              
-                
-                <a class="source" href="storage.html">
-                  storage.js
-                </a>
-              
-                
-                <a class="source" href="dot.html">
-                  dot.js
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.js
                 </a>
               
                 
@@ -128,12 +108,12 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Arenite.Async = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
-  <span class="hljs-keyword">var</span> _sequencialLatch = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(values, callback, finalCallback)</span> </span>{
+            <div class="content"><div class='highlight'><pre>Arenite.Async = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arenite</span>) </span>{
+  <span class="hljs-keyword">var</span> _sequencialLatch = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">values, callback, finalCallback</span>) </span>{
     <span class="hljs-keyword">var</span> index = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">var</span> length = values.length;
 
-    <span class="hljs-keyword">var</span> _next = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">var</span> _next = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
       <span class="hljs-keyword">if</span> (index &lt; length) {
         callback(values[index++]);
       } <span class="hljs-keyword">else</span> {
@@ -146,7 +126,7 @@
     };
   };
 
-  <span class="hljs-keyword">var</span> _latch = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(times, callback, name)</span> </span>{
+  <span class="hljs-keyword">var</span> _latch = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">times, callback, name</span>) </span>{
     <span class="hljs-keyword">var</span> executions = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">var</span> id = name || <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime();
 
@@ -157,7 +137,7 @@
     }
 
     <span class="hljs-keyword">return</span> {
-      countDown: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      countDown: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         executions++;
         <span class="hljs-keyword">if</span> (arenite.config.debug) {
           <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Latch: Counting down latch "'</span> + id + <span class="hljs-string">'" ,'</span>, times - executions, <span class="hljs-string">'remaining'</span>);
@@ -169,7 +149,7 @@
           callback(executions);
         }
       },
-      countUp: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      countUp: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         executions--;
         <span class="hljs-keyword">if</span> (arenite.config.debug) {
           <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Latch: Counting up latch "'</span> + id + <span class="hljs-string">'" ,'</span>, times - executions, <span class="hljs-string">'remaining'</span>);
@@ -185,7 +165,7 @@
   };
 
   <span class="hljs-keyword">return</span> {
-    async: {</pre></div></div>
+    <span class="hljs-keyword">async</span>: {</pre></div></div>
             
         </li>
         
@@ -196,8 +176,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <h3 id="sequencial-latch-">Sequencial latch.</h3>
-<p>The sequencial latch will synchronously execute the handler
+              <p>###Sequencial latch.
+The sequencial latch will synchronously execute the handler
 with the provided values and execute a callback when all operations are complete.</p>
 <p><pre><code>
 seqLatch(values, handler, callback)
@@ -209,7 +189,7 @@ The <em><b>callback</b></em> is the function that is executed once all the value
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      seqLatch: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(values, handler, callback)</span> </span>{
+            <div class="content"><div class='highlight'><pre>      seqLatch: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">values, handler, callback</span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> _sequencialLatch(values, handler, callback);
       },</pre></div></div>
             
@@ -222,8 +202,8 @@ The <em><b>callback</b></em> is the function that is executed once all the value
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h3 id="latch-">Latch.</h3>
-<p>The latch will execute asynchronous tasks and invoke a callback when all the declared times have been executed</p>
+              <p>###Latch.
+The latch will execute asynchronous tasks and invoke a callback when all the declared times have been executed</p>
 <p><pre><code>
 latch(times, callback [, name])
 </code></pre>
@@ -242,7 +222,7 @@ Once the counter hits 0 the callback is invoked.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      latch: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(times, callback, name)</span> </span>{
+            <div class="content"><div class='highlight'><pre>      latch: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">times, callback, name</span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> _latch(times, callback, name);
       }
     }

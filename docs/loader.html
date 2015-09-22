@@ -30,6 +30,11 @@
                 </a>
               
                 
+                <a class="source" href="bus.html">
+                  bus.js
+                </a>
+              
+                
                 <a class="source" href="context.html">
                   context.js
                 </a>
@@ -42,31 +47,6 @@
                 
                 <a class="source" href="di.html">
                   di.js
-                </a>
-              
-                
-                <a class="source" href="bus.html">
-                  bus.js
-                </a>
-              
-                
-                <a class="source" href="router.html">
-                  router.js
-                </a>
-              
-                
-                <a class="source" href="storage.html">
-                  storage.js
-                </a>
-              
-                
-                <a class="source" href="dot.html">
-                  dot.js
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.js
                 </a>
               
                 
@@ -129,16 +109,16 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Arenite.Loader = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(arenite)</span> </span>{
+            <div class="content"><div class='highlight'><pre>Arenite.Loader = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arenite</span>) </span>{
 
   <span class="hljs-keyword">var</span> firefoxOs = navigator.userAgent.indexOf(<span class="hljs-string">'Firefox'</span>) &gt; -<span class="hljs-number">1</span> &amp;&amp; navigator.userAgent.indexOf(<span class="hljs-string">"Mobile"</span>) &gt; -<span class="hljs-number">1</span>;
 
-  <span class="hljs-keyword">var</span> _createCORSRequest = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(method, url, success, failure)</span> </span>{
+  <span class="hljs-keyword">var</span> _createCORSRequest = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">method, url, success, failure</span>) </span>{
     <span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();
     xhr.open(method, url, <span class="hljs-literal">true</span>);
     xhr.setRequestHeader(<span class="hljs-string">"X-Requested-With"</span>, <span class="hljs-string">"XMLHttpRequest"</span>);
     xhr.setRequestHeader(<span class="hljs-string">"Access-Control-Allow-Origin"</span>, <span class="hljs-built_in">window</span>.location.origin);
-    xhr.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    xhr.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
       <span class="hljs-keyword">if</span> (xhr.readyState === <span class="hljs-number">4</span>) {
         <span class="hljs-keyword">if</span> (xhr.status % <span class="hljs-number">100</span> &lt; <span class="hljs-number">4</span>) {
           success();
@@ -162,10 +142,10 @@
     <span class="hljs-keyword">return</span> xhr;
   };
 
-  <span class="hljs-keyword">var</span> _loadResource = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, callback, error)</span> </span>{
-    <span class="hljs-keyword">var</span> req = _createCORSRequest(<span class="hljs-string">'GET'</span>, url, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> _loadResource = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">url, callback, error</span>) </span>{
+    <span class="hljs-keyword">var</span> req = _createCORSRequest(<span class="hljs-string">'GET'</span>, url, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
       callback(req);
-    }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> error === <span class="hljs-string">'function'</span>) {
         error(req);
       }
@@ -173,13 +153,13 @@
     req.send();
   };
 
-  <span class="hljs-keyword">var</span> _loadScriptWithTag = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, callback)</span> </span>{
+  <span class="hljs-keyword">var</span> _loadScriptWithTag = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">url, callback</span>) </span>{
     <span class="hljs-keyword">var</span> head = <span class="hljs-built_in">document</span>.getElementsByTagName(<span class="hljs-string">'head'</span>)[<span class="hljs-number">0</span>];
     <span class="hljs-keyword">var</span> script = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'script'</span>);
     script.async = <span class="hljs-literal">true</span>;
     script.type = <span class="hljs-string">'text/javascript'</span>;
     <span class="hljs-keyword">if</span> (navigator.appVersion.indexOf(<span class="hljs-string">"MSIE 9"</span>) === -<span class="hljs-number">1</span>) { <span class="hljs-comment">//IE 9 calls the callback twice</span>
-      script.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      script.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.readyState === <span class="hljs-string">'complete'</span>) {
           callback();
         }
@@ -190,8 +170,8 @@
     head.appendChild(script);
   };
 
-  <span class="hljs-keyword">var</span> _loadScriptAsResource = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, callback)</span> </span>{
-    _loadResource(url, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(req)</span> </span>{</pre></div></div>
+  <span class="hljs-keyword">var</span> _loadScriptAsResource = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">url, callback</span>) </span>{
+    _loadResource(url, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">req</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -213,7 +193,7 @@
     });
   };
 
-  <span class="hljs-keyword">var</span> _sameOrigin = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url)</span> </span>{
+  <span class="hljs-keyword">var</span> _sameOrigin = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">url</span>) </span>{
     <span class="hljs-keyword">var</span> loc = <span class="hljs-built_in">window</span>.location;
     <span class="hljs-keyword">var</span> a = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'a'</span>);
     a.href = url;
@@ -222,7 +202,7 @@
       a.protocol === loc.protocol;
   };
 
-  <span class="hljs-keyword">var</span> _loadScriptFrom = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, callback)</span> </span>{
+  <span class="hljs-keyword">var</span> _loadScriptFrom = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">url, callback</span>) </span>{
     <span class="hljs-keyword">if</span> (_sameOrigin(url) &amp;&amp; !firefoxOs) {
       _loadScriptAsResource(url, callback);
     } <span class="hljs-keyword">else</span> {
@@ -230,12 +210,12 @@
     }
   };
 
-  <span class="hljs-keyword">var</span> _loadScript = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(script, done)</span> </span>{
+  <span class="hljs-keyword">var</span> _loadScript = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">script, done</span>) </span>{
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> script === <span class="hljs-string">'string'</span>) {
       _loadScriptFrom(script, done);
     } <span class="hljs-keyword">else</span> {
-      _loadScriptFrom(script.url, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-        arenite.object.keys(script.instances).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(instance)</span> </span>{
+      _loadScriptFrom(script.url, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        arenite.object.keys(script.instances).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">instance</span>) </span>{
           arenite.context.add(instance, <span class="hljs-built_in">window</span>[script.instances[instance]]);
           <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> script.init === <span class="hljs-string">'function'</span>) {
             script.init(arenite);
@@ -261,8 +241,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h3 id="loader-loadresource">loader.loadResource</h3>
-<p>Load a given resource using ajax.</p>
+              <p>###loader.loadResource
+Load a given resource using ajax.</p>
 <p><pre><code>
 loadResource(url, callback, error)
 </pre></code>
@@ -282,8 +262,8 @@ it’s succesful completion and <em><b>error</b></em> is an optional callback to
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <h3 id="loader-loadscript">loader.loadScript</h3>
-<p>Load a script. This method will choose the best method to load the script (using tag or ajax) depending on the
+              <p>###loader.loadScript
+Load a script. This method will choose the best method to load the script (using tag or ajax) depending on the
 origin of the script. Additionally it can extract variables exposed in the window object and register them as
 instances in arenite.</p>
 <p><pre><code>

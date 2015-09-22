@@ -1,7 +1,6 @@
 /*global require:true */
 (function () {
   'use strict';
-  var exec = require('child_process').exec;
   var gulp = require('gulp');
   var rename = require('gulp-rename');
   var uglify = require('gulp-uglify');
@@ -11,17 +10,9 @@
 
   var build = 'build/';
 
-  gulp.task('test', function (cb) {
-    exec('phantomjs test/lib/run-jasmine.js test/test.html', function (err, stdout, stderr) {
-      console.log(stdout);
-      console.log(stderr);
-      cb(err);
-    });
-  });
-
   gulp.task('docs', function () {
     return gulp.src('js/core.js', {read: false})
-      .pipe(shell('node_modules/docco/bin/docco -o docs js/*.js js/extensions/**/*.js'));
+      .pipe(shell('node_modules/docco/bin/docco -o docs js/*.js'));
   });
 
   gulp.task('js', function () {
