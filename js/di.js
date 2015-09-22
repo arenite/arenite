@@ -44,10 +44,10 @@ Arenite.DI = function (arenite) {
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
-        if(type==='factory'){
+        if (type === 'factory') {
           arenite.context.remove(tempId);
         } else {
-          execution.args.splice(idx, 1, {ref:tempId});
+          execution.args.splice(idx, 1, {ref: tempId});
         }
       }
     });
@@ -211,7 +211,9 @@ Arenite.DI = function (arenite) {
     var unloadedImports = [];
 
     while (imp) {
-      if (!arenite.object.get(window, imp.namespace)) {
+      if (imp.vendor) {
+
+      } else if (!arenite.object.get(window, imp.namespace)) {
         unloadedImports.push(imp);
       } else {
         var imported = arenite.object.get(window, imp.namespace)();

@@ -152,10 +152,10 @@
         anonymousContext.instances[tempId] = arg.instance;
         _loadContext(anonymousContext);
         resolved.push(arenite.context.get(tempId));
-        <span class="hljs-keyword">if</span>(type===<span class="hljs-string">'factory'</span>){
+        <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'factory'</span>) {
           arenite.context.remove(tempId);
         } <span class="hljs-keyword">else</span> {
-          execution.args.splice(idx, <span class="hljs-number">1</span>, {ref:tempId});
+          execution.args.splice(idx, <span class="hljs-number">1</span>, {ref: tempId});
         }
       }
     });
@@ -344,7 +344,9 @@
     <span class="hljs-keyword">var</span> unloadedImports = [];
 
     <span class="hljs-keyword">while</span> (imp) {
-      <span class="hljs-keyword">if</span> (!arenite.object.get(<span class="hljs-built_in">window</span>, imp.namespace)) {
+      <span class="hljs-keyword">if</span> (imp.vendor) {
+
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!arenite.object.get(<span class="hljs-built_in">window</span>, imp.namespace)) {
         unloadedImports.push(imp);
       } <span class="hljs-keyword">else</span> {
         <span class="hljs-keyword">var</span> imported = arenite.object.get(<span class="hljs-built_in">window</span>, imp.namespace)();
