@@ -551,7 +551,9 @@ Arenite.DI = function (arenite) {
       arenite.object.forEach(modules, function (module) {
         var moduleBasePath;
         if (module.vendor) {
-          if (module.version.match(_prodModuleVersion)) {
+          if (arenite.config.repo) {
+            moduleBasePath = arenite.config.repo;
+          } else if (module.version.match(_prodModuleVersion)) {
             moduleBasePath = _prodRepo.replace('{vendor}', module.vendor);
           } else {
             moduleBasePath = _devRepo.replace('{vendor}', module.vendor);

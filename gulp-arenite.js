@@ -98,9 +98,6 @@ module.exports = function (options, config, cb) {
       });
     };
 
-    if (config.imports) {
-      _parse(config.imports);
-    }
     if (config.context.dependencies[options.mode].sync) {
       _parse(config.context.dependencies[options.mode].sync);
     }

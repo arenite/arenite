@@ -217,7 +217,9 @@ Arenite.DI = function (arenite) {
       arenite.object.forEach(modules, function (module) {
         var moduleBasePath;
         if (module.vendor) {
-          if (module.version.match(_prodModuleVersion)) {
+          if (arenite.config.repo) {
+            moduleBasePath = arenite.config.repo;
+          } else if (module.version.match(_prodModuleVersion)) {
             moduleBasePath = _prodRepo.replace('{vendor}', module.vendor);
           } else {
             moduleBasePath = _devRepo.replace('{vendor}', module.vendor);
@@ -231,7 +233,8 @@ Arenite.DI = function (arenite) {
         arenite.loader.loadResource(moduleBasePath + 'module.json', function (xhr) {
           var moduleConf = JSON.parse(xhr.responseText);
           var newDeps = {async: [], sync: []};
-          arenite.object.forEach(moduleConf.context.dependencies.default, function (dependencies, depType) {
+          var mode = module.vendor ? 'default' : arenite.config.mode;
+          arenite.object.forEach(moduleConf.context.dependencies[mode], function (dependencies, depType) {
             dependencies.forEach(function (dep) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(moduleBasePath + dep);

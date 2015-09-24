@@ -350,7 +350,9 @@
       arenite.object.forEach(modules, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">module</span>) </span>{
         <span class="hljs-keyword">var</span> moduleBasePath;
         <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.vendor) {
-          <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.version.match(_prodModuleVersion)) {
+          <span class="hljs-keyword">if</span> (arenite.config.repo) {
+            moduleBasePath = arenite.config.repo;
+          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.version.match(_prodModuleVersion)) {
             moduleBasePath = _prodRepo.replace(<span class="hljs-string">'{vendor}'</span>, <span class="hljs-built_in">module</span>.vendor);
           } <span class="hljs-keyword">else</span> {
             moduleBasePath = _devRepo.replace(<span class="hljs-string">'{vendor}'</span>, <span class="hljs-built_in">module</span>.vendor);
