@@ -56,6 +56,8 @@ var Loader = function (config, options, cb) {
     options.base = options.base + '/';
   }
 
+  config.mode = options.mode;
+
   var arenite = Arenite.Object(arenite);
   _options = arenite.object.extend({env: 'dev', base: ''}, options);
   arenite = arenite.object.extend(arenite, new Arenite.Async(arenite));
@@ -75,10 +77,13 @@ module.exports = function (options, config, cb) {
 
     var _parse = function (urls) {
       urls.forEach(function (script) {
-        var regex = /http[s]*:\/\/.*?\/.*/;
         if (typeof script === 'object') {
           script = script.url;
         }
+        if (script.match(/.*\.(\w+)\?*.*/)[1] !== 'js') {
+          return;
+        }
+        var regex = /http[s]*:\/\/.*?\/.*/;
         script = script.indexOf("//") === 0 ? 'http:' + script : options.base + script;
         script = script.replace(/\?.*$/, '');
         var match = regex.exec(script);

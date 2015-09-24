@@ -549,6 +549,7 @@ Arenite.DI = function (arenite) {
     if (moduleKeys.length) {
       var latch = arenite.async.latch(moduleKeys.length, callback, 'modules');
       arenite.object.forEach(modules, function (module) {
+        var mode = module.vendor ? 'default' : arenite.config.mode;
         var moduleBasePath;
         if (module.vendor) {
           if (arenite.config.repo) {
@@ -567,7 +568,7 @@ Arenite.DI = function (arenite) {
         arenite.loader.loadResource(moduleBasePath + 'module.json', function (xhr) {
           var moduleConf = JSON.parse(xhr.responseText);
           var newDeps = {async: [], sync: []};
-          arenite.object.forEach(moduleConf.context.dependencies.default, function (dependencies, depType) {
+          arenite.object.forEach(moduleConf.context.dependencies[mode], function (dependencies, depType) {
             dependencies.forEach(function (dep) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(moduleBasePath + dep);
@@ -580,6 +581,7 @@ Arenite.DI = function (arenite) {
 
           arenite.config.context = arenite.config.context || {};
           arenite.config.context.dependencies = arenite.config.context.dependencies || {default: {sync: [], async: []}};
+          arenite.config.context.dependencies[mode] = arenite.config.context[mode] || {sync: [], async: []};
           arenite.object.forEach(arenite.config.context.dependencies, function (env) {
             arenite.object.extend(env, newDeps);
           });
@@ -600,7 +602,7 @@ Arenite.DI = function (arenite) {
   var _loadConfig = function (config, callback) {
     arenite.context.add('arenite', arenite);
     arenite.config = config;
-    arenite.config.mode = arenite.url.query().mode || 'default';
+    arenite.config.mode = arenite.config.mode || arenite.url.query().mode || 'default';
     window.console.log('Arenite: Starting in mode', arenite.config.mode);
     if (config.debug) {
       if (typeof config.debug === 'function') {
