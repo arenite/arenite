@@ -802,10 +802,10 @@ Arenite.Loader = function (arenite) {
   };
 
   var _loadScriptFrom = function (url, callback) {
-    if (_sameOrigin(url) && !firefoxOs) {
+    var fileExt = url.match(/.*\.(\w+)\?*.*/)[1];
+    if (_sameOrigin(url) && !firefoxOs && fileExt === 'js') {
       _loadScriptAsResource(url, callback);
     } else {
-      var fileExt = url.match(/.*\.(\w+)\?*.*/)[1];
       if (fileExt === 'js') {
         _loadScriptWithTag(url, callback);
       } else if (fileExt === 'css') {

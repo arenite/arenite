@@ -233,10 +233,10 @@ xhr.setRequestHeader(“Access-Control-Allow-Origin”, window.location.origin);
   };
 
   <span class="hljs-keyword">var</span> _loadScriptFrom = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">url, callback</span>) </span>{
-    <span class="hljs-keyword">if</span> (_sameOrigin(url) &amp;&amp; !firefoxOs) {
+    <span class="hljs-keyword">var</span> fileExt = url.match(<span class="hljs-regexp">/.*\.(\w+)\?*.*/</span>)[<span class="hljs-number">1</span>];
+    <span class="hljs-keyword">if</span> (_sameOrigin(url) &amp;&amp; !firefoxOs &amp;&amp; fileExt === <span class="hljs-string">'js'</span>) {
       _loadScriptAsResource(url, callback);
     } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">var</span> fileExt = url.match(<span class="hljs-regexp">/.*\.(\w+)\?*.*/</span>)[<span class="hljs-number">1</span>];
       <span class="hljs-keyword">if</span> (fileExt === <span class="hljs-string">'js'</span>) {
         _loadScriptWithTag(url, callback);
       } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (fileExt === <span class="hljs-string">'css'</span>) {
