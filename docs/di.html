@@ -375,6 +375,7 @@
           });
           <span class="hljs-keyword">delete</span> moduleConf.context.dependencies;
 
+          arenite.config.context = arenite.config.context || {};
           arenite.config.context.dependencies = arenite.config.context.dependencies || {<span class="hljs-keyword">default</span>: {sync: [], <span class="hljs-keyword">async</span>: []}};
           arenite.object.forEach(arenite.config.context.dependencies, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">env</span>) </span>{
             arenite.object.extend(env, newDeps);

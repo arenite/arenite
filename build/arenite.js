@@ -576,6 +576,7 @@ Arenite.DI = function (arenite) {
           });
           delete moduleConf.context.dependencies;
 
+          arenite.config.context = arenite.config.context || {};
           arenite.config.context.dependencies = arenite.config.context.dependencies || {default: {sync: [], async: []}};
           arenite.object.forEach(arenite.config.context.dependencies, function (env) {
             arenite.object.extend(env, newDeps);
