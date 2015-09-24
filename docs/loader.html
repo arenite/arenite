@@ -115,10 +115,23 @@
 
   <span class="hljs-keyword">var</span> _createCORSRequest = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">method, url, success, failure</span>) </span>{
     <span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();
-    xhr.open(method, url, <span class="hljs-literal">true</span>);
-    xhr.setRequestHeader(<span class="hljs-string">"X-Requested-With"</span>, <span class="hljs-string">"XMLHttpRequest"</span>);
-    xhr.setRequestHeader(<span class="hljs-string">"Access-Control-Allow-Origin"</span>, <span class="hljs-built_in">window</span>.location.origin);
-    xhr.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    xhr.open(method, url, <span class="hljs-literal">true</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>xhr.setRequestHeader(“X-Requested-With”, “XMLHttpRequest”);
+xhr.setRequestHeader(“Access-Control-Allow-Origin”, window.location.origin);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    xhr.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
       <span class="hljs-keyword">if</span> (xhr.readyState === <span class="hljs-number">4</span>) {
         <span class="hljs-keyword">if</span> (xhr.status % <span class="hljs-number">100</span> &lt; <span class="hljs-number">4</span>) {
           success();
@@ -153,6 +166,23 @@
     req.send();
   };
 
+  <span class="hljs-keyword">var</span> _loadStyleWithTag = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">url, callback</span>) </span>{
+    <span class="hljs-keyword">var</span> head = <span class="hljs-built_in">document</span>.getElementsByTagName(<span class="hljs-string">'head'</span>)[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">var</span> script = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'link'</span>);
+    script.rel = <span class="hljs-string">'stylesheet'</span>;
+    script.type = <span class="hljs-string">'text/css'</span>;
+    <span class="hljs-keyword">if</span> (navigator.appVersion.indexOf(<span class="hljs-string">"MSIE 9"</span>) === -<span class="hljs-number">1</span>) { <span class="hljs-comment">//IE 9 calls the callback twice</span>
+      script.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.readyState === <span class="hljs-string">'complete'</span>) {
+          callback();
+        }
+      };
+    }
+    script.onload = callback;
+    script.href = url;
+    head.appendChild(script);
+  };
+
   <span class="hljs-keyword">var</span> _loadScriptWithTag = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">url, callback</span>) </span>{
     <span class="hljs-keyword">var</span> head = <span class="hljs-built_in">document</span>.getElementsByTagName(<span class="hljs-string">'head'</span>)[<span class="hljs-number">0</span>];
     <span class="hljs-keyword">var</span> script = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'script'</span>);
@@ -176,11 +206,11 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>analyze the script for “annotation” type configurations</p>
 
@@ -206,7 +236,14 @@
     <span class="hljs-keyword">if</span> (_sameOrigin(url) &amp;&amp; !firefoxOs) {
       _loadScriptAsResource(url, callback);
     } <span class="hljs-keyword">else</span> {
-      _loadScriptWithTag(url, callback);
+      <span class="hljs-keyword">var</span> fileExt = url.match(<span class="hljs-regexp">/.*\.(\w+)\?*.*/</span>)[<span class="hljs-number">1</span>];
+      <span class="hljs-keyword">if</span> (fileExt === <span class="hljs-string">'js'</span>) {
+        _loadScriptWithTag(url, callback);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (fileExt === <span class="hljs-string">'css'</span>) {
+        _loadStyleWithTag(url, callback);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Uknown extension "'</span> + fileExt + <span class="hljs-string">'"'</span>;
+      }
     }
   };
 
@@ -235,11 +272,11 @@
         </li>
         
         
-        <li id="section-4">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>###loader.loadResource
 Load a given resource using ajax.</p>
@@ -256,11 +293,11 @@ it’s succesful completion and <em><b>error</b></em> is an optional callback to
         </li>
         
         
-        <li id="section-5">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>###loader.loadScript
 Load a script. This method will choose the best method to load the script (using tag or ajax) depending on the

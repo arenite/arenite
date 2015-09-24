@@ -8,8 +8,8 @@ Arenite.Loader = function (arenite) {
   var _createCORSRequest = function (method, url, success, failure) {
     var xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
-    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-    xhr.setRequestHeader("Access-Control-Allow-Origin", window.location.origin);
+    //xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    //xhr.setRequestHeader("Access-Control-Allow-Origin", window.location.origin);
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
         if (xhr.status % 100 < 4) {
@@ -43,6 +43,23 @@ Arenite.Loader = function (arenite) {
       }
     });
     req.send();
+  };
+
+  var _loadStyleWithTag = function (url, callback) {
+    var head = document.getElementsByTagName('head')[0];
+    var script = document.createElement('link');
+    script.rel = 'stylesheet';
+    script.type = 'text/css';
+    if (navigator.appVersion.indexOf("MSIE 9") === -1) { //IE 9 calls the callback twice
+      script.onreadystatechange = function () {
+        if (this.readyState === 'complete') {
+          callback();
+        }
+      };
+    }
+    script.onload = callback;
+    script.href = url;
+    head.appendChild(script);
   };
 
   var _loadScriptWithTag = function (url, callback) {
@@ -85,7 +102,14 @@ Arenite.Loader = function (arenite) {
     if (_sameOrigin(url) && !firefoxOs) {
       _loadScriptAsResource(url, callback);
     } else {
-      _loadScriptWithTag(url, callback);
+      var fileExt = url.match(/.*\.(\w+)\?*.*/)[1];
+      if (fileExt === 'js') {
+        _loadScriptWithTag(url, callback);
+      } else if (fileExt === 'css') {
+        _loadStyleWithTag(url, callback);
+      } else {
+        throw 'Uknown extension "' + fileExt + '"';
+      }
     }
   };
 

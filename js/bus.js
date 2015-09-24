@@ -33,8 +33,10 @@ Arenite.Bus = function () {
   };
 
   return {
-    subscribe: _subscribe,
-    unsubscribe: _unsubscribe,
-    publish: _publish
+    bus: {
+      subscribe: _subscribe,
+      unsubscribe: _unsubscribe,
+      publish: _publish
+    }
   };
 };

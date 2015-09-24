@@ -2,8 +2,6 @@
 <html>
 <head lang="en">
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="../../arenite-extensions/test/lib/jasmine/jasmine.css"/>
-
   <!-- Arenite -->
   <script type="text/javascript" src="../build/arenite.js"></script>
 </head>
@@ -17,22 +15,18 @@
     window.location.search = window.location.search + '&test1=test1&test2=test2&test2=another2&test2=yetanother2&invalid';
   }
   Arenite({
+    expose: 'arenite',
+    debug: true,
     imports: {
-      namespaces: [],
-      modules: {
-        test: {
-          vendor: 'lcavadas/arenite-extensions',
-          module: 'test',
-          version: 'master',//check for specific verion fomat to use either dev rawgit or prod rawgit
-          namespace: 'Module.Test',
-          name: 'test'
-        }
+      test: {
+        vendor: 'arenite/test-module',
+        module: '',
+        version: 'master'
       }
     },
     context: {
       start: [
         {
-          module: 'test',
           instance: 'test',
           func: 'runTests',
           args: [
@@ -47,6 +41,7 @@
                 '../js/async.js',
                 '../js/url.js',
                 '../js/di.js',
+                '../js/bus.js',
                 '../js/context.js',
                 '../js/annotation.js'
               ]

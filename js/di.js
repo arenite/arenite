@@ -206,37 +206,89 @@ Arenite.DI = function (arenite) {
     seqLatch.next();
   };
 
-  var _mergeImports = function (imports, callback) {
-    var imp = imports.pop();
-    var unloadedImports = [];
+  //var _mergeImports = function (imports, callback) {
+  //  var imp = imports.pop();
+  //  var unloadedImports = [];
+  //
+  //  while (imp) {
+  //    if (!arenite.object.get(window, imp.namespace)) {
+  //      unloadedImports.push(imp);
+  //    } else {
+  //      var imported = arenite.object.get(window, imp.namespace)();
+  //      arenite.config = arenite.object.extend(arenite.config, imported);
+  //      if (imported.imports) {
+  //        var newImports = arenite.array.extract(imported.imports, 'namespace');
+  //        window.console.log('Arenite: Merging imports', newImports);
+  //        if (arenite.array.contains(newImports, imp.namespace)) {
+  //          throw 'You have declared a circular import for "' + imp.namespace + '"';
+  //        } else {
+  //          imports = arenite.array.merge(imports, imported.imports);
+  //        }
+  //      }
+  //    }
+  //    imp = imports.pop();
+  //  }
+  //
+  //  if (unloadedImports.length !== 0) {
+  //    var latch = arenite.async.latch(unloadedImports.length, function () {
+  //      _mergeImports(unloadedImports, callback);
+  //    }, 'imports');
+  //    unloadedImports.forEach(function (subImp) {
+  //      arenite.loader.loadScript(subImp.url, latch.countDown);
+  //    });
+  //  } else {
+  //    callback();
+  //  }
+  //};
 
-    while (imp) {
-      if (imp.vendor) {
+  var _prodModuleVersion = /[\d]+\.[\d]+\.*[\d]*/;
+  var _devRepo = 'https://rawgit.com/{vendor}/{version}/{module}/';
+  var _prodRepo = 'https://cdn.rawgit.com/{vendor}/{version}/{module}/';
 
-      } else if (!arenite.object.get(window, imp.namespace)) {
-        unloadedImports.push(imp);
-      } else {
-        var imported = arenite.object.get(window, imp.namespace)();
-        arenite.config = arenite.object.extend(arenite.config, imported);
-        if (imported.imports) {
-          var newImports = arenite.array.extract(imported.imports, 'namespace');
-          window.console.log('Arenite: Merging imports', newImports);
-          if (arenite.array.contains(newImports, imp.namespace)) {
-            throw 'You have declared a circular import for "' + imp.namespace + '"';
+  var _fetchModules = function (modules, callback) {
+    var moduleKeys = arenite.object.keys(modules);
+    if (moduleKeys.length) {
+      var latch = arenite.async.latch(moduleKeys.length, callback, 'modules');
+      arenite.object.forEach(modules, function (module) {
+        var moduleBasePath;
+        if (module.vendor) {
+          if (module.version.match(_prodModuleVersion)) {
+            moduleBasePath = _prodRepo.replace('{vendor}', module.vendor);
           } else {
-            imports = arenite.array.merge(imports, imported.imports);
+            moduleBasePath = _devRepo.replace('{vendor}', module.vendor);
           }
+          moduleBasePath = moduleBasePath.replace('{version}', module.version);
+          moduleBasePath = moduleBasePath.replace('{module}', module.module);
+        } else {
+          moduleBasePath = module.module;
         }
-      }
-      imp = imports.pop();
-    }
 
-    if (unloadedImports.length !== 0) {
-      var latch = arenite.async.latch(unloadedImports.length, function () {
-        _mergeImports(unloadedImports, callback);
-      }, 'imports');
-      unloadedImports.forEach(function (subImp) {
-        arenite.loader.loadScript(subImp.url, latch.countDown);
+        arenite.loader.loadResource(moduleBasePath + 'module.json', function (xhr) {
+          var moduleConf = JSON.parse(xhr.responseText);
+          var newDeps = {async: [], sync: []};
+          arenite.object.forEach(moduleConf.context.dependencies.default, function (dependencies, depType) {
+            dependencies.forEach(function (dep) {
+              if (typeof dep === 'string') {
+                newDeps[depType].push(moduleBasePath + dep);
+              } else {
+                newDeps[depType].push(arenite.object.extend(dep, {url: moduleBasePath + dep.url}));
+              }
+            });
+          });
+          delete moduleConf.context.dependencies;
+
+          arenite.config.context.dependencies = arenite.config.context.dependencies || {default: {sync: [], async: []}};
+          arenite.object.forEach(arenite.config.context.dependencies, function (env) {
+            arenite.object.extend(env, newDeps);
+          });
+
+          arenite.config = arenite.object.extend(arenite.config, moduleConf);
+          if (moduleConf.imports && moduleConf.imports) {
+            _fetchModules(moduleConf.imports, latch.countDown);
+          } else {
+            latch.countDown();
+          }
+        });
       });
     } else {
       callback();
@@ -264,8 +316,11 @@ Arenite.DI = function (arenite) {
     }
 
     if (arenite.config.imports) {
-      window.console.log('Arenite: Merging imports', arenite.array.extract(arenite.config.imports, 'namespace'));
-      _mergeImports(JSON.parse(JSON.stringify(arenite.config.imports)), callback);
+      //var latch = arenite.async.latch(2, callback, 'imports');
+      //window.console.log('Arenite: Merging imports', arenite.array.extract(arenite.config.imports.extensions, 'namespace'));
+      //_mergeImports(JSON.parse(JSON.stringify(arenite.config.imports.extensions)), latch.countDown);
+      window.console.log('Arenite: Fetching modules', arenite.object.keys(arenite.config.imports));
+      _fetchModules(JSON.parse(JSON.stringify(arenite.config.imports)), callback);
     } else {
       callback();
     }
@@ -291,7 +346,7 @@ Arenite.DI = function (arenite) {
       //<pre><code>
       // init(config)
       //</pre></code>
-      //where *<b>config</b>* is the complete or partial configuration (with the imports)
+      //where *<b>config</b>* is the complete configuration with imports
       init: _boot,
       //###di.loadConfig
       // Resolve the imports and merge them into arenite's internal config object

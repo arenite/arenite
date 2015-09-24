@@ -337,39 +337,101 @@
       _loadAsyncDependencies(dependencies);
     });
     seqLatch.next();
-  };
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>var _mergeImports = function (imports, callback) {
+ var imp = imports.pop();
+ var unloadedImports = [];</p>
+<p> while (imp) {
+   if (!arenite.object.get(window, imp.namespace)) {
+     unloadedImports.push(imp);
+   } else {
+     var imported = arenite.object.get(window, imp.namespace)();
+     arenite.config = arenite.object.extend(arenite.config, imported);
+     if (imported.imports) {
+       var newImports = arenite.array.extract(imported.imports, ‘namespace’);
+       window.console.log(‘Arenite: Merging imports’, newImports);
+       if (arenite.array.contains(newImports, imp.namespace)) {
+         throw ‘You have declared a circular import for “‘ + imp.namespace + ‘“‘;
+       } else {
+         imports = arenite.array.merge(imports, imported.imports);
+       }
+     }
+   }
+   imp = imports.pop();
+ }</p>
+<p> if (unloadedImports.length !== 0) {
+   var latch = arenite.async.latch(unloadedImports.length, function () {
+     _mergeImports(unloadedImports, callback);
+   }, ‘imports’);
+   unloadedImports.forEach(function (subImp) {
+     arenite.loader.loadScript(subImp.url, latch.countDown);
+   });
+ } else {
+   callback();
+ }
+};</p>
 
-  <span class="hljs-keyword">var</span> _mergeImports = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">imports, callback</span>) </span>{
-    <span class="hljs-keyword">var</span> imp = imports.pop();
-    <span class="hljs-keyword">var</span> unloadedImports = [];
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  <span class="hljs-keyword">var</span> _prodModuleVersion = <span class="hljs-regexp">/[\d]+\.[\d]+\.*[\d]*/</span>;
+  <span class="hljs-keyword">var</span> _devRepo = <span class="hljs-string">'https://rawgit.com/{vendor}/{version}/{module}/'</span>;
+  <span class="hljs-keyword">var</span> _prodRepo = <span class="hljs-string">'https://cdn.rawgit.com/{vendor}/{version}/{module}/'</span>;
 
-    <span class="hljs-keyword">while</span> (imp) {
-      <span class="hljs-keyword">if</span> (imp.vendor) {
-
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!arenite.object.get(<span class="hljs-built_in">window</span>, imp.namespace)) {
-        unloadedImports.push(imp);
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">var</span> imported = arenite.object.get(<span class="hljs-built_in">window</span>, imp.namespace)();
-        arenite.config = arenite.object.extend(arenite.config, imported);
-        <span class="hljs-keyword">if</span> (imported.imports) {
-          <span class="hljs-keyword">var</span> newImports = arenite.array.extract(imported.imports, <span class="hljs-string">'namespace'</span>);
-          <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: Merging imports'</span>, newImports);
-          <span class="hljs-keyword">if</span> (arenite.array.contains(newImports, imp.namespace)) {
-            <span class="hljs-keyword">throw</span> <span class="hljs-string">'You have declared a circular import for "'</span> + imp.namespace + <span class="hljs-string">'"'</span>;
+  <span class="hljs-keyword">var</span> _fetchModules = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">modules, callback</span>) </span>{
+    <span class="hljs-keyword">var</span> moduleKeys = arenite.object.keys(modules);
+    <span class="hljs-keyword">if</span> (moduleKeys.length) {
+      <span class="hljs-keyword">var</span> latch = arenite.async.latch(moduleKeys.length, callback, <span class="hljs-string">'modules'</span>);
+      arenite.object.forEach(modules, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">module</span>) </span>{
+        <span class="hljs-keyword">var</span> moduleBasePath;
+        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.vendor) {
+          <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.version.match(_prodModuleVersion)) {
+            moduleBasePath = _prodRepo.replace(<span class="hljs-string">'{vendor}'</span>, <span class="hljs-built_in">module</span>.vendor);
           } <span class="hljs-keyword">else</span> {
-            imports = arenite.array.merge(imports, imported.imports);
+            moduleBasePath = _devRepo.replace(<span class="hljs-string">'{vendor}'</span>, <span class="hljs-built_in">module</span>.vendor);
           }
+          moduleBasePath = moduleBasePath.replace(<span class="hljs-string">'{version}'</span>, <span class="hljs-built_in">module</span>.version);
+          moduleBasePath = moduleBasePath.replace(<span class="hljs-string">'{module}'</span>, <span class="hljs-built_in">module</span>.module);
+        } <span class="hljs-keyword">else</span> {
+          moduleBasePath = <span class="hljs-built_in">module</span>.module;
         }
-      }
-      imp = imports.pop();
-    }
 
-    <span class="hljs-keyword">if</span> (unloadedImports.length !== <span class="hljs-number">0</span>) {
-      <span class="hljs-keyword">var</span> latch = arenite.async.latch(unloadedImports.length, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-        _mergeImports(unloadedImports, callback);
-      }, <span class="hljs-string">'imports'</span>);
-      unloadedImports.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">subImp</span>) </span>{
-        arenite.loader.loadScript(subImp.url, latch.countDown);
+        arenite.loader.loadResource(moduleBasePath + <span class="hljs-string">'module.json'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">xhr</span>) </span>{
+          <span class="hljs-keyword">var</span> moduleConf = <span class="hljs-built_in">JSON</span>.parse(xhr.responseText);
+          <span class="hljs-keyword">var</span> newDeps = {<span class="hljs-keyword">async</span>: [], sync: []};
+          arenite.object.forEach(moduleConf.context.dependencies.default, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dependencies, depType</span>) </span>{
+            dependencies.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
+              <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> dep === <span class="hljs-string">'string'</span>) {
+                newDeps[depType].push(moduleBasePath + dep);
+              } <span class="hljs-keyword">else</span> {
+                newDeps[depType].push(arenite.object.extend(dep, {url: moduleBasePath + dep.url}));
+              }
+            });
+          });
+          <span class="hljs-keyword">delete</span> moduleConf.context.dependencies;
+
+          arenite.config.context.dependencies = arenite.config.context.dependencies || {<span class="hljs-keyword">default</span>: {sync: [], <span class="hljs-keyword">async</span>: []}};
+          arenite.object.forEach(arenite.config.context.dependencies, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">env</span>) </span>{
+            arenite.object.extend(env, newDeps);
+          });
+
+          arenite.config = arenite.object.extend(arenite.config, moduleConf);
+          <span class="hljs-keyword">if</span> (moduleConf.imports &amp;&amp; moduleConf.imports) {
+            _fetchModules(moduleConf.imports, latch.countDown);
+          } <span class="hljs-keyword">else</span> {
+            latch.countDown();
+          }
+        });
       });
     } <span class="hljs-keyword">else</span> {
       callback();
@@ -396,9 +458,25 @@
       }
     }
 
-    <span class="hljs-keyword">if</span> (arenite.config.imports) {
-      <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: Merging imports'</span>, arenite.array.extract(arenite.config.imports, <span class="hljs-string">'namespace'</span>));
-      _mergeImports(<span class="hljs-built_in">JSON</span>.parse(<span class="hljs-built_in">JSON</span>.stringify(arenite.config.imports)), callback);
+    <span class="hljs-keyword">if</span> (arenite.config.imports) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>var latch = arenite.async.latch(2, callback, ‘imports’);
+window.console.log(‘Arenite: Merging imports’, arenite.array.extract(arenite.config.imports.extensions, ‘namespace’));
+_mergeImports(JSON.parse(JSON.stringify(arenite.config.imports.extensions)), latch.countDown);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: Fetching modules'</span>, arenite.object.keys(arenite.config.imports));
+      _fetchModules(<span class="hljs-built_in">JSON</span>.parse(<span class="hljs-built_in">JSON</span>.stringify(arenite.config.imports)), callback);
     } <span class="hljs-keyword">else</span> {
       callback();
     }
@@ -423,18 +501,18 @@
         </li>
         
         
-        <li id="section-5">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>###di.init
 Start arenite with the given configuration</p>
 <p><pre><code>
 init(config)
 </pre></code>
-where <em><b>config</b></em> is the complete or partial configuration (with the imports)</p>
+where <em><b>config</b></em> is the complete configuration with imports</p>
 
             </div>
             
@@ -443,11 +521,11 @@ where <em><b>config</b></em> is the complete or partial configuration (with the 
         </li>
         
         
-        <li id="section-6">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>###di.loadConfig
 Resolve the imports and merge them into arenite’s internal config object</p>
@@ -464,11 +542,11 @@ the import has extended the config.</p>
         </li>
         
         
-        <li id="section-7">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>###di.resolveArgs
 Resolve the arguments defined in an instance definition AKA execution defined in the arenite configuration format</p>
@@ -484,11 +562,11 @@ where <em><b>execution</b></em> is the object describing the execution and <em><
         </li>
         
         
-        <li id="section-8">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>###di.exec
 Execute an instance definition AKA execution defined in the arenite configuration format</p>
@@ -505,11 +583,11 @@ before the actual execution and <em><b>done</b></em> is the callback after the e
         </li>
         
         
-        <li id="section-9">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>###di.wire
 Wire a new instance at runtime (used for factories)</p>

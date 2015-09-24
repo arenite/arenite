@@ -24,36 +24,36 @@
 Arenite = function (config) {
   //### Arenite.Object
   // Instance of the Sandbox is started with the <a href="object.html">Arenite.Object</a> module witch gives us access to the <code>extend</code> function used.
-  var arenite = new Arenite.Object(arenite);
+  var arenite = Arenite.Object(arenite);
   //### Arenite.Html
   // Extend the instance with the <a href="async.html">Arenite.Html</a> extension providing the html helper tooks.
-  arenite = arenite.object.extend(arenite, new Arenite.Html(arenite));
+  arenite = arenite.object.extend(arenite, Arenite.Html(arenite));
   //### Arenite.Async
   // Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
-  arenite = arenite.object.extend(arenite, new Arenite.Async(arenite));
+  arenite = arenite.object.extend(arenite, Arenite.Async(arenite));
   //### Arenite.Url
   // Extend the instance with the <a href="url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.
-  arenite = arenite.object.extend(arenite, new Arenite.Url(arenite));
+  arenite = arenite.object.extend(arenite, Arenite.Url(arenite));
   //### Arenite.DI
   // Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
   // the injector functionality.
-  arenite = arenite.object.extend(arenite, new Arenite.DI(arenite));
+  arenite = arenite.object.extend(arenite, Arenite.DI(arenite));
   //### Arenite.AnnotationProcessor
   // Extend the instance with the <a href="annotation.html">Arenite.AnnotationProcessor</a> extension which provides
   // the parsing and hanlding of annotations.
-  arenite = arenite.object.extend(arenite, new Arenite.AnnotationProcessor(arenite));
+  arenite = arenite.object.extend(arenite, Arenite.AnnotationProcessor(arenite));
   //### Arenite.Context
   // Extend the instance with the <a href="context.html">Arenite.Context</a> extension which provides
   // the context to manage the instances.
-  arenite = arenite.object.extend(arenite, new Arenite.Context(arenite));
+  arenite = arenite.object.extend(arenite, Arenite.Context(arenite));
   //### Arenite.Loader
   // Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
   // the script and resource loading functionality to the sandbox.
-  arenite = arenite.object.extend(arenite, new Arenite.Loader(arenite));
+  arenite = arenite.object.extend(arenite, Arenite.Loader(arenite));
   //### Arenite.Bus
   // Extend the instance with the <a href="bus.html">Arenite.Bus</a> extension which provides
   // an event bus.
-  arenite = arenite.object.extend(arenite, new Arenite.Bus(arenite));
+  arenite = arenite.object.extend(arenite, Arenite.Bus(arenite));
   // Initialize the injector by having it read the configuration object passed into this constructor.
   arenite.di.init(config);
   return arenite;
@@ -262,9 +262,11 @@ Arenite.Bus = function () {
   };
 
   return {
-    subscribe: _subscribe,
-    unsubscribe: _unsubscribe,
-    publish: _publish
+    bus: {
+      subscribe: _subscribe,
+      unsubscribe: _unsubscribe,
+      publish: _publish
+    }
   };
 };
 /*global Arenite:true*/
@@ -538,37 +540,89 @@ Arenite.DI = function (arenite) {
     seqLatch.next();
   };
 
-  var _mergeImports = function (imports, callback) {
-    var imp = imports.pop();
-    var unloadedImports = [];
+  //var _mergeImports = function (imports, callback) {
+  //  var imp = imports.pop();
+  //  var unloadedImports = [];
+  //
+  //  while (imp) {
+  //    if (!arenite.object.get(window, imp.namespace)) {
+  //      unloadedImports.push(imp);
+  //    } else {
+  //      var imported = arenite.object.get(window, imp.namespace)();
+  //      arenite.config = arenite.object.extend(arenite.config, imported);
+  //      if (imported.imports) {
+  //        var newImports = arenite.array.extract(imported.imports, 'namespace');
+  //        window.console.log('Arenite: Merging imports', newImports);
+  //        if (arenite.array.contains(newImports, imp.namespace)) {
+  //          throw 'You have declared a circular import for "' + imp.namespace + '"';
+  //        } else {
+  //          imports = arenite.array.merge(imports, imported.imports);
+  //        }
+  //      }
+  //    }
+  //    imp = imports.pop();
+  //  }
+  //
+  //  if (unloadedImports.length !== 0) {
+  //    var latch = arenite.async.latch(unloadedImports.length, function () {
+  //      _mergeImports(unloadedImports, callback);
+  //    }, 'imports');
+  //    unloadedImports.forEach(function (subImp) {
+  //      arenite.loader.loadScript(subImp.url, latch.countDown);
+  //    });
+  //  } else {
+  //    callback();
+  //  }
+  //};
 
-    while (imp) {
-      if (imp.vendor) {
+  var _prodModuleVersion = /[\d]+\.[\d]+\.*[\d]*/;
+  var _devRepo = 'https://rawgit.com/{vendor}/{version}/{module}/';
+  var _prodRepo = 'https://cdn.rawgit.com/{vendor}/{version}/{module}/';
 
-      } else if (!arenite.object.get(window, imp.namespace)) {
-        unloadedImports.push(imp);
-      } else {
-        var imported = arenite.object.get(window, imp.namespace)();
-        arenite.config = arenite.object.extend(arenite.config, imported);
-        if (imported.imports) {
-          var newImports = arenite.array.extract(imported.imports, 'namespace');
-          window.console.log('Arenite: Merging imports', newImports);
-          if (arenite.array.contains(newImports, imp.namespace)) {
-            throw 'You have declared a circular import for "' + imp.namespace + '"';
+  var _fetchModules = function (modules, callback) {
+    var moduleKeys = arenite.object.keys(modules);
+    if (moduleKeys.length) {
+      var latch = arenite.async.latch(moduleKeys.length, callback, 'modules');
+      arenite.object.forEach(modules, function (module) {
+        var moduleBasePath;
+        if (module.vendor) {
+          if (module.version.match(_prodModuleVersion)) {
+            moduleBasePath = _prodRepo.replace('{vendor}', module.vendor);
           } else {
-            imports = arenite.array.merge(imports, imported.imports);
+            moduleBasePath = _devRepo.replace('{vendor}', module.vendor);
           }
+          moduleBasePath = moduleBasePath.replace('{version}', module.version);
+          moduleBasePath = moduleBasePath.replace('{module}', module.module);
+        } else {
+          moduleBasePath = module.module;
         }
-      }
-      imp = imports.pop();
-    }
 
-    if (unloadedImports.length !== 0) {
-      var latch = arenite.async.latch(unloadedImports.length, function () {
-        _mergeImports(unloadedImports, callback);
-      }, 'imports');
-      unloadedImports.forEach(function (subImp) {
-        arenite.loader.loadScript(subImp.url, latch.countDown);
+        arenite.loader.loadResource(moduleBasePath + 'module.json', function (xhr) {
+          var moduleConf = JSON.parse(xhr.responseText);
+          var newDeps = {async: [], sync: []};
+          arenite.object.forEach(moduleConf.context.dependencies.default, function (dependencies, depType) {
+            dependencies.forEach(function (dep) {
+              if (typeof dep === 'string') {
+                newDeps[depType].push(moduleBasePath + dep);
+              } else {
+                newDeps[depType].push(arenite.object.extend(dep, {url: moduleBasePath + dep.url}));
+              }
+            });
+          });
+          delete moduleConf.context.dependencies;
+
+          arenite.config.context.dependencies = arenite.config.context.dependencies || {default: {sync: [], async: []}};
+          arenite.object.forEach(arenite.config.context.dependencies, function (env) {
+            arenite.object.extend(env, newDeps);
+          });
+
+          arenite.config = arenite.object.extend(arenite.config, moduleConf);
+          if (moduleConf.imports && moduleConf.imports) {
+            _fetchModules(moduleConf.imports, latch.countDown);
+          } else {
+            latch.countDown();
+          }
+        });
       });
     } else {
       callback();
@@ -596,8 +650,11 @@ Arenite.DI = function (arenite) {
     }
 
     if (arenite.config.imports) {
-      window.console.log('Arenite: Merging imports', arenite.array.extract(arenite.config.imports, 'namespace'));
-      _mergeImports(JSON.parse(JSON.stringify(arenite.config.imports)), callback);
+      //var latch = arenite.async.latch(2, callback, 'imports');
+      //window.console.log('Arenite: Merging imports', arenite.array.extract(arenite.config.imports.extensions, 'namespace'));
+      //_mergeImports(JSON.parse(JSON.stringify(arenite.config.imports.extensions)), latch.countDown);
+      window.console.log('Arenite: Fetching modules', arenite.object.keys(arenite.config.imports));
+      _fetchModules(JSON.parse(JSON.stringify(arenite.config.imports)), callback);
     } else {
       callback();
     }
@@ -623,7 +680,7 @@ Arenite.DI = function (arenite) {
       //<pre><code>
       // init(config)
       //</pre></code>
-      //where *<b>config</b>* is the complete or partial configuration (with the imports)
+      //where *<b>config</b>* is the complete configuration with imports
       init: _boot,
       //###di.loadConfig
       // Resolve the imports and merge them into arenite's internal config object
@@ -692,8 +749,8 @@ Arenite.Loader = function (arenite) {
   var _createCORSRequest = function (method, url, success, failure) {
     var xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
-    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-    xhr.setRequestHeader("Access-Control-Allow-Origin", window.location.origin);
+    //xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    //xhr.setRequestHeader("Access-Control-Allow-Origin", window.location.origin);
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
         if (xhr.status % 100 < 4) {
@@ -727,6 +784,23 @@ Arenite.Loader = function (arenite) {
       }
     });
     req.send();
+  };
+
+  var _loadStyleWithTag = function (url, callback) {
+    var head = document.getElementsByTagName('head')[0];
+    var script = document.createElement('link');
+    script.rel = 'stylesheet';
+    script.type = 'text/css';
+    if (navigator.appVersion.indexOf("MSIE 9") === -1) { //IE 9 calls the callback twice
+      script.onreadystatechange = function () {
+        if (this.readyState === 'complete') {
+          callback();
+        }
+      };
+    }
+    script.onload = callback;
+    script.href = url;
+    head.appendChild(script);
   };
 
   var _loadScriptWithTag = function (url, callback) {
@@ -769,7 +843,14 @@ Arenite.Loader = function (arenite) {
     if (_sameOrigin(url) && !firefoxOs) {
       _loadScriptAsResource(url, callback);
     } else {
-      _loadScriptWithTag(url, callback);
+      var fileExt = url.match(/.*\.(\w+)\?*.*/)[1];
+      if (fileExt === 'js') {
+        _loadScriptWithTag(url, callback);
+      } else if (fileExt === 'css') {
+        _loadStyleWithTag(url, callback);
+      } else {
+        throw 'Uknown extension "' + fileExt + '"';
+      }
     }
   };
 
