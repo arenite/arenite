@@ -61,7 +61,7 @@ describe("Arenite.Loader", function () {
     });
     var loader = Arenite.Loader();
     var callback = jasmine.createSpy('callback');
-    loader.loader.loadScript('http://somewhereelse/asd', callback);
+    loader.loader.loadScript('http://somewhereelse/asd.js', callback);
     script.readyState = 'complete';
     script.onreadystatechange();
     expect(callback).toHaveBeenCalled();

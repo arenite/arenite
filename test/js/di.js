@@ -6,6 +6,7 @@ describe("Arenite.DI", function () {
 
   it("should return null if arguments can\'t be resolved", function () {
     var di = Arenite.DI({
+      deubug:true,
       context: {
         get: function (name) {
           if (name === 'foo') {
@@ -116,61 +117,61 @@ describe("Arenite.DI", function () {
     expect(window.arfunny).toBe(undefined);
   });
 
-  it('should merge config with imports', function () {
-    spyOn(Arenite, 'Extra').and.callFake(function () {
-      return {
-        context: {
-          instances: {}
-        }
-      };
-    });
-    Arenite({
-      expose: 'arenite',
-      imports: [
-        {
-          url: 'url',
-          namespace: 'Arenite.Extra'
-        }
-      ]
-    });
+  //it('should merge config with imports', function () {
+  //  spyOn(Arenite, 'Extra').and.callFake(function () {
+  //    return {
+  //      context: {
+  //        instances: {}
+  //      }
+  //    };
+  //  });
+  //  Arenite({
+  //    expose: 'arenite',
+  //    imports: [
+  //      {
+  //        url: 'url',
+  //        namespace: 'Arenite.Extra'
+  //      }
+  //    ]
+  //  });
+  //
+  //  expect(window.arenite.config).toEqual({
+  //    expose: 'arenite', imports: [{url: 'url', namespace: 'Arenite.Extra'}], mode: 'default', context: {instances: {}}
+  //  });
+  //});
 
-    expect(window.arenite.config).toEqual({
-      expose: 'arenite', imports: [{url: 'url', namespace: 'Arenite.Extra'}], mode: 'default', context: {instances: {}}
-    });
-  });
-
-  it('should fetch and merge config with imports if not already present', function () {
-    spyOn(Arenite, 'Loader').and.callFake(function () {
-      return {
-        loader: {
-          loadScript: function (url, cb) {
-            Arenite.Extra2 = function () {
-              return {
-                context: {
-                  instances: {}
-                }
-              };
-            };
-            cb();
-          }
-        }
-      };
-    });
-
-    Arenite({
-      expose: 'arenite',
-      imports: [
-        {
-          url: 'url',
-          namespace: 'Arenite.Extra2'
-        }
-      ]
-    });
-
-    expect(window.arenite.config).toEqual({
-      expose: 'arenite', imports: [{url: 'url', namespace: 'Arenite.Extra2'}], mode: 'default', context: {instances: {}}
-    });
-  });
+  //it('should fetch and merge config with imports if not already present', function () {
+  //  spyOn(Arenite, 'Loader').and.callFake(function () {
+  //    return {
+  //      loader: {
+  //        loadScript: function (url, cb) {
+  //          Arenite.Extra2 = function () {
+  //            return {
+  //              context: {
+  //                instances: {}
+  //              }
+  //            };
+  //          };
+  //          cb();
+  //        }
+  //      }
+  //    };
+  //  });
+  //
+  //  Arenite({
+  //    expose: 'arenite',
+  //    imports: [
+  //      {
+  //        url: 'url',
+  //        namespace: 'Arenite.Extra2'
+  //      }
+  //    ]
+  //  });
+  //
+  //  expect(window.arenite.config).toEqual({
+  //    expose: 'arenite', imports: [{url: 'url', namespace: 'Arenite.Extra2'}], mode: 'default', context: {instances: {}}
+  //  });
+  //});
 
   it('should fetch dependencies', function () {
     var loadingSpy = jasmine.createSpy('load').and.callFake(function (url, cb) {
@@ -257,6 +258,13 @@ describe("Arenite.DI", function () {
   it('should extend arenite if extensions is present', function () {
     window.Arenite.Extra = function () {
       return {yay: 'yay'};
+    };
+    window.Arenite.Extra2 = function () {
+      return {
+        context: {
+          instances: {}
+        }
+      };
     };
     Arenite({
       expose: 'arenite',
@@ -525,7 +533,7 @@ describe("Arenite.DI", function () {
             factory: true,
             namespace: 'Arenite.Extra',
             args: [{
-              instance:{
+              instance: {
                 namespace: 'Arenite.Extra2'
               }
             }]
@@ -541,7 +549,7 @@ describe("Arenite.DI", function () {
     expect(extra2).toHaveBeenCalled();
     arenite.context.get('one');
 
-    expect(extra.calls.count()).toEqual(2,'Extra calls');
-    expect(extra2.calls.count()).toEqual(2,'Extra2 calls');
+    expect(extra.calls.count()).toEqual(2, 'Extra calls');
+    expect(extra2.calls.count()).toEqual(2, 'Extra2 calls');
   });
 });

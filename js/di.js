@@ -206,41 +206,6 @@ Arenite.DI = function (arenite) {
     seqLatch.next();
   };
 
-  //var _mergeImports = function (imports, callback) {
-  //  var imp = imports.pop();
-  //  var unloadedImports = [];
-  //
-  //  while (imp) {
-  //    if (!arenite.object.get(window, imp.namespace)) {
-  //      unloadedImports.push(imp);
-  //    } else {
-  //      var imported = arenite.object.get(window, imp.namespace)();
-  //      arenite.config = arenite.object.extend(arenite.config, imported);
-  //      if (imported.imports) {
-  //        var newImports = arenite.array.extract(imported.imports, 'namespace');
-  //        window.console.log('Arenite: Merging imports', newImports);
-  //        if (arenite.array.contains(newImports, imp.namespace)) {
-  //          throw 'You have declared a circular import for "' + imp.namespace + '"';
-  //        } else {
-  //          imports = arenite.array.merge(imports, imported.imports);
-  //        }
-  //      }
-  //    }
-  //    imp = imports.pop();
-  //  }
-  //
-  //  if (unloadedImports.length !== 0) {
-  //    var latch = arenite.async.latch(unloadedImports.length, function () {
-  //      _mergeImports(unloadedImports, callback);
-  //    }, 'imports');
-  //    unloadedImports.forEach(function (subImp) {
-  //      arenite.loader.loadScript(subImp.url, latch.countDown);
-  //    });
-  //  } else {
-  //    callback();
-  //  }
-  //};
-
   var _prodModuleVersion = /[\d]+\.[\d]+\.*[\d]*/;
   var _devRepo = 'https://rawgit.com/{vendor}/{version}/{module}/';
   var _prodRepo = 'https://cdn.rawgit.com/{vendor}/{version}/{module}/';
@@ -316,9 +281,6 @@ Arenite.DI = function (arenite) {
     }
 
     if (arenite.config.imports) {
-      //var latch = arenite.async.latch(2, callback, 'imports');
-      //window.console.log('Arenite: Merging imports', arenite.array.extract(arenite.config.imports.extensions, 'namespace'));
-      //_mergeImports(JSON.parse(JSON.stringify(arenite.config.imports.extensions)), latch.countDown);
       window.console.log('Arenite: Fetching modules', arenite.object.keys(arenite.config.imports));
       _fetchModules(JSON.parse(JSON.stringify(arenite.config.imports)), callback);
     } else {
