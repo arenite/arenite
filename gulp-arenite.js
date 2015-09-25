@@ -17,6 +17,13 @@ global.window.XMLHttpRequest = function () {
     },
     open: function (m, url) {
       var _this = this;
+      if (url.substr(0, 4) === 'http') {
+        _this.responseText = '{"context":{"dependencies":{}}}';
+        window.setTimeout(function () {
+          _this.onreadystatechange();
+        }, 1);
+        return;
+      }
       fs.readFile(_options.base + url.replace(/\?.*$/, ''), 'utf8', function (err, data) {
         if (err) {
           return console.log(err);
