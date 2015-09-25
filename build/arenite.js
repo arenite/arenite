@@ -325,7 +325,7 @@ Arenite.Context = function (arenite) {
       try {
         throw new Error();
       } catch (e) {
-        var reg = /([^\/]+?)(\.min)*\.js[:\d]+\)*$/m;
+        var reg = /([^\/]+?)(\.min)*\.js[:\d]+\)*$/gm;
         if (reg.exec(e.stack)) {
           var candidates = reg.exec(e.stack);
           if (candidates.length > 1) {
