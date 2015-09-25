@@ -240,7 +240,7 @@ Arenite.DI = function (arenite) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(dep.match(_externalUrl) ? dep : moduleBasePath + dep);
               } else {
-                newDeps[depType].push(arenite.object.extend(dep, {url: dep.match(_externalUrl) ? dep.url : moduleBasePath + dep.url}));
+                newDeps[depType].push(arenite.object.extend(dep, {url: dep.url.match(_externalUrl) ? dep.url : moduleBasePath + dep.url}));
               }
             });
           });
