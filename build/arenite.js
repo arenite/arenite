@@ -619,7 +619,10 @@ Arenite.DI = function (arenite) {
 
           arenite.config.context = arenite.config.context || {};
           arenite.config.context.dependencies = arenite.config.context.dependencies || {default: {sync: [], async: []}};
-          arenite.config.context.dependencies[mode] = arenite.config.context[mode] || {sync: [], async: []};
+          arenite.config.context.dependencies[mode] = arenite.config.context.dependencies[mode] || {
+              sync: [],
+              async: []
+            };
           arenite.object.forEach(arenite.config.context.dependencies, function (env) {
             arenite.object.extend(env, newDeps);
           });
