@@ -31,6 +31,43 @@ Arenite.Context = function (arenite) {
     }
   };
 
+  /* AMD methods declaration so we can capture the libs that support it */
+  window.require = _getInstance;
+  window.define = function (name, deps, callback) {
+    if (!callback) {
+      callback = deps;
+      deps = name;
+      name = undefined;
+    }
+
+    if (!Array.isArray(deps)) {
+      callback = deps;
+      deps = [];
+    }
+
+    var resolvedDeps = [];
+    deps.forEach(function (dep) {
+      resolvedDeps.push(_getInstance(dep));
+    });
+    var result = callback.apply(window, resolvedDeps);
+    if (!name) {
+      try {
+        throw new Error();
+      } catch (e) {
+        var candidates = e.stack.trim().match(/([^\/]+?)(\.min)*\.js[:\d]+$/);
+        if (candidates.length > 1) {
+          name = candidates[1];
+        }
+      }
+    }
+    if (name) {
+      _addInstance(name, result);
+    }
+  };
+  window.define.amd = {
+    jQuery: true
+  };
+
   return {
     context: {
       //###context.get

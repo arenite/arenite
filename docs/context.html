@@ -139,6 +139,43 @@
     }
   };
 
+  <span class="hljs-comment">/* AMD methods declaration so we can capture the libs that support it */</span>
+  <span class="hljs-built_in">window</span>.require = _getInstance;
+  <span class="hljs-built_in">window</span>.define = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, deps, callback</span>) </span>{
+    <span class="hljs-keyword">if</span> (!callback) {
+      callback = deps;
+      deps = name;
+      name = <span class="hljs-literal">undefined</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">Array</span>.isArray(deps)) {
+      callback = deps;
+      deps = [];
+    }
+
+    <span class="hljs-keyword">var</span> resolvedDeps = [];
+    deps.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
+      resolvedDeps.push(_getInstance(dep));
+    });
+    <span class="hljs-keyword">var</span> result = callback.apply(<span class="hljs-built_in">window</span>, resolvedDeps);
+    <span class="hljs-keyword">if</span> (!name) {
+      <span class="hljs-keyword">try</span> {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>();
+      } <span class="hljs-keyword">catch</span> (e) {
+        <span class="hljs-keyword">var</span> candidates = e.stack.trim().match(<span class="hljs-regexp">/([^\/]+?)(\.min)*\.js[:\d]+$/</span>);
+        <span class="hljs-keyword">if</span> (candidates.length &gt; <span class="hljs-number">1</span>) {
+          name = candidates[<span class="hljs-number">1</span>];
+        }
+      }
+    }
+    <span class="hljs-keyword">if</span> (name) {
+      _addInstance(name, result);
+    }
+  };
+  <span class="hljs-built_in">window</span>.define.amd = {
+    jQuery: <span class="hljs-literal">true</span>
+  };
+
   <span class="hljs-keyword">return</span> {
     context: {</pre></div></div>
             
