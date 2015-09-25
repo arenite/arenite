@@ -162,9 +162,12 @@
       <span class="hljs-keyword">try</span> {
         <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>();
       } <span class="hljs-keyword">catch</span> (e) {
-        <span class="hljs-keyword">var</span> candidates = e.stack.trim().match(<span class="hljs-regexp">/([^\/]+?)(\.min)*\.js[:\d]+\)*$/m</span>);
-        <span class="hljs-keyword">if</span> (candidates.length &gt; <span class="hljs-number">1</span>) {
-          name = candidates[<span class="hljs-number">1</span>];
+        <span class="hljs-keyword">var</span> reg = <span class="hljs-regexp">/([^\/]+?)(\.min)*\.js[:\d]+\)*$/m</span>;
+        <span class="hljs-keyword">if</span> (reg.exec(e.stack)) {
+          <span class="hljs-keyword">var</span> candidates = reg.exec(e.stack);
+          <span class="hljs-keyword">if</span> (candidates.length &gt; <span class="hljs-number">1</span>) {
+            name = candidates[<span class="hljs-number">1</span>];
+          }
         }
       }
     }
