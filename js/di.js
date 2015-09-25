@@ -229,7 +229,7 @@ Arenite.DI = function (arenite) {
           moduleBasePath = moduleBasePath.replace('{version}', module.version);
           moduleBasePath = moduleBasePath.replace('{module}', module.module);
         } else {
-          moduleBasePath = module.module;
+          moduleBasePath = '';
         }
 
         arenite.loader.loadResource(moduleBasePath + 'module.json', function (xhr) {

@@ -362,7 +362,7 @@
           moduleBasePath = moduleBasePath.replace(<span class="hljs-string">'{version}'</span>, <span class="hljs-built_in">module</span>.version);
           moduleBasePath = moduleBasePath.replace(<span class="hljs-string">'{module}'</span>, <span class="hljs-built_in">module</span>.module);
         } <span class="hljs-keyword">else</span> {
-          moduleBasePath = <span class="hljs-built_in">module</span>.module;
+          moduleBasePath = <span class="hljs-string">''</span>;
         }
 
         arenite.loader.loadResource(moduleBasePath + <span class="hljs-string">'module.json'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">xhr</span>) </span>{
