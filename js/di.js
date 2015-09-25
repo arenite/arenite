@@ -229,7 +229,7 @@ Arenite.DI = function (arenite) {
           moduleBasePath = moduleBasePath.replace('{version}', module.version);
           moduleBasePath = moduleBasePath.replace('{module}', module.module);
         } else {
-          moduleBasePath = '';
+          moduleBasePath = module.module + '/';
         }
 
         arenite.loader.loadResource(moduleBasePath + 'module.json', function (xhr) {
@@ -238,9 +238,9 @@ Arenite.DI = function (arenite) {
           arenite.object.forEach(moduleConf.context.dependencies[mode], function (dependencies, depType) {
             dependencies.forEach(function (dep) {
               if (typeof dep === 'string') {
-                newDeps[depType].push(dep.match(_externalUrl) ? dep : moduleBasePath + dep);
+                newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : moduleBasePath + dep);
               } else {
-                newDeps[depType].push(arenite.object.extend(dep, {url: dep.url.match(_externalUrl) ? dep.url : moduleBasePath + dep.url}));
+                newDeps[depType].push(arenite.object.extend(dep, {url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : moduleBasePath + dep.url}));
               }
             });
           });

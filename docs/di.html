@@ -362,7 +362,7 @@
           moduleBasePath = moduleBasePath.replace(<span class="hljs-string">'{version}'</span>, <span class="hljs-built_in">module</span>.version);
           moduleBasePath = moduleBasePath.replace(<span class="hljs-string">'{module}'</span>, <span class="hljs-built_in">module</span>.module);
         } <span class="hljs-keyword">else</span> {
-          moduleBasePath = <span class="hljs-string">''</span>;
+          moduleBasePath = <span class="hljs-built_in">module</span>.module + <span class="hljs-string">'/'</span>;
         }
 
         arenite.loader.loadResource(moduleBasePath + <span class="hljs-string">'module.json'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">xhr</span>) </span>{
@@ -371,9 +371,9 @@
           arenite.object.forEach(moduleConf.context.dependencies[mode], <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dependencies, depType</span>) </span>{
             dependencies.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
               <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> dep === <span class="hljs-string">'string'</span>) {
-                newDeps[depType].push(dep.match(_externalUrl) ? dep : moduleBasePath + dep);
+                newDeps[depType].push(dep.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep : moduleBasePath + dep);
               } <span class="hljs-keyword">else</span> {
-                newDeps[depType].push(arenite.object.extend(dep, {url: dep.url.match(_externalUrl) ? dep.url : moduleBasePath + dep.url}));
+                newDeps[depType].push(arenite.object.extend(dep, {url: dep.url.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep.url : moduleBasePath + dep.url}));
               }
             });
           });
