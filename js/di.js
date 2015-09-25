@@ -206,6 +206,7 @@ Arenite.DI = function (arenite) {
     seqLatch.next();
   };
 
+  var _externalUrl = /^((http:\/\/)|(http:\/\/)|(\/\/)).*$/;
   var _prodModuleVersion = /[\d]+\.[\d]+\.*[\d]*/;
   var _devRepo = 'https://rawgit.com/{vendor}/{version}/{module}/';
   var _prodRepo = 'https://cdn.rawgit.com/{vendor}/{version}/{module}/';
@@ -237,9 +238,9 @@ Arenite.DI = function (arenite) {
           arenite.object.forEach(moduleConf.context.dependencies[mode], function (dependencies, depType) {
             dependencies.forEach(function (dep) {
               if (typeof dep === 'string') {
-                newDeps[depType].push(moduleBasePath + dep);
+                newDeps[depType].push(dep.match(_externalUrl) ? dep : moduleBasePath + dep);
               } else {
-                newDeps[depType].push(arenite.object.extend(dep, {url: moduleBasePath + dep.url}));
+                newDeps[depType].push(arenite.object.extend(dep, {url: dep.match(_externalUrl) ? dep.url : moduleBasePath + dep.url}));
               }
             });
           });

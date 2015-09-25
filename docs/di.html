@@ -339,6 +339,7 @@
     seqLatch.next();
   };
 
+  <span class="hljs-keyword">var</span> _externalUrl = <span class="hljs-regexp">/^((http:\/\/)|(http:\/\/)|(\/\/)).*$/</span>;
   <span class="hljs-keyword">var</span> _prodModuleVersion = <span class="hljs-regexp">/[\d]+\.[\d]+\.*[\d]*/</span>;
   <span class="hljs-keyword">var</span> _devRepo = <span class="hljs-string">'https://rawgit.com/{vendor}/{version}/{module}/'</span>;
   <span class="hljs-keyword">var</span> _prodRepo = <span class="hljs-string">'https://cdn.rawgit.com/{vendor}/{version}/{module}/'</span>;
@@ -370,9 +371,9 @@
           arenite.object.forEach(moduleConf.context.dependencies[mode], <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dependencies, depType</span>) </span>{
             dependencies.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
               <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> dep === <span class="hljs-string">'string'</span>) {
-                newDeps[depType].push(moduleBasePath + dep);
+                newDeps[depType].push(dep.match(_externalUrl) ? dep : moduleBasePath + dep);
               } <span class="hljs-keyword">else</span> {
-                newDeps[depType].push(arenite.object.extend(dep, {url: moduleBasePath + dep.url}));
+                newDeps[depType].push(arenite.object.extend(dep, {url: dep.match(_externalUrl) ? dep.url : moduleBasePath + dep.url}));
               }
             });
           });
