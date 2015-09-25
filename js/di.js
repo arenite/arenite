@@ -208,7 +208,7 @@ Arenite.DI = function (arenite) {
 
   var _externalUrl = /^((http:\/\/)|(http:\/\/)|(\/\/)).*$/;
   var _prodModuleVersion = /[\d]+\.[\d]+\.*[\d]*/;
-  var _devRepo = 'https://rawgit.com/{vendor}/{version}/{module}/';
+  var _devRepo = 'http://rawgit.com/{vendor}/{version}/{module}/';
   var _prodRepo = 'https://cdn.rawgit.com/{vendor}/{version}/{module}/';
 
   var _fetchModules = function (modules, callback) {
