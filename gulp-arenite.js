@@ -17,7 +17,7 @@ global.window.XMLHttpRequest = function () {
     },
     open: function (m, url) {
       var _this = this;
-      if (url.substr(0, 4) === 'http') {
+      if (url.substr(0, 2) === '//' || url.substr(0, 4) === 'http') {
         _this.responseText = '{"context":{"dependencies":{}}}';
         window.setTimeout(function () {
           _this.onreadystatechange();
