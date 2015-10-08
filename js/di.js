@@ -182,7 +182,7 @@ Arenite.DI = function (arenite) {
         wireLatch.countDown();
       }, "extensions");
 
-      _wire(context.extensions, 'extension');
+      _wire(context.extensions, 'extension', stack || []);
       _init(context.extensions, extensionsLatch, true);
       extensionsLatch.countDown();
     }

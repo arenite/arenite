@@ -315,7 +315,7 @@
         wireLatch.countDown();
       }, <span class="hljs-string">"extensions"</span>);
 
-      _wire(context.extensions, <span class="hljs-string">'extension'</span>);
+      _wire(context.extensions, <span class="hljs-string">'extension'</span>, stack || []);
       _init(context.extensions, extensionsLatch, <span class="hljs-literal">true</span>);
       extensionsLatch.countDown();
     }
