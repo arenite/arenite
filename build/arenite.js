@@ -392,7 +392,7 @@ Arenite.DI = function (arenite) {
     return resolvedFunc;
   };
 
-  var _resolveArgs = function (execution, done, type) {
+  var _resolveArgs = function (execution, done, type, stack) {
     if (!execution.args) {
       return [];
     }
@@ -407,6 +407,9 @@ Arenite.DI = function (arenite) {
           resolved.push(ref);
         } else {
           failure = true;
+          if (arenite.debug) {
+            window.console.log('Arenite: Failed to resolve arg', arg);
+          }
         }
       } else if (typeof arg.func !== 'undefined') {
         resolved.push(arg.func);
@@ -416,7 +419,7 @@ Arenite.DI = function (arenite) {
         var anonymousContext = {instances: {}};
         var tempId = '__anonymous_temp_instance__' + anonymous_id++;
         anonymousContext.instances[tempId] = arg.instance;
-        _loadContext(anonymousContext);
+        _loadContext(anonymousContext, stack);
         resolved.push(arenite.context.get(tempId));
         if (type === 'factory') {
           arenite.context.remove(tempId);
@@ -429,13 +432,14 @@ Arenite.DI = function (arenite) {
     if (execution.wait && typeof done === 'function') {
       resolved.push(done);
     }
+
     return failure ? null : resolved;
   };
 
-  var _execFunction = function (execution, before, done) {
+  var _execFunction = function (execution, before, done, stack) {
     var resolvedFunc = _resolveFunc(execution);
     if (resolvedFunc) {
-      var resolvedArgs = _resolveArgs(execution, done);
+      var resolvedArgs = _resolveArgs(execution, done, undefined, stack);
       if (resolvedArgs) {
         if (execution.wait && typeof before === 'function') {
           before();
@@ -449,7 +453,7 @@ Arenite.DI = function (arenite) {
     }
   };
 
-  var _wire = function (instances, type) {
+  var _wire = function (instances, type, stack) {
     if (!instances) {
       return;
     }
@@ -463,16 +467,19 @@ Arenite.DI = function (arenite) {
       } else {
         var func = arenite.object.get(window, instances[instance].namespace);
         if (func) {
-          var args = _resolveArgs(instances[instance], null, type);
+          var args = _resolveArgs(instances[instance], null, type, [instance]);
           if (args) {
             var actualInstance = func.apply(func, args);
             if (type === 'extension') {
               var wrappedInstance = {};
               wrappedInstance[instance] = actualInstance;
               arenite = arenite.object.extend(arenite, wrappedInstance);
-            } else {
-              arenite.context.add(instance, actualInstance);
             }
+            if (arenite.debug) {
+              window.console.log('Arenite: Instance', instance, 'wired');
+            }
+            arenite.context.add(instance, actualInstance);
+
           } else {
             unresolved[instance] = instances[instance];
           }
@@ -484,10 +491,14 @@ Arenite.DI = function (arenite) {
 
     var unresolvedKeys = arenite.object.keys(unresolved);
     if (unresolvedKeys.length !== arenite.object.keys(instances).length && unresolvedKeys.length > 0) {
-      _wire(unresolved);
+      arenite.object.forEach(unresolved, function (instance, name) {
+        var instanceObj = {}
+        instanceObj[name] = instance
+        _wire(instanceObj, undefined, stack.concat(name));
+      });
     } else {
       if (unresolvedKeys.length !== 0) {
-        throw 'Make sure you don\'t have circular dependencies, Unable to resolve the following instances: ' + unresolvedKeys.join(", ");
+        throw 'Make sure you don\'t have circular dependencies, Unable to resolve the following instances: ' + unresolvedKeys.join(", ") + ' - [' + stack.join(', ') + ']';
       }
     }
   };
@@ -525,7 +536,7 @@ Arenite.DI = function (arenite) {
     }
   };
 
-  var _loadContext = function (context) {
+  var _loadContext = function (context, stack) {
     if (arenite.config.debug) {
       window.console.time('Arenite context load');
     }
@@ -540,7 +551,7 @@ Arenite.DI = function (arenite) {
 
       //wiring of instances must wait for the extensions
       var extensionsLatch = arenite.async.latch(1, function () {
-        _wire(context.instances);
+        _wire(context.instances, undefined, stack || []);
         _init(context.instances, wireLatch);
         wireLatch.countDown();
       }, "extensions");
@@ -621,7 +632,12 @@ Arenite.DI = function (arenite) {
           delete moduleConf.context.dependencies;
 
           arenite.config.context = arenite.config.context || {};
-          arenite.config.context.dependencies = arenite.config.context.dependencies || {default: {sync: [], async: []}};
+          arenite.config.context.dependencies = arenite.config.context.dependencies || {
+              default: {
+                sync: [],
+                async: []
+              }
+            };
           arenite.config.context.dependencies[mode] = arenite.config.context.dependencies[mode] || {
               sync: [],
               async: []
@@ -680,7 +696,7 @@ Arenite.DI = function (arenite) {
   };
 
   var _wireFactory = function (instances) {
-    _wire(instances, 'factory');
+    _wire(instances, 'factory', []);
     _init(instances);
   };
 
@@ -725,7 +741,7 @@ Arenite.DI = function (arenite) {
       wire: _wireFactory
     }
   };
-};
+}
 
 /*global Arenite:true*/
 // Collection of utility functions to handle html.
