@@ -127,9 +127,7 @@
   };
 
   <span class="hljs-keyword">var</span> _resolveArgs = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">execution, done, type, stack</span>) </span>{
-    <span class="hljs-keyword">if</span> (!execution.args) {
-      <span class="hljs-keyword">return</span> [];
-    }
+    execution.args = execution.args || [];
     <span class="hljs-keyword">var</span> failure = <span class="hljs-literal">false</span>;
     <span class="hljs-keyword">var</span> resolved = [];
     execution.args.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arg, idx</span>) </span>{
@@ -226,8 +224,8 @@
     <span class="hljs-keyword">var</span> unresolvedKeys = arenite.object.keys(unresolved);
     <span class="hljs-keyword">if</span> (unresolvedKeys.length !== arenite.object.keys(instances).length &amp;&amp; unresolvedKeys.length &gt; <span class="hljs-number">0</span>) {
       arenite.object.forEach(unresolved, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">instance, name</span>) </span>{
-        <span class="hljs-keyword">var</span> instanceObj = {}
-        instanceObj[name] = instance
+        <span class="hljs-keyword">var</span> instanceObj = {};
+        instanceObj[name] = instance;
         _wire(instanceObj, <span class="hljs-literal">undefined</span>, stack.concat(name));
       });
     } <span class="hljs-keyword">else</span> {
@@ -565,7 +563,7 @@ where <em><b>instanceDefinitions</b></em> is a list of instance definition objec
             <div class="content"><div class='highlight'><pre>      wire: _wireFactory
     }
   };
-}</pre></div></div>
+};</pre></div></div>
             
         </li>
         

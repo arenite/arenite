@@ -393,9 +393,7 @@ Arenite.DI = function (arenite) {
   };
 
   var _resolveArgs = function (execution, done, type, stack) {
-    if (!execution.args) {
-      return [];
-    }
+    execution.args = execution.args || [];
     var failure = false;
     var resolved = [];
     execution.args.forEach(function (arg, idx) {
@@ -492,8 +490,8 @@ Arenite.DI = function (arenite) {
     var unresolvedKeys = arenite.object.keys(unresolved);
     if (unresolvedKeys.length !== arenite.object.keys(instances).length && unresolvedKeys.length > 0) {
       arenite.object.forEach(unresolved, function (instance, name) {
-        var instanceObj = {}
-        instanceObj[name] = instance
+        var instanceObj = {};
+        instanceObj[name] = instance;
         _wire(instanceObj, undefined, stack.concat(name));
       });
     } else {
@@ -741,7 +739,7 @@ Arenite.DI = function (arenite) {
       wire: _wireFactory
     }
   };
-}
+};
 
 /*global Arenite:true*/
 // Collection of utility functions to handle html.
