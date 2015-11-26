@@ -636,7 +636,7 @@ Arenite.DI = function (arenite) {
                 async: []
               }
             };
-          arenite.config.context.dependencies[mode] = arenite.config.context.dependencies[mode] || {
+            arenite.config.context.dependencies[arenite.config.mode] = arenite.config.context.dependencies[arenite.config.mode] || {
               sync: [],
               async: []
             };
