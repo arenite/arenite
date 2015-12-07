@@ -603,7 +603,7 @@ Arenite.DI = function (arenite) {
         var moduleBasePath;
         if (module.vendor) {
           if (arenite.config.repo) {
-            moduleBasePath = arenite.config.repo;
+            moduleBasePath = arenite.config.repo.replace('{vendor}', module.vendor);
           } else if (module.version.match(_prodModuleVersion)) {
             moduleBasePath = _prodRepo.replace('{vendor}', module.vendor);
           } else {
