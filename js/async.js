@@ -55,6 +55,75 @@ Arenite.Async = function (arenite) {
       }
     };
   };
+  
+  var _webWorker = function () {
+        var self = this;
+        var window = self;
+        self.arenite = {};
+        self.onmessage = function (e) {
+            e.data.arenite.forEach(function (dep) {
+                arenite = eval('(' + dep.code + ')();');
+            });
+            e.data.deps.forEach(function (dep) {
+                if (dep.type === 'raw') {
+                    arenite.object.set(self, dep.name, eval('(function(){ return ' + dep.code + ';})();'));
+                } else {
+                    arenite.object.set(self, dep.name, eval('(' + dep.code + ')();'));
+                }
+            });
+            var result = self.__MAIN__.apply(this, e.data.args);
+            self.postMessage(result);
+        };
+    };
+
+    var _serialize = function (func, strip) {
+        var script = func.toString();
+        if (strip) {
+            script = script.slice(script.indexOf("{") + 1, script.lastIndexOf("}"));
+        }
+        return script;
+    };
+
+    var _create = function (func, deps, cb, keepAlive) {
+        var _cb = cb;
+        var worker = new Worker(URL.createObjectURL(new Blob([_serialize(_webWorker, true)])));
+        worker.onmessage = function (e) {
+            _cb(e.data);
+            if (!keepAlive) {
+                worker.terminate();
+            }
+        };
+        var serializedDeps = [];
+        (deps || []).forEach(function (dep) {
+            serializedDeps.push({name: dep.name, code: _serialize(dep.func), type: dep.type});
+        });
+        serializedDeps.push({name: '__MAIN__', code: _serialize(func), type: 'raw'});
+
+        var api = {
+            exec: function (args, cb) {
+                if (cb) {
+                    _cb = cb;
+                }
+                worker.postMessage({
+                    args: args,
+                    deps: serializedDeps,
+                    arenite: [{name: 'object', code: _serialize(Arenite.Object)}]
+                });
+                return api;
+            },
+            kill: function () {
+                if (keepAlive) {
+                    worker.terminate();
+                }
+            }
+        };
+        return api;
+    };
+
+    return {
+        webworker: _create
+    };
+
 
   return {
     async: {
@@ -90,7 +159,8 @@ Arenite.Async = function (arenite) {
       // Once the counter hits 0 the callback is invoked.
       latch: function (times, callback, name) {
         return new _latch(times, callback, name);
-      }
+      },
+      webworker:_webWorker
     }
   };
 };
