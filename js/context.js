@@ -34,15 +34,10 @@ Arenite.Context = function (arenite) {
   /* AMD methods declaration so we can capture the libs that support it */
   window.require = _getInstance;
   window.define = function (name, deps, callback) {
-    if (!callback) {
+    while (!Array.isArray(deps)) {
       callback = deps;
-      deps = name;
-      name = undefined;
-    }
-
-    if (!Array.isArray(deps)) {
-      callback = deps;
-      deps = [];
+      deps = typeof name === 'function' || Array.isArray(name) ? name : [];
+      name = typeof name === 'string' ? name : undefined;
     }
 
     var resolvedDeps = [];
