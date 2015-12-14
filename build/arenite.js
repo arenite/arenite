@@ -189,6 +189,71 @@ Arenite.Async = function (arenite) {
     };
   };
 
+  var _webworker = function () {
+    var self = this;
+    var window = self;
+    self.arenite = {};
+    self.onmessage = function (e) {
+      /* jshint evil:true */
+      e.data.arenite.forEach(function (dep) {
+        arenite = eval('(' + dep.code + ')();');
+      });
+      e.data.deps.forEach(function (dep) {
+        if (dep.type === 'raw') {
+          arenite.object.set(self, dep.name, eval('(function(){ return ' + dep.code + ';})();'));
+        } else {
+          arenite.object.set(self, dep.name, eval('(' + dep.code + ')();'));
+        }
+      });
+      var result = self.__MAIN__.apply(this, e.data.args);
+      self.postMessage(result);
+    };
+  };
+
+  var _serialize = function (func, strip) {
+    var script = func.toString();
+    if (strip) {
+      script = script.slice(script.indexOf("{") + 1, script.lastIndexOf("}"));
+    }
+    return script;
+  };
+
+  var _createWebWorker = function (func, deps, cb, keepAlive) {
+    var _cb = cb;
+    var worker = new Worker(URL.createObjectURL(new Blob([_serialize(_webworker, true)])));
+    worker.onmessage = function (e) {
+      _cb(e.data);
+      if (!keepAlive) {
+        worker.terminate();
+      }
+    };
+    var serializedDeps = [];
+    (deps || []).forEach(function (dep) {
+      serializedDeps.push({name: dep.name, code: _serialize(dep.func), type: dep.type});
+    });
+    serializedDeps.push({name: '__MAIN__', code: _serialize(func), type: 'raw'});
+
+    var api = {
+      exec: function (args, cb) {
+        if (cb) {
+          _cb = cb;
+        }
+        worker.postMessage({
+          args: args,
+          deps: serializedDeps,
+          arenite: [{name: 'object', code: _serialize(Arenite.Object)}]
+        });
+        return api;
+      },
+      kill: function () {
+        if (keepAlive) {
+          worker.terminate();
+        }
+      }
+    };
+    return api;
+  };
+
   return {
     async: {
       //###Sequencial latch.
@@ -201,9 +266,7 @@ Arenite.Async = function (arenite) {
       // The *<b>handler</b>* function must call the <code>next</code> function of the returned object when it
       // finishes the execution.
       // The *<b>callback</b>* is the function that is executed once all the values have been handled.
-      seqLatch: function (values, handler, callback) {
-        return new _sequencialLatch(values, handler, callback);
-      },
+      seqLatch: _sequencialLatch,
       //###Latch.
       //The latch will execute asynchronous tasks and invoke a callback when all the declared times have been executed
       //<pre><code>
@@ -221,12 +284,13 @@ Arenite.Async = function (arenite) {
       //</code></pre>
       // *<b>countDown</b>* will decrease the counter and *<b>CountUp</b>* will increase the counter that is initialized with the times argument.
       // Once the counter hits 0 the callback is invoked.
-      latch: function (times, callback, name) {
-        return new _latch(times, callback, name);
-      }
+      latch: _latch,
+      webworker: _createWebWorker
     }
   };
-};
+}
+;
+
 /*global Arenite:true*/
 Arenite.Bus = function () {
   var bus = {};
@@ -305,15 +369,10 @@ Arenite.Context = function (arenite) {
   /* AMD methods declaration so we can capture the libs that support it */
   window.require = _getInstance;
   window.define = function (name, deps, callback) {
-    if (!callback) {
+    while (!Array.isArray(deps)) {
       callback = deps;
-      deps = name;
-      name = undefined;
-    }
-
-    if (!Array.isArray(deps)) {
-      callback = deps;
-      deps = [];
+      deps = typeof name === 'function' || Array.isArray(name) ? name : [];
+      name = typeof name === 'string' ? name : undefined;
     }
 
     var resolvedDeps = [];
@@ -636,7 +695,7 @@ Arenite.DI = function (arenite) {
                 async: []
               }
             };
-            arenite.config.context.dependencies[arenite.config.mode] = arenite.config.context.dependencies[arenite.config.mode] || {
+          arenite.config.context.dependencies[arenite.config.mode] = arenite.config.context.dependencies[arenite.config.mode] || {
               sync: [],
               async: []
             };

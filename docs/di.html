@@ -362,7 +362,7 @@
         <span class="hljs-keyword">var</span> moduleBasePath;
         <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.vendor) {
           <span class="hljs-keyword">if</span> (arenite.config.repo) {
-            moduleBasePath = arenite.config.repo;
+            moduleBasePath = arenite.config.repo.replace(<span class="hljs-string">'{vendor}'</span>, <span class="hljs-built_in">module</span>.vendor);
           } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.version.match(_prodModuleVersion)) {
             moduleBasePath = _prodRepo.replace(<span class="hljs-string">'{vendor}'</span>, <span class="hljs-built_in">module</span>.vendor);
           } <span class="hljs-keyword">else</span> {
@@ -395,7 +395,7 @@
                 <span class="hljs-keyword">async</span>: []
               }
             };
-          arenite.config.context.dependencies[mode] = arenite.config.context.dependencies[mode] || {
+          arenite.config.context.dependencies[arenite.config.mode] = arenite.config.context.dependencies[arenite.config.mode] || {
               sync: [],
               <span class="hljs-keyword">async</span>: []
             };

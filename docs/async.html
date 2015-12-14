@@ -164,6 +164,71 @@
     };
   };
 
+  <span class="hljs-keyword">var</span> _webworker = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">var</span> <span class="hljs-built_in">window</span> = self;
+    self.arenite = {};
+    self.onmessage = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>) </span>{
+      <span class="hljs-comment">/* jshint evil:true */</span>
+      e.data.arenite.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
+        arenite = <span class="hljs-built_in">eval</span>(<span class="hljs-string">'('</span> + dep.code + <span class="hljs-string">')();'</span>);
+      });
+      e.data.deps.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
+        <span class="hljs-keyword">if</span> (dep.type === <span class="hljs-string">'raw'</span>) {
+          arenite.object.set(self, dep.name, <span class="hljs-built_in">eval</span>(<span class="hljs-string">'(function(){ return '</span> + dep.code + <span class="hljs-string">';})();'</span>));
+        } <span class="hljs-keyword">else</span> {
+          arenite.object.set(self, dep.name, <span class="hljs-built_in">eval</span>(<span class="hljs-string">'('</span> + dep.code + <span class="hljs-string">')();'</span>));
+        }
+      });
+      <span class="hljs-keyword">var</span> result = self.__MAIN__.apply(<span class="hljs-keyword">this</span>, e.data.args);
+      self.postMessage(result);
+    };
+  };
+
+  <span class="hljs-keyword">var</span> _serialize = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">func, strip</span>) </span>{
+    <span class="hljs-keyword">var</span> script = func.toString();
+    <span class="hljs-keyword">if</span> (strip) {
+      script = script.slice(script.indexOf(<span class="hljs-string">"{"</span>) + <span class="hljs-number">1</span>, script.lastIndexOf(<span class="hljs-string">"}"</span>));
+    }
+    <span class="hljs-keyword">return</span> script;
+  };
+
+  <span class="hljs-keyword">var</span> _createWebWorker = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">func, deps, cb, keepAlive</span>) </span>{
+    <span class="hljs-keyword">var</span> _cb = cb;
+    <span class="hljs-keyword">var</span> worker = <span class="hljs-keyword">new</span> Worker(URL.createObjectURL(<span class="hljs-keyword">new</span> Blob([_serialize(_webworker, <span class="hljs-literal">true</span>)])));
+    worker.onmessage = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>) </span>{
+      _cb(e.data);
+      <span class="hljs-keyword">if</span> (!keepAlive) {
+        worker.terminate();
+      }
+    };
+    <span class="hljs-keyword">var</span> serializedDeps = [];
+    (deps || []).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
+      serializedDeps.push({name: dep.name, code: _serialize(dep.func), type: dep.type});
+    });
+    serializedDeps.push({name: <span class="hljs-string">'__MAIN__'</span>, code: _serialize(func), type: <span class="hljs-string">'raw'</span>});
+
+    <span class="hljs-keyword">var</span> api = {
+      exec: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">args, cb</span>) </span>{
+        <span class="hljs-keyword">if</span> (cb) {
+          _cb = cb;
+        }
+        worker.postMessage({
+          args: args,
+          deps: serializedDeps,
+          arenite: [{name: <span class="hljs-string">'object'</span>, code: _serialize(Arenite.Object)}]
+        });
+        <span class="hljs-keyword">return</span> api;
+      },
+      kill: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">if</span> (keepAlive) {
+          worker.terminate();
+        }
+      }
+    };
+    <span class="hljs-keyword">return</span> api;
+  };
+
   <span class="hljs-keyword">return</span> {
     <span class="hljs-keyword">async</span>: {</pre></div></div>
             
@@ -189,9 +254,7 @@ The <em><b>callback</b></em> is the function that is executed once all the value
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      seqLatch: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">values, handler, callback</span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> _sequencialLatch(values, handler, callback);
-      },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      seqLatch: _sequencialLatch,</pre></div></div>
             
         </li>
         
@@ -222,12 +285,12 @@ Once the counter hits 0 the callback is invoked.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      latch: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">times, callback, name</span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> _latch(times, callback, name);
-      }
+            <div class="content"><div class='highlight'><pre>      latch: _latch,
+      webworker: _createWebWorker
     }
   };
-};</pre></div></div>
+}
+;</pre></div></div>
             
         </li>
         
