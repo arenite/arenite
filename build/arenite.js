@@ -14,7 +14,7 @@
 //
 // You can create further extensions to the sandbox by providing new services or overriding already imported ones.
 //
-// There are a few extensions included in this repository and you can read more about them <a href="extensions.html">here</a>.
+// There are a few extensiseons included in this repository and you can read more about them <a href="extensions.html">here</a>.
 //
 // For more information about the mentioned patterns consult the book "Javascript Patterns"
 // by Stoyan Stefanov from O'Reilly Media which discusses these patterns in detail.
@@ -140,7 +140,8 @@ Arenite.Async = function (arenite) {
 
     var _next = function () {
       if (index < length) {
-        callback(values[index++]);
+        callback(values[index], index);
+        index++;
       } else {
         finalCallback();
       }
