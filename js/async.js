@@ -7,8 +7,7 @@ Arenite.Async = function (arenite) {
 
     var _next = function () {
       if (index < length) {
-        callback(values[index], index);
-        index++;
+        callback(values[index], index++);
       } else {
         finalCallback();
       }
