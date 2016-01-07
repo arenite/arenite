@@ -115,7 +115,7 @@
 
     <span class="hljs-keyword">var</span> _next = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
       <span class="hljs-keyword">if</span> (index &lt; length) {
-        callback(values[index++]);
+        callback(values[index], index++);
       } <span class="hljs-keyword">else</span> {
         finalCallback();
       }
@@ -165,9 +165,22 @@
   };
 
   <span class="hljs-keyword">var</span> _webworker = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">var</span> <span class="hljs-built_in">window</span> = self;
-    self.arenite = {};
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>var window = self;</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    self.arenite = {};
     self.onmessage = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>) </span>{
       <span class="hljs-comment">/* jshint evil:true */</span>
       e.data.arenite.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
@@ -175,9 +188,9 @@
       });
       e.data.deps.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
         <span class="hljs-keyword">if</span> (dep.type === <span class="hljs-string">'raw'</span>) {
-          arenite.object.set(self, dep.name, <span class="hljs-built_in">eval</span>(<span class="hljs-string">'(function(){ return '</span> + dep.code + <span class="hljs-string">';})();'</span>));
+          arenite.set(self, dep.name, <span class="hljs-built_in">eval</span>(<span class="hljs-string">'(function(){ return '</span> + dep.code + <span class="hljs-string">';})();'</span>));
         } <span class="hljs-keyword">else</span> {
-          arenite.object.set(self, dep.name, <span class="hljs-built_in">eval</span>(<span class="hljs-string">'('</span> + dep.code + <span class="hljs-string">')();'</span>));
+          arenite.set(self, dep.name, <span class="hljs-built_in">eval</span>(<span class="hljs-string">'('</span> + dep.code + <span class="hljs-string">')();'</span>));
         }
       });
       <span class="hljs-keyword">var</span> result = self.__MAIN__.apply(<span class="hljs-keyword">this</span>, e.data.args);
@@ -235,11 +248,11 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>###Sequencial latch.
 The sequencial latch will synchronously execute the handler
@@ -259,11 +272,11 @@ The <em><b>callback</b></em> is the function that is executed once all the value
         </li>
         
         
-        <li id="section-4">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>###Latch.
 The latch will execute asynchronous tasks and invoke a callback when all the declared times have been executed</p>

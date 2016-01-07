@@ -72,18 +72,18 @@ describe('Arenite.Context', function () {
 
   it("should remove instance if instance exists", function () {
     var objectDelete = jasmine.createSpy('delete');
+    var originalDelete = Object.prototype.delete;
+    Object.prototype.delete = objectDelete;
     var context = Arenite.Context({
       di: {
         resolveArgs: function () {
           return [];
         }
-      },
-      object: {
-        delete: objectDelete
       }
     });
     context.context.add('a', 'a');
     context.context.remove('a');
+    Object.prototype.delete = originalDelete;
     expect(objectDelete).toHaveBeenCalledWith({a: 'a'}, 'a');
   });
 

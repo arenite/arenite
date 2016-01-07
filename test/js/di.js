@@ -6,7 +6,7 @@ describe("Arenite.DI", function () {
 
   it("should return null if arguments can\'t be resolved", function () {
     var di = Arenite.DI({
-      deubug:true,
+      deubug: true,
       context: {
         get: function (name) {
           if (name === 'foo') {
@@ -85,10 +85,8 @@ describe("Arenite.DI", function () {
     Arenite({});
   });
 
-  it('should not expose arenite if option isn\'t true', function () {
-    Arenite({
-      expose: false
-    });
+  it('should not expose arenite if expose is undefined', function () {
+    Arenite({});
     expect(window.arenite).toBe(undefined);
   });
 
@@ -313,7 +311,7 @@ describe("Arenite.DI", function () {
           }
         }
       });
-    }).toThrow('Make sure you don\'t have circular dependencies, Unable to resolve the following instances: one, two');
+    }).toThrow('Make sure you don\'t have circular dependencies, Unable to resolve the following instances: one, two - []');
   });
 
   it('should throw error on wire unknown instances', function () {

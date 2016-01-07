@@ -118,9 +118,9 @@
       resolvedFunc = execution.func;
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">if</span> (execution.extension) {
-        resolvedFunc = arenite.object.get(arenite[execution.instance], execution.func);
+        resolvedFunc = arenite.get(arenite[execution.instance], execution.func);
       } <span class="hljs-keyword">else</span> {
-        resolvedFunc = arenite.object.get(arenite.context.get(execution.instance), execution.func);
+        resolvedFunc = arenite.get(arenite.context.get(execution.instance), execution.func);
       }
     }
     <span class="hljs-keyword">return</span> resolvedFunc;
@@ -190,14 +190,14 @@
       <span class="hljs-keyword">return</span>;
     }
 
-    <span class="hljs-keyword">var</span> instanceKeys = arenite.object.keys(instances);
+    <span class="hljs-keyword">var</span> instanceKeys = arenite.keys(instances);
     <span class="hljs-keyword">var</span> unresolved = {};
 
     instanceKeys.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">instance</span>) </span>{
       <span class="hljs-keyword">if</span> (instances[instance].factory) {
         arenite.context.add(instance, instances[instance], <span class="hljs-literal">true</span>);
       } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">var</span> func = arenite.object.get(<span class="hljs-built_in">window</span>, instances[instance].namespace);
+        <span class="hljs-keyword">var</span> func = arenite.get(<span class="hljs-built_in">window</span>, instances[instance].namespace);
         <span class="hljs-keyword">if</span> (func) {
           <span class="hljs-keyword">var</span> args = _resolveArgs(instances[instance], <span class="hljs-literal">null</span>, type, [instance]);
           <span class="hljs-keyword">if</span> (args) {
@@ -205,7 +205,7 @@
             <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'extension'</span>) {
               <span class="hljs-keyword">var</span> wrappedInstance = {};
               wrappedInstance[instance] = actualInstance;
-              arenite = arenite.object.extend(arenite, wrappedInstance);
+              arenite = arenite.extend(arenite, wrappedInstance);
             }
             <span class="hljs-keyword">if</span> (arenite.debug) {
               <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: Instance'</span>, instance, <span class="hljs-string">'wired'</span>);
@@ -221,9 +221,9 @@
       }
     });
 
-    <span class="hljs-keyword">var</span> unresolvedKeys = arenite.object.keys(unresolved);
-    <span class="hljs-keyword">if</span> (unresolvedKeys.length !== arenite.object.keys(instances).length &amp;&amp; unresolvedKeys.length &gt; <span class="hljs-number">0</span>) {
-      arenite.object.forEach(unresolved, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">instance, name</span>) </span>{
+    <span class="hljs-keyword">var</span> unresolvedKeys = arenite.keys(unresolved);
+    <span class="hljs-keyword">if</span> (unresolvedKeys.length !== arenite.keys(instances).length &amp;&amp; unresolvedKeys.length &gt; <span class="hljs-number">0</span>) {
+      arenite.forEach(unresolved, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">instance, name</span>) </span>{
         <span class="hljs-keyword">var</span> instanceObj = {};
         instanceObj[name] = instance;
         _wire(instanceObj, <span class="hljs-literal">undefined</span>, stack.concat(name));
@@ -236,12 +236,12 @@
   };
 
   <span class="hljs-keyword">var</span> _init = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">instances, latch, extension</span>) </span>{
-    arenite.object.keys(instances).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">instance</span>) </span>{
+    arenite.keys(instances).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">instance</span>) </span>{
       <span class="hljs-keyword">if</span> (instances[instance].init &amp;&amp; !instances[instance].factory) {
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> instances[instance].init === <span class="hljs-string">'string'</span>) {
           instances[instance].init = {func: instances[instance].init};
         }
-        _execFunction(arenite.object.extend({
+        _execFunction(arenite.extend({
           instance: instance,
           extension: extension
         }, instances[instance].init), <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
@@ -354,11 +354,11 @@
   <span class="hljs-keyword">var</span> _prodRepo = <span class="hljs-string">'//cdn.rawgit.com/{vendor}/{version}/{module}/'</span>;
 
   <span class="hljs-keyword">var</span> _fetchModules = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">modules, callback</span>) </span>{
-    <span class="hljs-keyword">var</span> moduleKeys = arenite.object.keys(modules);
+    <span class="hljs-keyword">var</span> moduleKeys = arenite.keys(modules);
     <span class="hljs-keyword">if</span> (moduleKeys.length) {
       <span class="hljs-keyword">var</span> latch = arenite.async.latch(moduleKeys.length, callback, <span class="hljs-string">'modules'</span>);
-      arenite.object.forEach(modules, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">module</span>) </span>{
-        <span class="hljs-keyword">var</span> mode = <span class="hljs-built_in">module</span>.vendor ? <span class="hljs-string">'default'</span> : arenite.config.mode;
+      arenite.forEach(modules, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">module</span>) </span>{
+        <span class="hljs-keyword">var</span> mode = <span class="hljs-built_in">module</span>.vendor ? <span class="hljs-built_in">module</span>.mode ? <span class="hljs-built_in">module</span>.mode : <span class="hljs-string">'default'</span> : arenite.config.mode;
         <span class="hljs-keyword">var</span> moduleBasePath;
         <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.vendor) {
           <span class="hljs-keyword">if</span> (arenite.config.repo) {
@@ -377,12 +377,12 @@
         arenite.loader.loadResource(moduleBasePath + <span class="hljs-string">'module.json'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">xhr</span>) </span>{
           <span class="hljs-keyword">var</span> moduleConf = <span class="hljs-built_in">JSON</span>.parse(xhr.responseText);
           <span class="hljs-keyword">var</span> newDeps = {<span class="hljs-keyword">async</span>: [], sync: []};
-          arenite.object.forEach(moduleConf.context.dependencies[mode], <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dependencies, depType</span>) </span>{
+          arenite.forEach(moduleConf.context.dependencies[mode], <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dependencies, depType</span>) </span>{
             dependencies.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
               <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> dep === <span class="hljs-string">'string'</span>) {
                 newDeps[depType].push(dep.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep : moduleBasePath + dep);
               } <span class="hljs-keyword">else</span> {
-                newDeps[depType].push(arenite.object.extend(dep, {url: dep.url.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep.url : moduleBasePath + dep.url}));
+                newDeps[depType].push(arenite.extend(dep, {url: dep.url.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep.url : moduleBasePath + dep.url}));
               }
             });
           });
@@ -399,11 +399,11 @@
               sync: [],
               <span class="hljs-keyword">async</span>: []
             };
-          arenite.object.forEach(arenite.config.context.dependencies, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">env</span>) </span>{
-            arenite.object.extend(env, newDeps);
+          arenite.forEach(arenite.config.context.dependencies, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">env</span>) </span>{
+            arenite.extend(env, newDeps);
           });
 
-          arenite.config = arenite.object.extend(arenite.config, moduleConf);
+          arenite.config = arenite.extend(arenite.config, moduleConf);
           <span class="hljs-keyword">if</span> (moduleConf.imports &amp;&amp; moduleConf.imports) {
             _fetchModules(moduleConf.imports, latch.countDown);
           } <span class="hljs-keyword">else</span> {
@@ -437,7 +437,7 @@
     }
 
     <span class="hljs-keyword">if</span> (arenite.config.imports) {
-      <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: Fetching modules'</span>, arenite.object.keys(arenite.config.imports));
+      <span class="hljs-built_in">window</span>.console.log(<span class="hljs-string">'Arenite: Fetching modules'</span>, arenite.keys(arenite.config.imports));
       _fetchModules(<span class="hljs-built_in">JSON</span>.parse(<span class="hljs-built_in">JSON</span>.stringify(arenite.config.imports)), callback);
     } <span class="hljs-keyword">else</span> {
       callback();

@@ -14,7 +14,7 @@
 //
 // You can create further extensions to the sandbox by providing new services or overriding already imported ones.
 //
-// There are a few extensiseons included in this repository and you can read more about them <a href="extensions.html">here</a>.
+// There are a few extensions included in this repository and you can read more about them <a href="extensions.html">here</a>.
 //
 // For more information about the mentioned patterns consult the book "Javascript Patterns"
 // by Stoyan Stefanov from O'Reilly Media which discusses these patterns in detail.
@@ -25,35 +25,46 @@ Arenite = function (config) {
   //### Arenite.Object
   // Instance of the Sandbox is started with the <a href="object.html">Arenite.Object</a> module witch gives us access to the <code>extend</code> function used.
   var arenite = Arenite.Object(arenite);
+  // Add the object and array helper methods to their respective prototypes
+  arenite.object.forEach(arenite.object, function (func, name) {
+    if (!Object.prototype[name]) {
+      Object.prototype[name] = func;
+    }
+  });
+  arenite.array.forEach(function (func, name) {
+    if (!Array.prototype[name]) {
+      Array.prototype[name] = func;
+    }
+  });
   //### Arenite.Html
   // Extend the instance with the <a href="async.html">Arenite.Html</a> extension providing the html helper tooks.
-  arenite = arenite.object.extend(arenite, Arenite.Html(arenite));
+  arenite = arenite.extend(arenite, Arenite.Html(arenite));
   //### Arenite.Async
   // Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
-  arenite = arenite.object.extend(arenite, Arenite.Async(arenite));
+  arenite = arenite.extend(arenite, Arenite.Async(arenite));
   //### Arenite.Url
   // Extend the instance with the <a href="url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.
-  arenite = arenite.object.extend(arenite, Arenite.Url(arenite));
+  arenite = arenite.extend(arenite, Arenite.Url(arenite));
   //### Arenite.DI
   // Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
   // the injector functionality.
-  arenite = arenite.object.extend(arenite, Arenite.DI(arenite));
+  arenite = arenite.extend(arenite, Arenite.DI(arenite));
   //### Arenite.AnnotationProcessor
   // Extend the instance with the <a href="annotation.html">Arenite.AnnotationProcessor</a> extension which provides
   // the parsing and hanlding of annotations.
-  arenite = arenite.object.extend(arenite, Arenite.AnnotationProcessor(arenite));
+  arenite = arenite.extend(arenite, Arenite.AnnotationProcessor(arenite));
   //### Arenite.Context
   // Extend the instance with the <a href="context.html">Arenite.Context</a> extension which provides
   // the context to manage the instances.
-  arenite = arenite.object.extend(arenite, Arenite.Context(arenite));
+  arenite = arenite.extend(arenite, Arenite.Context(arenite));
   //### Arenite.Loader
   // Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
   // the script and resource loading functionality to the sandbox.
-  arenite = arenite.object.extend(arenite, Arenite.Loader(arenite));
+  arenite = arenite.extend(arenite, Arenite.Loader(arenite));
   //### Arenite.Bus
   // Extend the instance with the <a href="bus.html">Arenite.Bus</a> extension which provides
   // an event bus.
-  arenite = arenite.object.extend(arenite, Arenite.Bus(arenite));
+  arenite = arenite.extend(arenite, Arenite.Bus(arenite));
   // Initialize the injector by having it read the configuration object passed into this constructor.
   arenite.di.init(config);
   return arenite;
@@ -140,8 +151,7 @@ Arenite.Async = function (arenite) {
 
     var _next = function () {
       if (index < length) {
-        callback(values[index], index);
-        index++;
+        callback(values[index], index++);
       } else {
         finalCallback();
       }
@@ -192,7 +202,7 @@ Arenite.Async = function (arenite) {
 
   var _webworker = function () {
     var self = this;
-    var window = self;
+    //var window = self;
     self.arenite = {};
     self.onmessage = function (e) {
       /* jshint evil:true */
@@ -201,9 +211,9 @@ Arenite.Async = function (arenite) {
       });
       e.data.deps.forEach(function (dep) {
         if (dep.type === 'raw') {
-          arenite.object.set(self, dep.name, eval('(function(){ return ' + dep.code + ';})();'));
+          arenite.set(self, dep.name, eval('(function(){ return ' + dep.code + ';})();'));
         } else {
-          arenite.object.set(self, dep.name, eval('(' + dep.code + ')();'));
+          arenite.set(self, dep.name, eval('(' + dep.code + ')();'));
         }
       });
       var result = self.__MAIN__.apply(this, e.data.args);
@@ -350,14 +360,14 @@ Arenite.Context = function (arenite) {
   };
 
   var _removeInstance = function (name) {
-    arenite.object.delete(registry, name);
+    arenite.delete(registry, name);
   };
 
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
       var tempId = '__factory_instance_' + name + '__' + factory_id++;
       var tempContext = {};
-      tempContext[tempId] = arenite.object.extend(factories[name], {factory: false});
+      tempContext[tempId] = arenite.extend(factories[name], {factory: false});
       arenite.di.wire(tempContext);
       var instance = registry[tempId];
       _removeInstance(tempId);
@@ -444,9 +454,9 @@ Arenite.DI = function (arenite) {
       resolvedFunc = execution.func;
     } else {
       if (execution.extension) {
-        resolvedFunc = arenite.object.get(arenite[execution.instance], execution.func);
+        resolvedFunc = arenite.get(arenite[execution.instance], execution.func);
       } else {
-        resolvedFunc = arenite.object.get(arenite.context.get(execution.instance), execution.func);
+        resolvedFunc = arenite.get(arenite.context.get(execution.instance), execution.func);
       }
     }
     return resolvedFunc;
@@ -516,14 +526,14 @@ Arenite.DI = function (arenite) {
       return;
     }
 
-    var instanceKeys = arenite.object.keys(instances);
+    var instanceKeys = arenite.keys(instances);
     var unresolved = {};
 
     instanceKeys.forEach(function (instance) {
       if (instances[instance].factory) {
         arenite.context.add(instance, instances[instance], true);
       } else {
-        var func = arenite.object.get(window, instances[instance].namespace);
+        var func = arenite.get(window, instances[instance].namespace);
         if (func) {
           var args = _resolveArgs(instances[instance], null, type, [instance]);
           if (args) {
@@ -531,7 +541,7 @@ Arenite.DI = function (arenite) {
             if (type === 'extension') {
               var wrappedInstance = {};
               wrappedInstance[instance] = actualInstance;
-              arenite = arenite.object.extend(arenite, wrappedInstance);
+              arenite = arenite.extend(arenite, wrappedInstance);
             }
             if (arenite.debug) {
               window.console.log('Arenite: Instance', instance, 'wired');
@@ -547,9 +557,9 @@ Arenite.DI = function (arenite) {
       }
     });
 
-    var unresolvedKeys = arenite.object.keys(unresolved);
-    if (unresolvedKeys.length !== arenite.object.keys(instances).length && unresolvedKeys.length > 0) {
-      arenite.object.forEach(unresolved, function (instance, name) {
+    var unresolvedKeys = arenite.keys(unresolved);
+    if (unresolvedKeys.length !== arenite.keys(instances).length && unresolvedKeys.length > 0) {
+      arenite.forEach(unresolved, function (instance, name) {
         var instanceObj = {};
         instanceObj[name] = instance;
         _wire(instanceObj, undefined, stack.concat(name));
@@ -562,12 +572,12 @@ Arenite.DI = function (arenite) {
   };
 
   var _init = function (instances, latch, extension) {
-    arenite.object.keys(instances).forEach(function (instance) {
+    arenite.keys(instances).forEach(function (instance) {
       if (instances[instance].init && !instances[instance].factory) {
         if (typeof instances[instance].init === 'string') {
           instances[instance].init = {func: instances[instance].init};
         }
-        _execFunction(arenite.object.extend({
+        _execFunction(arenite.extend({
           instance: instance,
           extension: extension
         }, instances[instance].init), function () {
@@ -655,11 +665,11 @@ Arenite.DI = function (arenite) {
   var _prodRepo = '//cdn.rawgit.com/{vendor}/{version}/{module}/';
 
   var _fetchModules = function (modules, callback) {
-    var moduleKeys = arenite.object.keys(modules);
+    var moduleKeys = arenite.keys(modules);
     if (moduleKeys.length) {
       var latch = arenite.async.latch(moduleKeys.length, callback, 'modules');
-      arenite.object.forEach(modules, function (module) {
-        var mode = module.vendor ? 'default' : arenite.config.mode;
+      arenite.forEach(modules, function (module) {
+        var mode = module.vendor ? module.mode ? module.mode : 'default' : arenite.config.mode;
         var moduleBasePath;
         if (module.vendor) {
           if (arenite.config.repo) {
@@ -678,12 +688,12 @@ Arenite.DI = function (arenite) {
         arenite.loader.loadResource(moduleBasePath + 'module.json', function (xhr) {
           var moduleConf = JSON.parse(xhr.responseText);
           var newDeps = {async: [], sync: []};
-          arenite.object.forEach(moduleConf.context.dependencies[mode], function (dependencies, depType) {
+          arenite.forEach(moduleConf.context.dependencies[mode], function (dependencies, depType) {
             dependencies.forEach(function (dep) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : moduleBasePath + dep);
               } else {
-                newDeps[depType].push(arenite.object.extend(dep, {url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : moduleBasePath + dep.url}));
+                newDeps[depType].push(arenite.extend(dep, {url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : moduleBasePath + dep.url}));
               }
             });
           });
@@ -700,11 +710,11 @@ Arenite.DI = function (arenite) {
               sync: [],
               async: []
             };
-          arenite.object.forEach(arenite.config.context.dependencies, function (env) {
-            arenite.object.extend(env, newDeps);
+          arenite.forEach(arenite.config.context.dependencies, function (env) {
+            arenite.extend(env, newDeps);
           });
 
-          arenite.config = arenite.object.extend(arenite.config, moduleConf);
+          arenite.config = arenite.extend(arenite.config, moduleConf);
           if (moduleConf.imports && moduleConf.imports) {
             _fetchModules(moduleConf.imports, latch.countDown);
           } else {
@@ -738,7 +748,7 @@ Arenite.DI = function (arenite) {
     }
 
     if (arenite.config.imports) {
-      window.console.log('Arenite: Fetching modules', arenite.object.keys(arenite.config.imports));
+      window.console.log('Arenite: Fetching modules', arenite.keys(arenite.config.imports));
       _fetchModules(JSON.parse(JSON.stringify(arenite.config.imports)), callback);
     } else {
       callback();
@@ -944,7 +954,7 @@ Arenite.Loader = function (arenite) {
       _loadScriptFrom(script, done);
     } else {
       _loadScriptFrom(script.url, function () {
-        arenite.object.keys(script.instances).forEach(function (instance) {
+        arenite.keys(script.instances).forEach(function (instance) {
           arenite.context.add(instance, window[script.instances[instance]]);
           if (typeof script.init === 'function') {
             script.init(arenite);

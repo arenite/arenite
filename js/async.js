@@ -58,7 +58,7 @@ Arenite.Async = function (arenite) {
 
   var _webworker = function () {
     var self = this;
-    var window = self;
+    //var window = self;
     self.arenite = {};
     self.onmessage = function (e) {
       /* jshint evil:true */
@@ -67,9 +67,9 @@ Arenite.Async = function (arenite) {
       });
       e.data.deps.forEach(function (dep) {
         if (dep.type === 'raw') {
-          arenite.object.set(self, dep.name, eval('(function(){ return ' + dep.code + ';})();'));
+          arenite.set(self, dep.name, eval('(function(){ return ' + dep.code + ';})();'));
         } else {
-          arenite.object.set(self, dep.name, eval('(' + dep.code + ')();'));
+          arenite.set(self, dep.name, eval('(' + dep.code + ')();'));
         }
       });
       var result = self.__MAIN__.apply(this, e.data.args);

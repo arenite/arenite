@@ -150,12 +150,20 @@ by Stoyan Stefanov from O’Reilly Media which discusses these patterns in detai
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h3 id="arenite-html">Arenite.Html</h3>
-<p>Extend the instance with the <a href="async.html">Arenite.Html</a> extension providing the html helper tooks.</p>
+              <p>Add the object and array helper methods to their respective prototypes</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, Arenite.Html(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite.object.forEach(arenite.object, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">func, name</span>) </span>{
+    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">Object</span>.prototype[name]) {
+      <span class="hljs-built_in">Object</span>.prototype[name] = func;
+    }
+  });
+  arenite.array.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">func, name</span>) </span>{
+    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">Array</span>.prototype[name]) {
+      <span class="hljs-built_in">Array</span>.prototype[name] = func;
+    }
+  });</pre></div></div>
             
         </li>
         
@@ -166,12 +174,12 @@ by Stoyan Stefanov from O’Reilly Media which discusses these patterns in detai
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <h3 id="arenite-async">Arenite.Async</h3>
-<p>Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.</p>
+              <h3 id="arenite-html">Arenite.Html</h3>
+<p>Extend the instance with the <a href="async.html">Arenite.Html</a> extension providing the html helper tooks.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, Arenite.Async(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Html(arenite));</pre></div></div>
             
         </li>
         
@@ -182,12 +190,12 @@ by Stoyan Stefanov from O’Reilly Media which discusses these patterns in detai
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <h3 id="arenite-url">Arenite.Url</h3>
-<p>Extend the instance with the <a href="url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.</p>
+              <h3 id="arenite-async">Arenite.Async</h3>
+<p>Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, Arenite.Url(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Async(arenite));</pre></div></div>
             
         </li>
         
@@ -198,13 +206,12 @@ by Stoyan Stefanov from O’Reilly Media which discusses these patterns in detai
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <h3 id="arenite-di">Arenite.DI</h3>
-<p>Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
-the injector functionality.</p>
+              <h3 id="arenite-url">Arenite.Url</h3>
+<p>Extend the instance with the <a href="url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, Arenite.DI(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Url(arenite));</pre></div></div>
             
         </li>
         
@@ -215,13 +222,13 @@ the injector functionality.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <h3 id="arenite-annotationprocessor">Arenite.AnnotationProcessor</h3>
-<p>Extend the instance with the <a href="annotation.html">Arenite.AnnotationProcessor</a> extension which provides
-the parsing and hanlding of annotations.</p>
+              <h3 id="arenite-di">Arenite.DI</h3>
+<p>Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
+the injector functionality.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, Arenite.AnnotationProcessor(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.DI(arenite));</pre></div></div>
             
         </li>
         
@@ -232,13 +239,13 @@ the parsing and hanlding of annotations.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <h3 id="arenite-context">Arenite.Context</h3>
-<p>Extend the instance with the <a href="context.html">Arenite.Context</a> extension which provides
-the context to manage the instances.</p>
+              <h3 id="arenite-annotationprocessor">Arenite.AnnotationProcessor</h3>
+<p>Extend the instance with the <a href="annotation.html">Arenite.AnnotationProcessor</a> extension which provides
+the parsing and hanlding of annotations.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, Arenite.Context(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.AnnotationProcessor(arenite));</pre></div></div>
             
         </li>
         
@@ -249,13 +256,13 @@ the context to manage the instances.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <h3 id="arenite-loader">Arenite.Loader</h3>
-<p>Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
-the script and resource loading functionality to the sandbox.</p>
+              <h3 id="arenite-context">Arenite.Context</h3>
+<p>Extend the instance with the <a href="context.html">Arenite.Context</a> extension which provides
+the context to manage the instances.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, Arenite.Loader(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Context(arenite));</pre></div></div>
             
         </li>
         
@@ -266,13 +273,13 @@ the script and resource loading functionality to the sandbox.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <h3 id="arenite-bus">Arenite.Bus</h3>
-<p>Extend the instance with the <a href="bus.html">Arenite.Bus</a> extension which provides
-an event bus.</p>
+              <h3 id="arenite-loader">Arenite.Loader</h3>
+<p>Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
+the script and resource loading functionality to the sandbox.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.object.extend(arenite, Arenite.Bus(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Loader(arenite));</pre></div></div>
             
         </li>
         
@@ -282,6 +289,23 @@ an event bus.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h3 id="arenite-bus">Arenite.Bus</h3>
+<p>Extend the instance with the <a href="bus.html">Arenite.Bus</a> extension which provides
+an event bus.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Bus(arenite));</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Initialize the injector by having it read the configuration object passed into this constructor.</p>
 

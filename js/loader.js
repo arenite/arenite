@@ -118,7 +118,7 @@ Arenite.Loader = function (arenite) {
       _loadScriptFrom(script, done);
     } else {
       _loadScriptFrom(script.url, function () {
-        arenite.object.keys(script.instances).forEach(function (instance) {
+        arenite.keys(script.instances).forEach(function (instance) {
           arenite.context.add(instance, window[script.instances[instance]]);
           if (typeof script.init === 'function') {
             script.init(arenite);

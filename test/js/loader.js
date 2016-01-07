@@ -77,7 +77,7 @@ describe("Arenite.Loader", function () {
       config: {}
     });
     var callback = jasmine.createSpy('callback');
-    loader.loader.loadScript('asd', callback);
+    loader.loader.loadScript('asd.js', callback);
     xmlHttpReq.readyState = 4;
     xmlHttpReq.status = 200;
     xmlHttpReq.onreadystatechange();
@@ -94,7 +94,7 @@ describe("Arenite.Loader", function () {
       config: {}
     });
     var callback = jasmine.createSpy('callback');
-    loader.loader.loadScript('asd', callback);
+    loader.loader.loadScript('asd.js', callback);
     xmlHttpReq.readyState = 4;
     xmlHttpReq.status = 200;
     xmlHttpReq.onreadystatechange();
@@ -107,18 +107,17 @@ describe("Arenite.Loader", function () {
       return xmlHttpReq;
     };
     var arenite = Arenite.Object();
-    arenite = arenite.object.extend(arenite, {
+    arenite = arenite.extend(arenite, {
       annotation: jasmine.createSpyObj('annotationProcessor', ['processAnnotations']),
       config:{}
     });
-    arenite = arenite.object.extend(arenite, Arenite.Context());
-    console.log('asd', arenite);
+    arenite = arenite.extend(arenite, Arenite.Context());
     var loader = Arenite.Loader(arenite);
     var callback = jasmine.createSpy('callback');
     window.a = 'a1';
     window.b = 'b1';
     loader.loader.loadScript({
-      url: 'asd',
+      url: 'asd.js',
       instances: {
         'a': 'a',
         'b': 'b'

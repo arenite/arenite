@@ -25,35 +25,46 @@ Arenite = function (config) {
   //### Arenite.Object
   // Instance of the Sandbox is started with the <a href="object.html">Arenite.Object</a> module witch gives us access to the <code>extend</code> function used.
   var arenite = Arenite.Object(arenite);
+  // Add the object and array helper methods to their respective prototypes
+  arenite.object.forEach(arenite.object, function (func, name) {
+    if (!Object.prototype[name]) {
+      Object.prototype[name] = func;
+    }
+  });
+  arenite.array.forEach(function (func, name) {
+    if (!Array.prototype[name]) {
+      Array.prototype[name] = func;
+    }
+  });
   //### Arenite.Html
   // Extend the instance with the <a href="async.html">Arenite.Html</a> extension providing the html helper tooks.
-  arenite = arenite.object.extend(arenite, Arenite.Html(arenite));
+  arenite = arenite.extend(arenite, Arenite.Html(arenite));
   //### Arenite.Async
   // Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
-  arenite = arenite.object.extend(arenite, Arenite.Async(arenite));
+  arenite = arenite.extend(arenite, Arenite.Async(arenite));
   //### Arenite.Url
   // Extend the instance with the <a href="url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.
-  arenite = arenite.object.extend(arenite, Arenite.Url(arenite));
+  arenite = arenite.extend(arenite, Arenite.Url(arenite));
   //### Arenite.DI
   // Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
   // the injector functionality.
-  arenite = arenite.object.extend(arenite, Arenite.DI(arenite));
+  arenite = arenite.extend(arenite, Arenite.DI(arenite));
   //### Arenite.AnnotationProcessor
   // Extend the instance with the <a href="annotation.html">Arenite.AnnotationProcessor</a> extension which provides
   // the parsing and hanlding of annotations.
-  arenite = arenite.object.extend(arenite, Arenite.AnnotationProcessor(arenite));
+  arenite = arenite.extend(arenite, Arenite.AnnotationProcessor(arenite));
   //### Arenite.Context
   // Extend the instance with the <a href="context.html">Arenite.Context</a> extension which provides
   // the context to manage the instances.
-  arenite = arenite.object.extend(arenite, Arenite.Context(arenite));
+  arenite = arenite.extend(arenite, Arenite.Context(arenite));
   //### Arenite.Loader
   // Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
   // the script and resource loading functionality to the sandbox.
-  arenite = arenite.object.extend(arenite, Arenite.Loader(arenite));
+  arenite = arenite.extend(arenite, Arenite.Loader(arenite));
   //### Arenite.Bus
   // Extend the instance with the <a href="bus.html">Arenite.Bus</a> extension which provides
   // an event bus.
-  arenite = arenite.object.extend(arenite, Arenite.Bus(arenite));
+  arenite = arenite.extend(arenite, Arenite.Bus(arenite));
   // Initialize the injector by having it read the configuration object passed into this constructor.
   arenite.di.init(config);
   return arenite;

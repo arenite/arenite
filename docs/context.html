@@ -122,14 +122,14 @@
   };
 
   <span class="hljs-keyword">var</span> _removeInstance = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name</span>) </span>{
-    arenite.object.delete(registry, name);
+    arenite.delete(registry, name);
   };
 
   <span class="hljs-keyword">var</span> _getInstance = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name</span>) </span>{
     <span class="hljs-keyword">if</span> (factories.hasOwnProperty(name)) {
       <span class="hljs-keyword">var</span> tempId = <span class="hljs-string">'__factory_instance_'</span> + name + <span class="hljs-string">'__'</span> + factory_id++;
       <span class="hljs-keyword">var</span> tempContext = {};
-      tempContext[tempId] = arenite.object.extend(factories[name], {factory: <span class="hljs-literal">false</span>});
+      tempContext[tempId] = arenite.extend(factories[name], {factory: <span class="hljs-literal">false</span>});
       arenite.di.wire(tempContext);
       <span class="hljs-keyword">var</span> instance = registry[tempId];
       _removeInstance(tempId);
