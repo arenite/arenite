@@ -66,7 +66,7 @@ var Loader = function (config, options, cb) {
   config.mode = options.mode;
 
   var arenite = Arenite.Object(arenite);
-  arenite.forEach(arenite.object, function (func, name) {
+  arenite.object.forEach(arenite.object, function (func, name) {
     if (!Object.prototype[name]) {
       Object.prototype[name] = func;
     }
