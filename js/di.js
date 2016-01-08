@@ -10,9 +10,9 @@ Arenite.DI = function (arenite) {
       resolvedFunc = execution.func;
     } else {
       if (execution.extension) {
-        resolvedFunc = arenite.get(arenite[execution.instance], execution.func);
+        resolvedFunc = arenite[execution.instance].get(execution.func);
       } else {
-        resolvedFunc = arenite.get(arenite.context.get(execution.instance), execution.func);
+        resolvedFunc = arenite.context.get(execution.instance).get(execution.func);
       }
     }
     return resolvedFunc;
@@ -82,14 +82,13 @@ Arenite.DI = function (arenite) {
       return;
     }
 
-    var instanceKeys = arenite.keys(instances);
     var unresolved = {};
 
-    instanceKeys.forEach(function (instance) {
+    instances.keys().forEach(function (instance) {
       if (instances[instance].factory) {
         arenite.context.add(instance, instances[instance], true);
       } else {
-        var func = arenite.get(window, instances[instance].namespace);
+        var func = window.get(instances[instance].namespace);
         if (func) {
           var args = _resolveArgs(instances[instance], null, type, [instance]);
           if (args) {
@@ -97,7 +96,7 @@ Arenite.DI = function (arenite) {
             if (type === 'extension') {
               var wrappedInstance = {};
               wrappedInstance[instance] = actualInstance;
-              arenite = arenite.extend(arenite, wrappedInstance);
+              arenite = arenite.extend(wrappedInstance);
             }
             if (arenite.debug) {
               window.console.log('Arenite: Instance', instance, 'wired');
@@ -113,30 +112,32 @@ Arenite.DI = function (arenite) {
       }
     });
 
-    var unresolvedKeys = arenite.keys(unresolved);
-    if (unresolvedKeys.length !== arenite.keys(instances).length && unresolvedKeys.length > 0) {
-      arenite.forEach(unresolved, function (instance, name) {
+    if (unresolved.keys().length !== instances.keys().length && unresolved.keys().length > 0) {
+      unresolved.forEach(function (instance, name) {
         var instanceObj = {};
         instanceObj[name] = instance;
         _wire(instanceObj, undefined, stack.concat(name));
       });
     } else {
-      if (unresolvedKeys.length !== 0) {
-        throw 'Make sure you don\'t have circular dependencies, Unable to resolve the following instances: ' + unresolvedKeys.join(", ") + ' - [' + stack.join(', ') + ']';
+      if (unresolved.keys().length !== 0) {
+        throw 'Make sure you don\'t have circular dependencies, Unable to resolve the following instances: ' + unresolved.keys().join(", ") + ' - [' + stack.join(', ') + ']';
       }
     }
   };
 
   var _init = function (instances, latch, extension) {
-    arenite.keys(instances).forEach(function (instance) {
-      if (instances[instance].init && !instances[instance].factory) {
-        if (typeof instances[instance].init === 'string') {
-          instances[instance].init = {func: instances[instance].init};
+    if (!instances) {
+      return;
+    }
+    instances.forEach(function (instance, instanceName) {
+      if (instance.init && !instance.factory) {
+        if (typeof instance.init === 'string') {
+          instance.init = {func: instance.init};
         }
-        _execFunction(arenite.extend({
-          instance: instance,
+        _execFunction(({
+          instance: instanceName,
           extension: extension
-        }, instances[instance].init), function () {
+        }).extend(instance.init), function () {
           latch.countUp();
         }, function () {
           latch.countDown();
@@ -221,10 +222,9 @@ Arenite.DI = function (arenite) {
   var _prodRepo = '//cdn.rawgit.com/{vendor}/{version}/{module}/';
 
   var _fetchModules = function (modules, callback) {
-    var moduleKeys = arenite.keys(modules);
-    if (moduleKeys.length) {
-      var latch = arenite.async.latch(moduleKeys.length, callback, 'modules');
-      arenite.forEach(modules, function (module) {
+    if (modules.keys().length) {
+      var latch = arenite.async.latch(modules.keys().length, callback, 'modules');
+      modules.forEach(function (module) {
         var mode = module.vendor ? module.mode ? module.mode : 'default' : arenite.config.mode;
         var moduleBasePath;
         if (module.vendor) {
@@ -244,12 +244,12 @@ Arenite.DI = function (arenite) {
         arenite.loader.loadResource(moduleBasePath + 'module.json', function (xhr) {
           var moduleConf = JSON.parse(xhr.responseText);
           var newDeps = {async: [], sync: []};
-          arenite.forEach(moduleConf.context.dependencies[mode], function (dependencies, depType) {
+          moduleConf.context.dependencies[mode].forEach(function (dependencies, depType) {
             dependencies.forEach(function (dep) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : moduleBasePath + dep);
               } else {
-                newDeps[depType].push(arenite.extend(dep, {url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : moduleBasePath + dep.url}));
+                newDeps[depType].push(dep.extend({url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : moduleBasePath + dep.url}));
               }
             });
           });
@@ -266,11 +266,11 @@ Arenite.DI = function (arenite) {
               sync: [],
               async: []
             };
-          arenite.forEach(arenite.config.context.dependencies, function (env) {
-            arenite.extend(env, newDeps);
+          arenite.config.context.dependencies.forEach(function (env) {
+            env.extend(newDeps);
           });
 
-          arenite.config = arenite.extend(arenite.config, moduleConf);
+          arenite.config = arenite.config.extend(moduleConf);
           if (moduleConf.imports && moduleConf.imports) {
             _fetchModules(moduleConf.imports, latch.countDown);
           } else {
@@ -304,7 +304,7 @@ Arenite.DI = function (arenite) {
     }
 
     if (arenite.config.imports) {
-      window.console.log('Arenite: Fetching modules', arenite.keys(arenite.config.imports));
+      window.console.log('Arenite: Fetching modules', arenite.config.imports.keys());
       _fetchModules(JSON.parse(JSON.stringify(arenite.config.imports)), callback);
     } else {
       callback();

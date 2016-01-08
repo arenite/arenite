@@ -84,7 +84,7 @@ describe('Arenite.Context', function () {
     context.context.add('a', 'a');
     context.context.remove('a');
     Object.prototype.delete = originalDelete;
-    expect(objectDelete).toHaveBeenCalledWith({a: 'a'}, 'a');
+    expect(objectDelete).toHaveBeenCalledWith('a');
   });
 
   //it("factories should throw exception when args cannot be resolved", function () {

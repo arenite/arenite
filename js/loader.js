@@ -118,12 +118,12 @@ Arenite.Loader = function (arenite) {
       _loadScriptFrom(script, done);
     } else {
       _loadScriptFrom(script.url, function () {
-        arenite.keys(script.instances).forEach(function (instance) {
-          arenite.context.add(instance, window[script.instances[instance]]);
+        script.instances.forEach(function (instance, instanceName) {
+          arenite.context.add(instanceName, window[instance]);
           if (typeof script.init === 'function') {
             script.init(arenite);
           }
-          delete window[script.instances[instance]];
+          delete window[instance];
         });
         if (typeof done === 'function') {
           done();

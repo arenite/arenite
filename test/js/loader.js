@@ -107,11 +107,11 @@ describe("Arenite.Loader", function () {
       return xmlHttpReq;
     };
     var arenite = Arenite.Object();
-    arenite = arenite.extend(arenite, {
+    arenite = arenite.extend({
       annotation: jasmine.createSpyObj('annotationProcessor', ['processAnnotations']),
       config:{}
     });
-    arenite = arenite.extend(arenite, Arenite.Context());
+    arenite = arenite.extend(Arenite.Context());
     var loader = Arenite.Loader(arenite);
     var callback = jasmine.createSpy('callback');
     window.a = 'a1';

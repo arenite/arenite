@@ -188,9 +188,9 @@
       });
       e.data.deps.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
         <span class="hljs-keyword">if</span> (dep.type === <span class="hljs-string">'raw'</span>) {
-          arenite.set(self, dep.name, <span class="hljs-built_in">eval</span>(<span class="hljs-string">'(function(){ return '</span> + dep.code + <span class="hljs-string">';})();'</span>));
+          self.set(dep.name, <span class="hljs-built_in">eval</span>(<span class="hljs-string">'(function(){ return '</span> + dep.code + <span class="hljs-string">';})();'</span>));
         } <span class="hljs-keyword">else</span> {
-          arenite.set(self, dep.name, <span class="hljs-built_in">eval</span>(<span class="hljs-string">'('</span> + dep.code + <span class="hljs-string">')();'</span>));
+          self.set(dep.name, <span class="hljs-built_in">eval</span>(<span class="hljs-string">'('</span> + dep.code + <span class="hljs-string">')();'</span>));
         }
       });
       <span class="hljs-keyword">var</span> result = self.__MAIN__.apply(<span class="hljs-keyword">this</span>, e.data.args);

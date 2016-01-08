@@ -10,7 +10,7 @@ describe("Arenite.Async", function () {
 
   it('Latch should trigger when countUp hits 0', function () {
     var callback = jasmine.createSpy('callback');
-    var latch = Arenite.Async({config:{debug:false}}).async.latch(-1, callback);
+    var latch = Arenite.Async({config:{debug:true}}).async.latch(-1, callback);
     latch.countUp();
     expect(callback).toHaveBeenCalled();
     expect(callback.calls.count()).toBe(1);
@@ -18,7 +18,7 @@ describe("Arenite.Async", function () {
 
   it('Latch should trigger on "times" independent of countDown and countUp', function () {
     var callback = jasmine.createSpy('callback');
-    var latch = Arenite.Async({config:{debug:false}}).async.latch(1, callback);
+    var latch = Arenite.Async({config:{debug:true}}).async.latch(1, callback);
     latch.countUp();
     latch.countUp();
     latch.countDown();

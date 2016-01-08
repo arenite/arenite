@@ -65,24 +65,28 @@ var Loader = function (config, options, cb) {
 
   config.mode = options.mode;
 
-  var arenite = Arenite.Object(arenite);
+  var arenite = Arenite.Object();
   arenite.object.forEach(arenite.object, function (func, name) {
     if (!Object.prototype[name]) {
-      Object.prototype[name] = func;
+      Object.prototype[name] = function () {
+        return func.apply(this, [this].concat([].slice.call(arguments)));
+      };
     }
   });
   arenite.array.forEach(function (func, name) {
     if (!Array.prototype[name]) {
-      Array.prototype[name] = func;
+      Array.prototype[name] = function () {
+        return func.apply(this, [this].concat([].slice.call(arguments)));
+      };
     }
   });
-  _options = arenite.extend({env: 'dev', base: ''}, options);
-  arenite = arenite.extend(arenite, new Arenite.Async(arenite));
-  arenite = arenite.extend(arenite, new Arenite.Url(arenite));
-  arenite = arenite.extend(arenite, new Arenite.DI(arenite));
-  arenite = arenite.extend(arenite, new Arenite.AnnotationProcessor(arenite));
-  arenite = arenite.extend(arenite, new Arenite.Context(arenite));
-  arenite = arenite.extend(arenite, new Arenite.Loader(arenite));
+  _options = ({env: 'dev', base: ''}).extend(options);
+  arenite.extend(new Arenite.Async(arenite));
+  arenite.extend(new Arenite.Url(arenite));
+  arenite.extend(new Arenite.DI(arenite));
+  arenite.extend(new Arenite.AnnotationProcessor(arenite));
+  arenite.extend(new Arenite.Context(arenite));
+  arenite.extend(new Arenite.Loader(arenite));
   arenite.di.loadConfig(config, function () {
     cb(arenite, arenite.config);
   });

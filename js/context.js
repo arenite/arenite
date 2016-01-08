@@ -14,14 +14,14 @@ Arenite.Context = function (arenite) {
   };
 
   var _removeInstance = function (name) {
-    arenite.delete(registry, name);
+    registry.delete(name);
   };
 
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
       var tempId = '__factory_instance_' + name + '__' + factory_id++;
       var tempContext = {};
-      tempContext[tempId] = arenite.extend(factories[name], {factory: false});
+      tempContext[tempId] = factories[name].extend({factory: false});
       arenite.di.wire(tempContext);
       var instance = registry[tempId];
       _removeInstance(tempId);

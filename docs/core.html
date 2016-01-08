@@ -94,7 +94,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*!
- * Arenite JavaScript Library v1.4.1
+ * Arenite JavaScript Library v2.0.0-rc1
  * https://github.com/lcavadas/arenite
  *
  * Copyright 2014, Luís Serralheiro
@@ -139,7 +139,7 @@ by Stoyan Stefanov from O’Reilly Media which discusses these patterns in detai
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> arenite = Arenite.Object(arenite);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> arenite = Arenite.Object();</pre></div></div>
             
         </li>
         
@@ -156,12 +156,16 @@ by Stoyan Stefanov from O’Reilly Media which discusses these patterns in detai
             
             <div class="content"><div class='highlight'><pre>  arenite.object.forEach(arenite.object, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">func, name</span>) </span>{
     <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">Object</span>.prototype[name]) {
-      <span class="hljs-built_in">Object</span>.prototype[name] = func;
+      <span class="hljs-built_in">Object</span>.prototype[name] = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> func.apply(<span class="hljs-keyword">this</span>, [<span class="hljs-keyword">this</span>].concat([].slice.call(<span class="hljs-built_in">arguments</span>)));
+      };
     }
   });
   arenite.array.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">func, name</span>) </span>{
     <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">Array</span>.prototype[name]) {
-      <span class="hljs-built_in">Array</span>.prototype[name] = func;
+      <span class="hljs-built_in">Array</span>.prototype[name] = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> func.apply(<span class="hljs-keyword">this</span>, [<span class="hljs-keyword">this</span>].concat([].slice.call(<span class="hljs-built_in">arguments</span>)));
+      };
     }
   });</pre></div></div>
             
@@ -179,7 +183,7 @@ by Stoyan Stefanov from O’Reilly Media which discusses these patterns in detai
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Html(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite.extend(Arenite.Html(arenite));</pre></div></div>
             
         </li>
         
@@ -195,7 +199,7 @@ by Stoyan Stefanov from O’Reilly Media which discusses these patterns in detai
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Async(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite.extend(Arenite.Async(arenite));</pre></div></div>
             
         </li>
         
@@ -211,7 +215,7 @@ by Stoyan Stefanov from O’Reilly Media which discusses these patterns in detai
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Url(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite.extend(Arenite.Url(arenite));</pre></div></div>
             
         </li>
         
@@ -228,7 +232,7 @@ the injector functionality.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.DI(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite.extend(Arenite.DI(arenite));</pre></div></div>
             
         </li>
         
@@ -245,7 +249,7 @@ the parsing and hanlding of annotations.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.AnnotationProcessor(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite.extend(Arenite.AnnotationProcessor(arenite));</pre></div></div>
             
         </li>
         
@@ -262,7 +266,7 @@ the context to manage the instances.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Context(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite.extend(Arenite.Context(arenite));</pre></div></div>
             
         </li>
         
@@ -279,7 +283,7 @@ the script and resource loading functionality to the sandbox.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Loader(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite.extend(Arenite.Loader(arenite));</pre></div></div>
             
         </li>
         
@@ -296,7 +300,7 @@ an event bus.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  arenite = arenite.extend(arenite, Arenite.Bus(arenite));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  arenite.extend(Arenite.Bus(arenite));</pre></div></div>
             
         </li>
         

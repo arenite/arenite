@@ -67,9 +67,9 @@ Arenite.Async = function (arenite) {
       });
       e.data.deps.forEach(function (dep) {
         if (dep.type === 'raw') {
-          arenite.set(self, dep.name, eval('(function(){ return ' + dep.code + ';})();'));
+          self.set(dep.name, eval('(function(){ return ' + dep.code + ';})();'));
         } else {
-          arenite.set(self, dep.name, eval('(' + dep.code + ')();'));
+          self.set(dep.name, eval('(' + dep.code + ')();'));
         }
       });
       var result = self.__MAIN__.apply(this, e.data.args);

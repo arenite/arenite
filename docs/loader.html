@@ -252,12 +252,12 @@ xhr.setRequestHeader(“Access-Control-Allow-Origin”, window.location.origin);
       _loadScriptFrom(script, done);
     } <span class="hljs-keyword">else</span> {
       _loadScriptFrom(script.url, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-        arenite.keys(script.instances).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">instance</span>) </span>{
-          arenite.context.add(instance, <span class="hljs-built_in">window</span>[script.instances[instance]]);
+        script.instances.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">instance, instanceName</span>) </span>{
+          arenite.context.add(instanceName, <span class="hljs-built_in">window</span>[instance]);
           <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> script.init === <span class="hljs-string">'function'</span>) {
             script.init(arenite);
           }
-          <span class="hljs-keyword">delete</span> <span class="hljs-built_in">window</span>[script.instances[instance]];
+          <span class="hljs-keyword">delete</span> <span class="hljs-built_in">window</span>[instance];
         });
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> done === <span class="hljs-string">'function'</span>) {
           done();
