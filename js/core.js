@@ -28,16 +28,25 @@ Arenite = function (config) {
   // Add the object and array helper methods to their respective prototypes
   arenite.object.forEach(arenite.object, function (func, name) {
     if (!Object.prototype[name]) {
-      Object.prototype[name] = function () {
-        return func.apply(this, [this].concat([].slice.call(arguments)));
-      };
+      Object.defineProperty(Object.prototype, name, {
+        writable: true,
+        enumerable: false,
+        value: function () {
+          return func.apply(this, [this].concat([].slice.call(arguments)));
+        }
+      });
     }
   });
-  arenite.array.forEach(function (func, name) {
+
+  arenite.object.forEach(arenite.array, function (func, name) {
     if (!Array.prototype[name]) {
-      Array.prototype[name] = function () {
-        return func.apply(this, [this].concat([].slice.call(arguments)));
-      };
+      Object.defineProperty(Array.prototype, name, {
+        writable: true,
+        enumerable: false,
+        value: function () {
+          return func.apply(this, [this].concat([].slice.call(arguments)));
+        }
+      });
     }
   });
   //### Arenite.Html
