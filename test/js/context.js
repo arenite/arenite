@@ -72,8 +72,8 @@ describe('Arenite.Context', function () {
 
   it("should remove instance if instance exists", function () {
     var objectDelete = jasmine.createSpy('delete');
-    var originalDelete = Object.prototype.delete;
-    Object.prototype.delete = objectDelete;
+    var originalDelete = Object.prototype.deleteInPath;
+    Object.prototype.deleteInPath = objectDelete;
     var context = Arenite.Context({
       di: {
         resolveArgs: function () {
@@ -83,25 +83,40 @@ describe('Arenite.Context', function () {
     });
     context.context.add('a', 'a');
     context.context.remove('a');
-    Object.prototype.delete = originalDelete;
+    Object.prototype.deleteInPath = originalDelete;
     expect(objectDelete).toHaveBeenCalledWith('a');
   });
 
-  //it("factories should throw exception when args cannot be resolved", function () {
-  //  var context = Arenite.Context({
-  //    di: {
-  //      resolveArgs: function () {
-  //
-  //      }
-  //    }
-  //  });
-  //
-  //  context.context.add('instanceName', function (arg) {
-  //    return arg;
-  //  }, true, [{ref: 'ohno'}]);
-  //
-  //  expect(function () {
-  //    context.context.get('instanceName');
-  //  }).toThrow('Unable to resolve arguments for "instanceName"');
-  //});
+  it("window.define: register instances", function () {
+    var callback = function () {
+      return 'instance';
+    };
+    var context = Arenite.Context({});
+    window.define('testInstance', [], callback);
+    expect(context.context.get('testInstance')).toBe('instance');
+  });
+
+  it("window.define: register instances using the script name when not provided", function () {
+    var callback = function () {
+      return 'instance';
+    };
+    var context = Arenite.Context({});
+    window.define([], callback);
+    expect(context.context.get('context')).toBe('instance');
+  });
+
+  it("window.define: will resolve deps", function () {
+    var dep;
+    var callback = function (arg) {
+      dep = arg;
+      return 'instance';
+    };
+    var context = Arenite.Context({});
+    context.context.add('dep', 't');
+    window.define(['dep'], callback);
+    expect(context.context.get('context')).toBe('instance');
+    expect(dep).toBe('t');
+  });
+
+
 });

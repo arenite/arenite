@@ -220,15 +220,8 @@ retrieve the functions by namespace.</p>
     <span class="hljs-keyword">return</span> result;
   };
 
-  <span class="hljs-keyword">var</span> _merge = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arr1, arr2, keepDups</span>) </span>{
-    <span class="hljs-keyword">var</span> result = [];
-    arr1.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">el</span>) </span>{
-      result.push(el);
-    });
-    arr2.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">el</span>) </span>{
-      result.push(el);
-    });
-    <span class="hljs-keyword">return</span> keepDups ? result : _uniq(result);
+  <span class="hljs-keyword">var</span> _merge = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arr1, arr2</span>) </span>{
+    <span class="hljs-keyword">return</span> _uniq(arr1.concat(arr2));
   };
 
   <span class="hljs-keyword">var</span> _extract = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj, prop</span>) </span>{
@@ -256,17 +249,6 @@ retrieve the functions by namespace.</p>
         func(obj[key], key);
       }
     }
-  };
-
-  <span class="hljs-keyword">var</span> _values = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj</span>) </span>{
-    <span class="hljs-keyword">var</span> key;
-    <span class="hljs-keyword">var</span> arr = [];
-    <span class="hljs-keyword">for</span> (key <span class="hljs-keyword">in</span> obj) {
-      <span class="hljs-keyword">if</span> (obj.hasOwnProperty(key)) {
-        arr.push(obj[key]);
-      }
-    }
-    <span class="hljs-keyword">return</span> arr;
   };
 
   <span class="hljs-keyword">var</span> _array = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj</span>) </span>{
@@ -299,16 +281,16 @@ retrieve the functions by namespace.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>###object.get
+              <p>###object.getFromPath
 Retrieves a property from an object. The property is expressed as a string, denoting a path.</p>
 <p><pre><code>
-get(object, path)
+getFromPath(object, path)
 </pre></code>
 where <em><b>object</b></em> is the target object and <em><b>path</b></em> is the path of the value to be fetched.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      get: _getInObject,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      getInPath: _getInObject,</pre></div></div>
             
         </li>
         
@@ -319,17 +301,17 @@ where <em><b>object</b></em> is the target object and <em><b>path</b></em> is th
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>###object.set
+              <p>###object.setInPath
 Sets a property in an object. The property is expressed as a string, denoting a path.</p>
 <p><pre><code>
-set(object, path, value)
+setInPath(object, path, value)
 </pre></code>
 where <em><b>object</b></em> is the target object,
 <em><b>path</b></em> is the path of the value and <em><b>value</b></em> the value to be set at the given path.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      set: _setInObject,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      setInPath: _setInObject,</pre></div></div>
             
         </li>
         
@@ -340,16 +322,16 @@ where <em><b>object</b></em> is the target object,
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>###object.delete
+              <p>###object.deleteInPath
 Removes a property from an object. The property is expressed as a string, denoting a path.</p>
 <p><pre><code>
-get(object, path)
+deleteInPath(object, path)
 </pre></code>
 where <em><b>object</b></em> is the target object and <em><b>path</b></em> is the path of the value to be deleted.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">delete</span>: _deleteInObject,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      deleteInPath: _deleteInObject,</pre></div></div>
             
         </li>
         
@@ -360,16 +342,16 @@ where <em><b>object</b></em> is the target object and <em><b>path</b></em> is th
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>###object.extend
-Extend merges to objects. The second object will “override” properties also existing in the first.</p>
+              <p>###object.fuseWith
+Fuse merges objects. The second object will “override” properties also existing in the first.</p>
 <p><pre><code>
-extend(object, other)
+fuseWith(object, other)
 </pre></code>
 where <em><b>object</b></em> is the object to be merged and extended by <em><b>other</b></em>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      extend: _extend,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      fuseWith: _extend,</pre></div></div>
             
         </li>
         
@@ -380,16 +362,16 @@ where <em><b>object</b></em> is the object to be merged and extended by <em><b>o
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>###object.keys
+              <p>###object.keysOf
 Returns all the properties available to an object in the form of an array.</p>
 <p><pre><code>
-keys(object)
+keysOf(object)
 </pre></code>
 where <em><b>object</b></em> is the object from which the properties will be extracted.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      keys: _keys,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      toKeyArray: _keys,</pre></div></div>
             
         </li>
         
@@ -420,16 +402,16 @@ where <em><b>object</b></em> is the object to iterate. <em><b>func(elem, key)</b
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>###object.values
-Returns all the values available to an object in the form of an array.</p>
+              <p>###object.containsKey
+Determines if a key exists in an object:</p>
 <p><pre><code>
-keys(object)
+containsKey(object, key)
 </pre></code>
-where <em><b>object</b></em> is the object from which the elements will be extracted.</p>
+where <em><b>object</b></em> is the object to test for the presence of key and <em><b>key</b></em> is the property/element to be tested.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      values: _values,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      containsKey: _contains,</pre></div></div>
             
         </li>
         
@@ -440,16 +422,16 @@ where <em><b>object</b></em> is the object from which the elements will be extra
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>###object.contains
-Determines if a element is present in an array or a key exists in an object:</p>
+              <p>###object.toArray
+Transforms the object to an array using the values for each key:</p>
 <p><pre><code>
-contains(object, key)
+toArray(object)
 </pre></code>
-where <em><b>object</b></em> is the object to test for the presence of key and <em><b>key</b></em> is the property/element to be tested.</p>
+where <em><b>object</b></em> is the object to be transformed into the array.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      contains: _contains,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      toArray: _array,</pre></div></div>
             
         </li>
         
@@ -460,16 +442,18 @@ where <em><b>object</b></em> is the object to test for the presence of key and <
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>###object.array
-Transforms the object to an array using the values for each key:</p>
+              <p>###object.filterWith
+Returns a filtered version of the object:</p>
 <p><pre><code>
-array(object)
+filterWith(object, keys)
 </pre></code>
-where <em><b>object</b></em> is the object to be transformed into the array.</p>
+where <em><b>object</b></em> is the object to be filtered and <em><b>keys</b></em> an array of keys to maintain.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      array: _array,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      filterWith: _filter
+    },
+    array: {</pre></div></div>
             
         </li>
         
@@ -480,18 +464,16 @@ where <em><b>object</b></em> is the object to be transformed into the array.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>###object.filter
-Returns a filtered version of the object:</p>
+              <p>###array.containsElement
+Determines if a element is present in an array:</p>
 <p><pre><code>
-filter(object, keys)
+containsElement(object, key)
 </pre></code>
-where <em><b>object</b></em> is the object to be filtered and <em><b>keys</b></em> an array of keys to maintain.</p>
+where <em><b>object</b></em> is the object to test for the presence of key and <em><b>key</b></em> is the property/element to be tested.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      filter: _filter
-    },
-    array: {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      containsElement: _contains,</pre></div></div>
             
         </li>
         
@@ -502,16 +484,16 @@ where <em><b>object</b></em> is the object to be filtered and <em><b>keys</b></e
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>###array.contains
-Determines if a element is present in an array or a key exists in an object:</p>
+              <p>###array.filterUnique
+Filters an array returning a new one with the unique values.</p>
 <p><pre><code>
-contains(object, key)
+filterUnique(array)
 </pre></code>
-where <em><b>object</b></em> is the object to test for the presence of key and <em><b>key</b></em> is the property/element to be tested.</p>
+where <em><b>array</b></em> is the array to be stripped o duplicate values</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      contains: _contains,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      filterUnique: _uniq,</pre></div></div>
             
         </li>
         
@@ -522,16 +504,16 @@ where <em><b>object</b></em> is the object to test for the presence of key and <
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>###array.uniq
-Filters an array returning a new one with the unique values.</p>
+              <p>###array.mergeWith
+Merges two arrays returning a new one with the unique values.</p>
 <p><pre><code>
-contains(array)
+mergeWith(arr1, arr2)
 </pre></code>
-where <em><b>array</b></em> is the array to be stripped o duplicate values</p>
+where <em><b>arr1</b></em> and <em><b>arr2</b></em> are the arrays to be merged</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      uniq: _uniq,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      mergeWith: _merge,</pre></div></div>
             
         </li>
         
@@ -542,16 +524,16 @@ where <em><b>array</b></em> is the array to be stripped o duplicate values</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>###array.merge
-Merges two arrays returning a new one with the unique values.</p>
+              <p>###array.toArrayOf
+Extract an array composed of a specified property of the subobjects of a given object</p>
 <p><pre><code>
-merge(arr1, arr2)
+toArrayOf(object, property)
 </pre></code>
-where <em><b>arr1</b></em> and <em><b>arr2</b></em> are the arrays to be merged</p>
+where <em><b>object</b></em> is the object whose members will be analysed <em><b>property</b></em> the property to be extracted from those members</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      merge: _merge,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      toArrayOf: _extract,</pre></div></div>
             
         </li>
         
@@ -562,36 +544,16 @@ where <em><b>arr1</b></em> and <em><b>arr2</b></em> are the arrays to be merged<
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>###array.extract
-Extract an array composed of a specified property of the subobjects of a given object</p>
-<p><pre><code>
-extract(object, property)
-</pre></code>
-where <em><b>object</b></em> is the object whose members will be analysed <em><b>property</b></em> the property to be extracted from those members</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      extract: _extract,</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-17">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
-              </div>
-              <p>###array.obj
+              <p>###array.toObject
 Extract an object indexed by a given key</p>
 <p><pre><code>
-obj(array, property)
+toObject(array, property)
 </pre></code>
 where <em><b>array</b></em> is the array whose members will be analysed <em><b>property</b></em> the property of each element to be turned into the key of that element in the resulting object</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      obj: _obj
+            <div class="content"><div class='highlight'><pre>      toObject: _obj
     }
   };
 };</pre></div></div>

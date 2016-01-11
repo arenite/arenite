@@ -1,5 +1,5 @@
 /*!
- * Arenite JavaScript Library v2.0.0-rc1
+ * Arenite JavaScript Library v2.0.0-rc2
  * https://github.com/lcavadas/arenite
  *
  * Copyright 2014, Luís Serralheiro
@@ -28,47 +28,56 @@ Arenite = function (config) {
   // Add the object and array helper methods to their respective prototypes
   arenite.object.forEach(arenite.object, function (func, name) {
     if (!Object.prototype[name]) {
-      Object.prototype[name] = function () {
-        return func.apply(this, [this].concat([].slice.call(arguments)));
-      };
+      Object.defineProperty(Object.prototype, name, {
+        writable: true,
+        enumerable: false,
+        value: function () {
+          return func.apply(this, [this].concat([].slice.call(arguments)));
+        }
+      });
     }
   });
-  arenite.array.forEach(function (func, name) {
+
+  arenite.object.forEach(arenite.array, function (func, name) {
     if (!Array.prototype[name]) {
-      Array.prototype[name] = function () {
-        return func.apply(this, [this].concat([].slice.call(arguments)));
-      };
+      Object.defineProperty(Array.prototype, name, {
+        writable: true,
+        enumerable: false,
+        value: function () {
+          return func.apply(this, [this].concat([].slice.call(arguments)));
+        }
+      });
     }
   });
   //### Arenite.Html
   // Extend the instance with the <a href="async.html">Arenite.Html</a> extension providing the html helper tooks.
-  arenite.extend(Arenite.Html(arenite));
+  arenite.fuseWith(Arenite.Html(arenite));
   //### Arenite.Async
   // Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
-  arenite.extend(Arenite.Async(arenite));
+  arenite.fuseWith(Arenite.Async(arenite));
   //### Arenite.Url
   // Extend the instance with the <a href="url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.
-  arenite.extend(Arenite.Url(arenite));
+  arenite.fuseWith(Arenite.Url(arenite));
   //### Arenite.DI
   // Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
   // the injector functionality.
-  arenite.extend(Arenite.DI(arenite));
+  arenite.fuseWith(Arenite.DI(arenite));
   //### Arenite.AnnotationProcessor
   // Extend the instance with the <a href="annotation.html">Arenite.AnnotationProcessor</a> extension which provides
   // the parsing and hanlding of annotations.
-  arenite.extend(Arenite.AnnotationProcessor(arenite));
+  arenite.fuseWith(Arenite.AnnotationProcessor(arenite));
   //### Arenite.Context
   // Extend the instance with the <a href="context.html">Arenite.Context</a> extension which provides
   // the context to manage the instances.
-  arenite.extend(Arenite.Context(arenite));
+  arenite.fuseWith(Arenite.Context(arenite));
   //### Arenite.Loader
   // Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
   // the script and resource loading functionality to the sandbox.
-  arenite.extend(Arenite.Loader(arenite));
+  arenite.fuseWith(Arenite.Loader(arenite));
   //### Arenite.Bus
   // Extend the instance with the <a href="bus.html">Arenite.Bus</a> extension which provides
   // an event bus.
-  arenite.extend(Arenite.Bus(arenite));
+  arenite.fuseWith(Arenite.Bus(arenite));
   // Initialize the injector by having it read the configuration object passed into this constructor.
   arenite.di.init(config);
   return arenite;
@@ -204,71 +213,6 @@ Arenite.Async = function (arenite) {
     };
   };
 
-  var _webworker = function () {
-    var self = this;
-    //var window = self;
-    self.arenite = {};
-    self.onmessage = function (e) {
-      /* jshint evil:true */
-      e.data.arenite.forEach(function (dep) {
-        arenite = eval('(' + dep.code + ')();');
-      });
-      e.data.deps.forEach(function (dep) {
-        if (dep.type === 'raw') {
-          self.set(dep.name, eval('(function(){ return ' + dep.code + ';})();'));
-        } else {
-          self.set(dep.name, eval('(' + dep.code + ')();'));
-        }
-      });
-      var result = self.__MAIN__.apply(this, e.data.args);
-      self.postMessage(result);
-    };
-  };
-
-  var _serialize = function (func, strip) {
-    var script = func.toString();
-    if (strip) {
-      script = script.slice(script.indexOf("{") + 1, script.lastIndexOf("}"));
-    }
-    return script;
-  };
-
-  var _createWebWorker = function (func, deps, cb, keepAlive) {
-    var _cb = cb;
-    var worker = new Worker(URL.createObjectURL(new Blob([_serialize(_webworker, true)])));
-    worker.onmessage = function (e) {
-      _cb(e.data);
-      if (!keepAlive) {
-        worker.terminate();
-      }
-    };
-    var serializedDeps = [];
-    (deps || []).forEach(function (dep) {
-      serializedDeps.push({name: dep.name, code: _serialize(dep.func), type: dep.type});
-    });
-    serializedDeps.push({name: '__MAIN__', code: _serialize(func), type: 'raw'});
-
-    var api = {
-      exec: function (args, cb) {
-        if (cb) {
-          _cb = cb;
-        }
-        worker.postMessage({
-          args: args,
-          deps: serializedDeps,
-          arenite: [{name: 'object', code: _serialize(Arenite.Object)}]
-        });
-        return api;
-      },
-      kill: function () {
-        if (keepAlive) {
-          worker.terminate();
-        }
-      }
-    };
-    return api;
-  };
-
   return {
     async: {
       //###Sequencial latch.
@@ -299,13 +243,10 @@ Arenite.Async = function (arenite) {
       //</code></pre>
       // *<b>countDown</b>* will decrease the counter and *<b>CountUp</b>* will increase the counter that is initialized with the times argument.
       // Once the counter hits 0 the callback is invoked.
-      latch: _latch,
-      webworker: _createWebWorker
+      latch: _latch
     }
   };
-}
-;
-
+};
 /*global Arenite:true*/
 Arenite.Bus = function () {
   var bus = {};
@@ -364,14 +305,14 @@ Arenite.Context = function (arenite) {
   };
 
   var _removeInstance = function (name) {
-    registry.delete(name);
+    registry.deleteInPath(name);
   };
 
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
       var tempId = '__factory_instance_' + name + '__' + factory_id++;
       var tempContext = {};
-      tempContext[tempId] = factories[name].extend({factory: false});
+      tempContext[tempId] = factories[name].fuseWith({factory: false});
       arenite.di.wire(tempContext);
       var instance = registry[tempId];
       _removeInstance(tempId);
@@ -460,7 +401,7 @@ Arenite.DI = function (arenite) {
       if (execution.extension) {
         resolvedFunc = arenite[execution.instance].get(execution.func);
       } else {
-        resolvedFunc = arenite.context.get(execution.instance).get(execution.func);
+        resolvedFunc = arenite.context.get(execution.instance).getInPath(execution.func);
       }
     }
     return resolvedFunc;
@@ -532,11 +473,11 @@ Arenite.DI = function (arenite) {
 
     var unresolved = {};
 
-    instances.keys().forEach(function (instance) {
+    instances.toKeyArray().forEach(function (instance) {
       if (instances[instance].factory) {
         arenite.context.add(instance, instances[instance], true);
       } else {
-        var func = window.get(instances[instance].namespace);
+        var func = window.getInPath(instances[instance].namespace);
         if (func) {
           var args = _resolveArgs(instances[instance], null, type, [instance]);
           if (args) {
@@ -544,7 +485,7 @@ Arenite.DI = function (arenite) {
             if (type === 'extension') {
               var wrappedInstance = {};
               wrappedInstance[instance] = actualInstance;
-              arenite = arenite.extend(wrappedInstance);
+              arenite = arenite.fuseWith(wrappedInstance);
             }
             if (arenite.debug) {
               window.console.log('Arenite: Instance', instance, 'wired');
@@ -560,15 +501,15 @@ Arenite.DI = function (arenite) {
       }
     });
 
-    if (unresolved.keys().length !== instances.keys().length && unresolved.keys().length > 0) {
+    if (unresolved.toKeyArray().length !== instances.toKeyArray().length && unresolved.toKeyArray().length > 0) {
       unresolved.forEach(function (instance, name) {
         var instanceObj = {};
         instanceObj[name] = instance;
         _wire(instanceObj, undefined, stack.concat(name));
       });
     } else {
-      if (unresolved.keys().length !== 0) {
-        throw 'Make sure you don\'t have circular dependencies, Unable to resolve the following instances: ' + unresolved.keys().join(", ") + ' - [' + stack.join(', ') + ']';
+      if (unresolved.toKeyArray().length !== 0) {
+        throw 'Make sure you don\'t have circular dependencies, Unable to resolve the following instances: ' + unresolved.toKeyArray().join(", ") + ' - [' + stack.join(', ') + ']';
       }
     }
   };
@@ -585,7 +526,7 @@ Arenite.DI = function (arenite) {
         _execFunction(({
           instance: instanceName,
           extension: extension
-        }).extend(instance.init), function () {
+        }).fuseWith(instance.init), function () {
           latch.countUp();
         }, function () {
           latch.countDown();
@@ -670,8 +611,8 @@ Arenite.DI = function (arenite) {
   var _prodRepo = '//cdn.rawgit.com/{vendor}/{version}/{module}/';
 
   var _fetchModules = function (modules, callback) {
-    if (modules.keys().length) {
-      var latch = arenite.async.latch(modules.keys().length, callback, 'modules');
+    if (modules.toKeyArray().length) {
+      var latch = arenite.async.latch(modules.toKeyArray().length, callback, 'modules');
       modules.forEach(function (module) {
         var mode = module.vendor ? module.mode ? module.mode : 'default' : arenite.config.mode;
         var moduleBasePath;
@@ -697,7 +638,7 @@ Arenite.DI = function (arenite) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : moduleBasePath + dep);
               } else {
-                newDeps[depType].push(dep.extend({url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : moduleBasePath + dep.url}));
+                newDeps[depType].push(dep.fuseWith({url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : moduleBasePath + dep.url}));
               }
             });
           });
@@ -715,10 +656,10 @@ Arenite.DI = function (arenite) {
               async: []
             };
           arenite.config.context.dependencies.forEach(function (env) {
-            env.extend(newDeps);
+            env.fuseWith(newDeps);
           });
 
-          arenite.config = arenite.config.extend(moduleConf);
+          arenite.config = arenite.config.fuseWith(moduleConf);
           if (moduleConf.imports && moduleConf.imports) {
             _fetchModules(moduleConf.imports, latch.countDown);
           } else {
@@ -752,7 +693,7 @@ Arenite.DI = function (arenite) {
     }
 
     if (arenite.config.imports) {
-      window.console.log('Arenite: Fetching modules', arenite.config.imports.keys());
+      window.console.log('Arenite: Fetching modules', arenite.config.imports.toKeyArray());
       _fetchModules(JSON.parse(JSON.stringify(arenite.config.imports)), callback);
     } else {
       callback();
@@ -860,16 +801,7 @@ Arenite.Loader = function (arenite) {
       }
     };
     if (arenite.config.withCredentials) {
-      if ('withCredentials' in xhr) {
-        xhr.withCredentials = true;
-      } else if (typeof XDomainRequest !== 'undefined') {
-        xhr = new XDomainRequest();
-        xhr.open(method, url);
-        xhr.onload = success;
-        xhr.onerror = failure;
-      } else {
-        xhr = null;
-      }
+      xhr.withCredentials = true;
     }
     return xhr;
   };
@@ -960,9 +892,6 @@ Arenite.Loader = function (arenite) {
       _loadScriptFrom(script.url, function () {
         script.instances.forEach(function (instance, instanceName) {
           arenite.context.add(instanceName, window[instance]);
-          if (typeof script.init === 'function') {
-            script.init(arenite);
-          }
           delete window[instance];
         });
         if (typeof done === 'function') {
@@ -1110,15 +1039,8 @@ Arenite.Object = function () {
     return result;
   };
 
-  var _merge = function (arr1, arr2, keepDups) {
-    var result = [];
-    arr1.forEach(function (el) {
-      result.push(el);
-    });
-    arr2.forEach(function (el) {
-      result.push(el);
-    });
-    return keepDups ? result : _uniq(result);
+  var _merge = function (arr1, arr2) {
+    return _uniq(arr1.concat(arr2));
   };
 
   var _extract = function (obj, prop) {
@@ -1148,17 +1070,6 @@ Arenite.Object = function () {
     }
   };
 
-  var _values = function (obj) {
-    var key;
-    var arr = [];
-    for (key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        arr.push(obj[key]);
-      }
-    }
-    return arr;
-  };
-
   var _array = function (obj) {
     var arr = [];
     _forEach(obj, function (el) {
@@ -1179,42 +1090,42 @@ Arenite.Object = function () {
 
   return {
     object: {
-      //###object.get
+      //###object.getFromPath
       // Retrieves a property from an object. The property is expressed as a string, denoting a path.
       //<pre><code>
-      // get(object, path)
+      // getFromPath(object, path)
       //</pre></code>
       //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be fetched.
-      get: _getInObject,
-      //###object.set
+      getInPath: _getInObject,
+      //###object.setInPath
       // Sets a property in an object. The property is expressed as a string, denoting a path.
       //<pre><code>
-      // set(object, path, value)
+      // setInPath(object, path, value)
       //</pre></code>
       //where *<b>object</b>* is the target object,
       // *<b>path</b>* is the path of the value and *<b>value</b>* the value to be set at the given path.
-      set: _setInObject,
-      //###object.delete
+      setInPath: _setInObject,
+      //###object.deleteInPath
       // Removes a property from an object. The property is expressed as a string, denoting a path.
       //<pre><code>
-      // get(object, path)
+      // deleteInPath(object, path)
       //</pre></code>
       //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be deleted.
-      delete: _deleteInObject,
-      //###object.extend
-      // Extend merges to objects. The second object will "override" properties also existing in the first.
+      deleteInPath: _deleteInObject,
+      //###object.fuseWith
+      // Fuse merges objects. The second object will "override" properties also existing in the first.
       //<pre><code>
-      // extend(object, other)
+      // fuseWith(object, other)
       //</pre></code>
       //where *<b>object</b>* is the object to be merged and extended by *<b>other</b>*.
-      extend: _extend,
-      //###object.keys
+      fuseWith: _extend,
+      //###object.keysOf
       //Returns all the properties available to an object in the form of an array.
       //<pre><code>
-      // keys(object)
+      // keysOf(object)
       //</pre></code>
       //where *<b>object</b>* is the object from which the properties will be extracted.
-      keys: _keys,
+      toKeyArray: _keys,
       //###object.forEach
       //Iterates through the object the equivalent to the way forEach works for arrays.
       //<pre><code>
@@ -1222,71 +1133,64 @@ Arenite.Object = function () {
       //</pre></code>
       //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
       forEach: _forEach,
-      //###object.values
-      //Returns all the values available to an object in the form of an array.
+      //###object.containsKey
+      // Determines if a key exists in an object:
       //<pre><code>
-      // keys(object)
-      //</pre></code>
-      //where *<b>object</b>* is the object from which the elements will be extracted.
-      values: _values,
-      //###object.contains
-      // Determines if a element is present in an array or a key exists in an object:
-      //<pre><code>
-      // contains(object, key)
+      // containsKey(object, key)
       //</pre></code>
       //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
-      contains: _contains,
-      //###object.array
+      containsKey: _contains,
+      //###object.toArray
       // Transforms the object to an array using the values for each key:
       //<pre><code>
-      // array(object)
+      // toArray(object)
       //</pre></code>
       //where *<b>object</b>* is the object to be transformed into the array.
-      array: _array,
-      //###object.filter
+      toArray: _array,
+      //###object.filterWith
       // Returns a filtered version of the object:
       //<pre><code>
-      // filter(object, keys)
+      // filterWith(object, keys)
       //</pre></code>
       //where *<b>object</b>* is the object to be filtered and *<b>keys</b>* an array of keys to maintain.
-      filter: _filter
+      filterWith: _filter
     },
     array: {
-      //###array.contains
-      // Determines if a element is present in an array or a key exists in an object:
+      //###array.containsElement
+      // Determines if a element is present in an array:
       //<pre><code>
-      // contains(object, key)
+      // containsElement(object, key)
       //</pre></code>
       //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
-      contains: _contains,
-      //###array.uniq
+      containsElement: _contains,
+      //###array.filterUnique
       // Filters an array returning a new one with the unique values.
       //<pre><code>
-      // contains(array)
+      // filterUnique(array)
       //</pre></code>
       //where *<b>array</b>* is the array to be stripped o duplicate values
-      uniq: _uniq,
-      //###array.merge
+      filterUnique: _uniq,
+      //###array.mergeWith
       // Merges two arrays returning a new one with the unique values.
       //<pre><code>
-      // merge(arr1, arr2)
+      // mergeWith(arr1, arr2)
       //</pre></code>
       //where *<b>arr1</b>* and *<b>arr2</b>* are the arrays to be merged
-      merge: _merge,
-      //###array.extract
+      mergeWith: _merge,
+      //###array.toArrayOf
       // Extract an array composed of a specified property of the subobjects of a given object
       //<pre><code>
-      // extract(object, property)
+      // toArrayOf(object, property)
       //</pre></code>
       //where *<b>object</b>* is the object whose members will be analysed *<b>property</b>* the property to be extracted from those members
-      extract: _extract,
-      //###array.obj
+      toArrayOf: _extract,
+      //###array.toObject
       // Extract an object indexed by a given key
       //<pre><code>
-      // obj(array, property)
+      // toObject(array, property)
       //</pre></code>
       //where *<b>array</b>* is the array whose members will be analysed *<b>property</b>* the property of each element to be turned into the key of that element in the resulting object
-      obj: _obj
+      toObject: _obj
     }
   };
 };

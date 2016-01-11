@@ -12,7 +12,7 @@ Arenite.DI = function (arenite) {
       if (execution.extension) {
         resolvedFunc = arenite[execution.instance].get(execution.func);
       } else {
-        resolvedFunc = arenite.context.get(execution.instance).get(execution.func);
+        resolvedFunc = arenite.context.get(execution.instance).getInPath(execution.func);
       }
     }
     return resolvedFunc;
@@ -84,11 +84,11 @@ Arenite.DI = function (arenite) {
 
     var unresolved = {};
 
-    instances.keys().forEach(function (instance) {
+    instances.toKeyArray().forEach(function (instance) {
       if (instances[instance].factory) {
         arenite.context.add(instance, instances[instance], true);
       } else {
-        var func = window.get(instances[instance].namespace);
+        var func = window.getInPath(instances[instance].namespace);
         if (func) {
           var args = _resolveArgs(instances[instance], null, type, [instance]);
           if (args) {
@@ -96,7 +96,7 @@ Arenite.DI = function (arenite) {
             if (type === 'extension') {
               var wrappedInstance = {};
               wrappedInstance[instance] = actualInstance;
-              arenite = arenite.extend(wrappedInstance);
+              arenite = arenite.fuseWith(wrappedInstance);
             }
             if (arenite.debug) {
               window.console.log('Arenite: Instance', instance, 'wired');
@@ -112,15 +112,15 @@ Arenite.DI = function (arenite) {
       }
     });
 
-    if (unresolved.keys().length !== instances.keys().length && unresolved.keys().length > 0) {
+    if (unresolved.toKeyArray().length !== instances.toKeyArray().length && unresolved.toKeyArray().length > 0) {
       unresolved.forEach(function (instance, name) {
         var instanceObj = {};
         instanceObj[name] = instance;
         _wire(instanceObj, undefined, stack.concat(name));
       });
     } else {
-      if (unresolved.keys().length !== 0) {
-        throw 'Make sure you don\'t have circular dependencies, Unable to resolve the following instances: ' + unresolved.keys().join(", ") + ' - [' + stack.join(', ') + ']';
+      if (unresolved.toKeyArray().length !== 0) {
+        throw 'Make sure you don\'t have circular dependencies, Unable to resolve the following instances: ' + unresolved.toKeyArray().join(", ") + ' - [' + stack.join(', ') + ']';
       }
     }
   };
@@ -137,7 +137,7 @@ Arenite.DI = function (arenite) {
         _execFunction(({
           instance: instanceName,
           extension: extension
-        }).extend(instance.init), function () {
+        }).fuseWith(instance.init), function () {
           latch.countUp();
         }, function () {
           latch.countDown();
@@ -222,8 +222,8 @@ Arenite.DI = function (arenite) {
   var _prodRepo = '//cdn.rawgit.com/{vendor}/{version}/{module}/';
 
   var _fetchModules = function (modules, callback) {
-    if (modules.keys().length) {
-      var latch = arenite.async.latch(modules.keys().length, callback, 'modules');
+    if (modules.toKeyArray().length) {
+      var latch = arenite.async.latch(modules.toKeyArray().length, callback, 'modules');
       modules.forEach(function (module) {
         var mode = module.vendor ? module.mode ? module.mode : 'default' : arenite.config.mode;
         var moduleBasePath;
@@ -249,7 +249,7 @@ Arenite.DI = function (arenite) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : moduleBasePath + dep);
               } else {
-                newDeps[depType].push(dep.extend({url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : moduleBasePath + dep.url}));
+                newDeps[depType].push(dep.fuseWith({url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : moduleBasePath + dep.url}));
               }
             });
           });
@@ -267,10 +267,10 @@ Arenite.DI = function (arenite) {
               async: []
             };
           arenite.config.context.dependencies.forEach(function (env) {
-            env.extend(newDeps);
+            env.fuseWith(newDeps);
           });
 
-          arenite.config = arenite.config.extend(moduleConf);
+          arenite.config = arenite.config.fuseWith(moduleConf);
           if (moduleConf.imports && moduleConf.imports) {
             _fetchModules(moduleConf.imports, latch.countDown);
           } else {
@@ -304,7 +304,7 @@ Arenite.DI = function (arenite) {
     }
 
     if (arenite.config.imports) {
-      window.console.log('Arenite: Fetching modules', arenite.config.imports.keys());
+      window.console.log('Arenite: Fetching modules', arenite.config.imports.toKeyArray());
       _fetchModules(JSON.parse(JSON.stringify(arenite.config.imports)), callback);
     } else {
       callback();

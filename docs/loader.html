@@ -141,16 +141,7 @@ xhr.setRequestHeader(“Access-Control-Allow-Origin”, window.location.origin);
       }
     };
     <span class="hljs-keyword">if</span> (arenite.config.withCredentials) {
-      <span class="hljs-keyword">if</span> (<span class="hljs-string">'withCredentials'</span> <span class="hljs-keyword">in</span> xhr) {
-        xhr.withCredentials = <span class="hljs-literal">true</span>;
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> XDomainRequest !== <span class="hljs-string">'undefined'</span>) {
-        xhr = <span class="hljs-keyword">new</span> XDomainRequest();
-        xhr.open(method, url);
-        xhr.onload = success;
-        xhr.onerror = failure;
-      } <span class="hljs-keyword">else</span> {
-        xhr = <span class="hljs-literal">null</span>;
-      }
+      xhr.withCredentials = <span class="hljs-literal">true</span>;
     }
     <span class="hljs-keyword">return</span> xhr;
   };
@@ -254,9 +245,6 @@ xhr.setRequestHeader(“Access-Control-Allow-Origin”, window.location.origin);
       _loadScriptFrom(script.url, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         script.instances.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">instance, instanceName</span>) </span>{
           arenite.context.add(instanceName, <span class="hljs-built_in">window</span>[instance]);
-          <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> script.init === <span class="hljs-string">'function'</span>) {
-            script.init(arenite);
-          }
           <span class="hljs-keyword">delete</span> <span class="hljs-built_in">window</span>[instance];
         });
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> done === <span class="hljs-string">'function'</span>) {

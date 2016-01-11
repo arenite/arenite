@@ -169,7 +169,7 @@ Arenite.Object = function () {
       // getFromPath(object, path)
       //</pre></code>
       //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be fetched.
-      getFromPath: _getInObject,
+      getInPath: _getInObject,
       //###object.setInPath
       // Sets a property in an object. The property is expressed as a string, denoting a path.
       //<pre><code>
@@ -198,7 +198,7 @@ Arenite.Object = function () {
       // keysOf(object)
       //</pre></code>
       //where *<b>object</b>* is the object from which the properties will be extracted.
-      keysOf: _keys,
+      toKeyArray: _keys,
       //###object.forEach
       //Iterates through the object the equivalent to the way forEach works for arrays.
       //<pre><code>

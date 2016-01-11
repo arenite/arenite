@@ -1,4 +1,4 @@
-/*global Arenite:true, describe:true, it:true, expect:true, jasmine:true */
+/*global Arenite:true, describe:true, it:true, expect:true, jasmine:true, spyOn:true */
 describe("Arenite.Loader", function () {
   it("should invoke callback on successful load using ajax", function () {
     var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials']);
@@ -107,11 +107,11 @@ describe("Arenite.Loader", function () {
       return xmlHttpReq;
     };
     var arenite = Arenite.Object();
-    arenite = arenite.extend({
+    arenite = arenite.fuseWith({
       annotation: jasmine.createSpyObj('annotationProcessor', ['processAnnotations']),
-      config:{}
+      config: {}
     });
-    arenite = arenite.extend(Arenite.Context());
+    arenite = arenite.fuseWith(Arenite.Context());
     var loader = Arenite.Loader(arenite);
     var callback = jasmine.createSpy('callback');
     window.a = 'a1';
@@ -128,6 +128,70 @@ describe("Arenite.Loader", function () {
     xmlHttpReq.onreadystatechange();
     expect(arenite.context.get('a')).toBe('a1');
     expect(arenite.context.get('b')).toBe('b1');
+  });
+
+  it("should use withCredentials when set on the config", function () {
+    var xmlHttpReq = jasmine.createSpyObj('XMLHttpRequest', ['open', 'send', 'setRequestHeader', 'withCredentials']);
+    window.XMLHttpRequest = function () {
+      return xmlHttpReq;
+    };
+    var arenite = Arenite.Object();
+    arenite = arenite.fuseWith({
+      annotation: jasmine.createSpyObj('annotationProcessor', ['processAnnotations']),
+      config: {withCredentials: true}
+    });
+    arenite = arenite.fuseWith(Arenite.Context());
+    var loader = Arenite.Loader(arenite);
+    var callback = jasmine.createSpy('callback');
+    window.a = 'a1';
+    window.b = 'b1';
+    loader.loader.loadScript({
+      url: 'asd.js',
+      instances: {
+        'a': 'a',
+        'b': 'b'
+      }
+    }, callback);
+    xmlHttpReq.readyState = 4;
+    xmlHttpReq.status = 200;
+    xmlHttpReq.onreadystatechange();
+
+    expect(xmlHttpReq.withCredentials).toBe(true);
+  });
+
+  it("should load css files", function () {
+    var script = {};
+    spyOn(document, ['getElementsByTagName']).and.returnValue([jasmine.createSpyObj('head', ['appendChild'])]);
+    spyOn(document, ['createElement']).and.callFake(function (type) {
+      if (type === 'a') {
+        return {'async': true};
+      } else {
+        return script;
+      }
+    });
+    var loader = Arenite.Loader();
+    var callback = jasmine.createSpy('callback');
+    loader.loader.loadScript('http://somewhereelse/asd.css', callback);
+    script.readyState = 'complete';
+    script.onreadystatechange();
+    expect(callback).toHaveBeenCalled();
+  });
+
+  it("should throw exception for files with unknown extensions", function () {
+    var script = {};
+    spyOn(document, ['getElementsByTagName']).and.returnValue([jasmine.createSpyObj('head', ['appendChild'])]);
+    spyOn(document, ['createElement']).and.callFake(function (type) {
+      if (type === 'a') {
+        return {'async': true};
+      } else {
+        return script;
+      }
+    });
+    var loader = Arenite.Loader();
+    var callback = jasmine.createSpy('callback');
+    expect(function () {
+      loader.loader.loadScript('http://somewhereelse/asd.inv', callback);
+    }).toThrow('Uknown extension "inv"');
   });
 
 });

@@ -20,16 +20,7 @@ Arenite.Loader = function (arenite) {
       }
     };
     if (arenite.config.withCredentials) {
-      if ('withCredentials' in xhr) {
-        xhr.withCredentials = true;
-      } else if (typeof XDomainRequest !== 'undefined') {
-        xhr = new XDomainRequest();
-        xhr.open(method, url);
-        xhr.onload = success;
-        xhr.onerror = failure;
-      } else {
-        xhr = null;
-      }
+      xhr.withCredentials = true;
     }
     return xhr;
   };
@@ -120,9 +111,6 @@ Arenite.Loader = function (arenite) {
       _loadScriptFrom(script.url, function () {
         script.instances.forEach(function (instance, instanceName) {
           arenite.context.add(instanceName, window[instance]);
-          if (typeof script.init === 'function') {
-            script.init(arenite);
-          }
           delete window[instance];
         });
         if (typeof done === 'function') {

@@ -6,7 +6,7 @@ describe("Arenite.DI", function () {
 
   it("should return null if arguments can\'t be resolved", function () {
     var di = Arenite.DI({
-      deubug: true,
+      debug: true,
       context: {
         get: function (name) {
           if (name === 'foo') {
@@ -22,6 +22,7 @@ describe("Arenite.DI", function () {
 
   it("should resolve value arguments", function () {
     var di = Arenite.DI({
+      debug: true,
       context: {
         get: function (name) {
           if (name === 'foo') {
@@ -37,6 +38,7 @@ describe("Arenite.DI", function () {
 
   it("should resolve exec arguments", function () {
     var di = Arenite.DI({
+      debug: true,
       context: {
         get: function (name) {
           if (name === 'foo') {
@@ -60,6 +62,7 @@ describe("Arenite.DI", function () {
 
   it("should resolve func arguments", function () {
     var di = Arenite.DI({
+      debug: true,
       context: {
         get: function (name) {
           if (name === 'foo') {
@@ -86,12 +89,13 @@ describe("Arenite.DI", function () {
   });
 
   it('should not expose arenite if expose is undefined', function () {
-    Arenite({});
+    Arenite({debug: true});
     expect(window.arenite).toBe(undefined);
   });
 
   it('should expose arenite with selected name', function () {
     Arenite({
+      debug: true,
       expose: 'aren'
     });
     expect(window.aren).not.toBe(undefined);
@@ -99,6 +103,7 @@ describe("Arenite.DI", function () {
 
   it('should expose arenite with function result as name', function () {
     Arenite({
+      debug: true,
       expose: function () {
         return 'arfun';
       }
@@ -108,6 +113,7 @@ describe("Arenite.DI", function () {
 
   it('should not expose arenite with function if result is false', function () {
     Arenite({
+      debug: true,
       expose: function () {
         return false;
       }
@@ -185,6 +191,7 @@ describe("Arenite.DI", function () {
     });
 
     Arenite({
+      debug: true,
       expose: 'arenite',
       context: {
         dependencies: {
@@ -219,6 +226,7 @@ describe("Arenite.DI", function () {
     });
 
     Arenite({
+      debug: true,
       expose: 'arenite',
       context: {
         dependencies: {
@@ -240,6 +248,7 @@ describe("Arenite.DI", function () {
   it('should wire instances', function () {
     spyOn(Arenite, 'Extra');
     Arenite({
+      debug: true,
       expose: 'arenite',
       context: {
         instances: {
@@ -265,6 +274,7 @@ describe("Arenite.DI", function () {
       };
     };
     Arenite({
+      debug: true,
       expose: 'arenite',
       context: {
         extensions: {
@@ -279,6 +289,7 @@ describe("Arenite.DI", function () {
 
   it('should wire dependencies on other instances', function () {
     Arenite({
+      debug: true,
       expose: 'arenite',
       context: {
         instances: {
@@ -297,6 +308,7 @@ describe("Arenite.DI", function () {
   it('should throw error on circular references', function () {
     expect(function () {
       Arenite({
+        debug: true,
         expose: 'arenite',
         context: {
           instances: {
@@ -317,6 +329,7 @@ describe("Arenite.DI", function () {
   it('should throw error on wire unknown instances', function () {
     expect(function () {
       Arenite({
+        debug: true,
         expose: 'arenite',
         context: {
           instances: {
@@ -335,6 +348,7 @@ describe("Arenite.DI", function () {
       init: funcSpy
     });
     Arenite({
+      debug: true,
       expose: 'arenite',
       context: {
         instances: {
@@ -357,6 +371,7 @@ describe("Arenite.DI", function () {
     });
     expect(function () {
       Arenite({
+        debug: true,
         expose: 'arenite',
         context: {
           instances: {
@@ -379,6 +394,7 @@ describe("Arenite.DI", function () {
     });
     expect(function () {
       Arenite({
+        debug: true,
         expose: 'arenite',
         context: {
           instances: {
@@ -402,6 +418,7 @@ describe("Arenite.DI", function () {
       start: funcSpy
     });
     Arenite({
+      debug: true,
       expose: 'arenite',
       context: {
         instances: {
@@ -430,6 +447,7 @@ describe("Arenite.DI", function () {
     });
     expect(function () {
       Arenite({
+        debug: true,
         expose: 'arenite',
         context: {
           instances: {
@@ -458,6 +476,7 @@ describe("Arenite.DI", function () {
     });
     expect(function () {
       Arenite({
+        debug: true,
         context: {
           instances: {
             one: {
@@ -485,6 +504,7 @@ describe("Arenite.DI", function () {
       init: funcSpy
     });
     Arenite({
+      debug: true,
       expose: 'arenite',
       context: {
         instances: {
@@ -506,6 +526,7 @@ describe("Arenite.DI", function () {
       init: funcSpy
     });
     var arenite = Arenite({
+      debug: true,
       context: {
         instances: {
           one: {
@@ -525,6 +546,7 @@ describe("Arenite.DI", function () {
     var extra = spyOn(Arenite, 'Extra').and.returnValue({});
     var extra2 = spyOn(Arenite, 'Extra2').and.returnValue({});
     var arenite = Arenite({
+      debug: true,
       context: {
         instances: {
           one: {

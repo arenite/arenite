@@ -1,5 +1,5 @@
 /*!
- * Arenite JavaScript Library v2.0.0-rc1
+ * Arenite JavaScript Library v2.0.0-rc2
  * https://github.com/lcavadas/arenite
  *
  * Copyright 2014, Luís Serralheiro
@@ -51,33 +51,33 @@ Arenite = function (config) {
   });
   //### Arenite.Html
   // Extend the instance with the <a href="async.html">Arenite.Html</a> extension providing the html helper tooks.
-  arenite.extend(Arenite.Html(arenite));
+  arenite.fuseWith(Arenite.Html(arenite));
   //### Arenite.Async
   // Extend the instance with the <a href="async.html">Arenite.Async</a> extension providing the asynchronous tools (Latch Pattern) used by the Loader extension.
-  arenite.extend(Arenite.Async(arenite));
+  arenite.fuseWith(Arenite.Async(arenite));
   //### Arenite.Url
   // Extend the instance with the <a href="url.html">Arenite.Url</a> extension which provides functions for analysis of query parameters.
-  arenite.extend(Arenite.Url(arenite));
+  arenite.fuseWith(Arenite.Url(arenite));
   //### Arenite.DI
   // Extend the instance with the <a href="di.html">Arenite.DI</a> extension which provides
   // the injector functionality.
-  arenite.extend(Arenite.DI(arenite));
+  arenite.fuseWith(Arenite.DI(arenite));
   //### Arenite.AnnotationProcessor
   // Extend the instance with the <a href="annotation.html">Arenite.AnnotationProcessor</a> extension which provides
   // the parsing and hanlding of annotations.
-  arenite.extend(Arenite.AnnotationProcessor(arenite));
+  arenite.fuseWith(Arenite.AnnotationProcessor(arenite));
   //### Arenite.Context
   // Extend the instance with the <a href="context.html">Arenite.Context</a> extension which provides
   // the context to manage the instances.
-  arenite.extend(Arenite.Context(arenite));
+  arenite.fuseWith(Arenite.Context(arenite));
   //### Arenite.Loader
   // Extend the instance with the <a href="loader.html">Arenite.Loader</a> extension which provides
   // the script and resource loading functionality to the sandbox.
-  arenite.extend(Arenite.Loader(arenite));
+  arenite.fuseWith(Arenite.Loader(arenite));
   //### Arenite.Bus
   // Extend the instance with the <a href="bus.html">Arenite.Bus</a> extension which provides
   // an event bus.
-  arenite.extend(Arenite.Bus(arenite));
+  arenite.fuseWith(Arenite.Bus(arenite));
   // Initialize the injector by having it read the configuration object passed into this constructor.
   arenite.di.init(config);
   return arenite;
