@@ -150,17 +150,6 @@ Arenite.Object = function () {
     }
   };
 
-  var _values = function (obj) {
-    var key;
-    var arr = [];
-    for (key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        arr.push(obj[key]);
-      }
-    }
-    return arr;
-  };
-
   var _array = function (obj) {
     var arr = [];
     _forEach(obj, function (el) {
@@ -224,13 +213,6 @@ Arenite.Object = function () {
       //</pre></code>
       //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
       forEach: _forEach,
-      //###object.values
-      //Returns all the values available to an object in the form of an array.
-      //<pre><code>
-      // keys(object)
-      //</pre></code>
-      //where *<b>object</b>* is the object from which the elements will be extracted.
-      values: _values,
       //###object.contains
       // Determines if a element is present in an array or a key exists in an object:
       //<pre><code>
