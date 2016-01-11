@@ -112,15 +112,8 @@ Arenite.Object = function () {
     return result;
   };
 
-  var _merge = function (arr1, arr2, keepDups) {
-    var result = [];
-    arr1.forEach(function (el) {
-      result.push(el);
-    });
-    arr2.forEach(function (el) {
-      result.push(el);
-    });
-    return keepDups ? result : _uniq(result);
+  var _merge = function (arr1, arr2) {
+    return _uniq(arr1.concat(arr2));
   };
 
   var _extract = function (obj, prop) {
@@ -170,42 +163,42 @@ Arenite.Object = function () {
 
   return {
     object: {
-      //###object.get
+      //###object.getFromPath
       // Retrieves a property from an object. The property is expressed as a string, denoting a path.
       //<pre><code>
-      // get(object, path)
+      // getFromPath(object, path)
       //</pre></code>
       //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be fetched.
-      get: _getInObject,
-      //###object.set
+      getFromPath: _getInObject,
+      //###object.setInPath
       // Sets a property in an object. The property is expressed as a string, denoting a path.
       //<pre><code>
-      // set(object, path, value)
+      // setInPath(object, path, value)
       //</pre></code>
       //where *<b>object</b>* is the target object,
       // *<b>path</b>* is the path of the value and *<b>value</b>* the value to be set at the given path.
-      set: _setInObject,
-      //###object.delete
+      setInPath: _setInObject,
+      //###object.deleteInPath
       // Removes a property from an object. The property is expressed as a string, denoting a path.
       //<pre><code>
-      // get(object, path)
+      // deleteInPath(object, path)
       //</pre></code>
       //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be deleted.
-      delete: _deleteInObject,
-      //###object.extend
-      // Extend merges to objects. The second object will "override" properties also existing in the first.
+      deleteInPath: _deleteInObject,
+      //###object.fuseWith
+      // Fuse merges objects. The second object will "override" properties also existing in the first.
       //<pre><code>
-      // extend(object, other)
+      // fuseWith(object, other)
       //</pre></code>
       //where *<b>object</b>* is the object to be merged and extended by *<b>other</b>*.
-      extend: _extend,
-      //###object.keys
+      fuseWith: _extend,
+      //###object.keysOf
       //Returns all the properties available to an object in the form of an array.
       //<pre><code>
-      // keys(object)
+      // keysOf(object)
       //</pre></code>
       //where *<b>object</b>* is the object from which the properties will be extracted.
-      keys: _keys,
+      keysOf: _keys,
       //###object.forEach
       //Iterates through the object the equivalent to the way forEach works for arrays.
       //<pre><code>
@@ -213,64 +206,64 @@ Arenite.Object = function () {
       //</pre></code>
       //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
       forEach: _forEach,
-      //###object.contains
-      // Determines if a element is present in an array or a key exists in an object:
+      //###object.containsKey
+      // Determines if a key exists in an object:
       //<pre><code>
-      // contains(object, key)
+      // containsKey(object, key)
       //</pre></code>
       //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
-      contains: _contains,
-      //###object.array
+      containsKey: _contains,
+      //###object.toArray
       // Transforms the object to an array using the values for each key:
       //<pre><code>
-      // array(object)
+      // toArray(object)
       //</pre></code>
       //where *<b>object</b>* is the object to be transformed into the array.
-      array: _array,
-      //###object.filter
+      toArray: _array,
+      //###object.filterWith
       // Returns a filtered version of the object:
       //<pre><code>
-      // filter(object, keys)
+      // filterWith(object, keys)
       //</pre></code>
       //where *<b>object</b>* is the object to be filtered and *<b>keys</b>* an array of keys to maintain.
-      filter: _filter
+      filterWith: _filter
     },
     array: {
-      //###array.contains
-      // Determines if a element is present in an array or a key exists in an object:
+      //###array.containsElement
+      // Determines if a element is present in an array:
       //<pre><code>
-      // contains(object, key)
+      // containsElement(object, key)
       //</pre></code>
       //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
-      contains: _contains,
-      //###array.uniq
+      containsElement: _contains,
+      //###array.filterUnique
       // Filters an array returning a new one with the unique values.
       //<pre><code>
-      // contains(array)
+      // filterUnique(array)
       //</pre></code>
       //where *<b>array</b>* is the array to be stripped o duplicate values
-      uniq: _uniq,
-      //###array.merge
+      filterUnique: _uniq,
+      //###array.mergeWith
       // Merges two arrays returning a new one with the unique values.
       //<pre><code>
-      // merge(arr1, arr2)
+      // mergeWith(arr1, arr2)
       //</pre></code>
       //where *<b>arr1</b>* and *<b>arr2</b>* are the arrays to be merged
-      merge: _merge,
-      //###array.extract
+      mergeWith: _merge,
+      //###array.toArrayOf
       // Extract an array composed of a specified property of the subobjects of a given object
       //<pre><code>
-      // extract(object, property)
+      // toArrayOf(object, property)
       //</pre></code>
       //where *<b>object</b>* is the object whose members will be analysed *<b>property</b>* the property to be extracted from those members
-      extract: _extract,
-      //###array.obj
+      toArrayOf: _extract,
+      //###array.toObject
       // Extract an object indexed by a given key
       //<pre><code>
-      // obj(array, property)
+      // toObject(array, property)
       //</pre></code>
       //where *<b>array</b>* is the array whose members will be analysed *<b>property</b>* the property of each element to be turned into the key of that element in the resulting object
-      obj: _obj
+      toObject: _obj
     }
   };
 };
