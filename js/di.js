@@ -244,7 +244,7 @@ Arenite.DI = function (arenite) {
         arenite.loader.loadResource(moduleBasePath + 'module.json', function (xhr) {
           var moduleConf = JSON.parse(xhr.responseText);
           var newDeps = {async: [], sync: []};
-          moduleConf.context.dependencies[mode].forEach(function (dependencies, depType) {
+          (moduleConf.context.dependencies[mode] || {}).forEach(function (dependencies, depType) {
             dependencies.forEach(function (dep) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : moduleBasePath + dep);

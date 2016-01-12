@@ -377,7 +377,7 @@
         arenite.loader.loadResource(moduleBasePath + <span class="hljs-string">'module.json'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">xhr</span>) </span>{
           <span class="hljs-keyword">var</span> moduleConf = <span class="hljs-built_in">JSON</span>.parse(xhr.responseText);
           <span class="hljs-keyword">var</span> newDeps = {<span class="hljs-keyword">async</span>: [], sync: []};
-          moduleConf.context.dependencies[mode].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dependencies, depType</span>) </span>{
+          (moduleConf.context.dependencies[mode] || {}).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dependencies, depType</span>) </span>{
             dependencies.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
               <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> dep === <span class="hljs-string">'string'</span>) {
                 newDeps[depType].push(dep.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep : moduleBasePath + dep);
