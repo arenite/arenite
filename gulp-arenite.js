@@ -89,7 +89,7 @@ var Loader = function (config, options, cb) {
       });
     }
   });
-  _options = ({env: 'dev', base: ''}).extend(options);
+  _options = ({env: 'dev', base: ''}).fuseWith(options);
   arenite.fuseWith(new Arenite.Async(arenite));
   arenite.fuseWith(new Arenite.Url(arenite));
   arenite.fuseWith(new Arenite.DI(arenite));
