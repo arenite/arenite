@@ -118,7 +118,7 @@
       resolvedFunc = execution.func;
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">if</span> (execution.extension) {
-        resolvedFunc = arenite[execution.instance].get(execution.func);
+        resolvedFunc = arenite[execution.instance].getInPath(execution.func);
       } <span class="hljs-keyword">else</span> {
         resolvedFunc = arenite.context.get(execution.instance).getInPath(execution.func);
       }

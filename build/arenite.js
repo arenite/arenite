@@ -399,7 +399,7 @@ Arenite.DI = function (arenite) {
       resolvedFunc = execution.func;
     } else {
       if (execution.extension) {
-        resolvedFunc = arenite[execution.instance].get(execution.func);
+        resolvedFunc = arenite[execution.instance].getInPath(execution.func);
       } else {
         resolvedFunc = arenite.context.get(execution.instance).getInPath(execution.func);
       }
