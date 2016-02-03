@@ -610,11 +610,45 @@ Arenite.DI = function (arenite) {
   var _devRepo = '//rawgit.com/{vendor}/{version}/{module}/';
   var _prodRepo = '//cdn.rawgit.com/{vendor}/{version}/{module}/';
 
-  var _fetchModules = function (modules, callback) {
-    if (modules.toKeyArray().length) {
-      var latch = arenite.async.latch(modules.toKeyArray().length, callback, 'modules');
-      modules.forEach(function (module) {
-        var mode = module.vendor ? module.mode ? module.mode : 'default' : arenite.config.mode;
+  var _fetchModules = function (modules, callback, config) {
+    var results = {};
+    var moduleKeys = arenite.object.keys(modules);
+    if (moduleKeys.length) {
+      var latch = arenite.async.latch(moduleKeys.length, function () {
+        arenite.object.forEach(modules, function (module, moduleName) {
+          var mode = module.vendor ? 'default' : arenite.config.mode;
+          var newDeps = {async: [], sync: []};
+          arenite.object.forEach(results[moduleName].module.context.dependencies[mode], function (dependencies, depType) {
+            dependencies.forEach(function (dep) {
+              if (typeof dep === 'string') {
+                newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : results[moduleName].path + dep);
+              } else {
+                newDeps[depType].push(arenite.object.extend(dep, {url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : results[moduleName].path + dep.url}));
+              }
+            });
+          });
+          delete results[moduleName].module.context.dependencies;
+
+          config.context = config.context || {};
+          config.context.dependencies = config.context.dependencies || {
+              default: {
+                sync: [],
+                async: []
+              }
+            };
+          config.context.dependencies[config.mode] = config.context.dependencies[config.mode] || {
+              sync: [],
+              async: []
+            };
+          arenite.object.forEach(config.context.dependencies, function (env) {
+            arenite.object.extend(env, newDeps);
+          });
+
+          config = arenite.object.extend(config, results[moduleName].module);
+        });
+        callback();
+      }, 'modules');
+      arenite.object.forEach(modules, function (module, moduleName) {
         var moduleBasePath;
         if (module.vendor) {
           if (arenite.config.repo) {
@@ -631,37 +665,9 @@ Arenite.DI = function (arenite) {
         }
 
         arenite.loader.loadResource(moduleBasePath + 'module.json', function (xhr) {
-          var moduleConf = JSON.parse(xhr.responseText);
-          var newDeps = {async: [], sync: []};
-          (moduleConf.context.dependencies[mode] || {}).forEach(function (dependencies, depType) {
-            dependencies.forEach(function (dep) {
-              if (typeof dep === 'string') {
-                newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : moduleBasePath + dep);
-              } else {
-                newDeps[depType].push(dep.fuseWith({url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : moduleBasePath + dep.url}));
-              }
-            });
-          });
-          delete moduleConf.context.dependencies;
-
-          arenite.config.context = arenite.config.context || {};
-          arenite.config.context.dependencies = arenite.config.context.dependencies || {
-              default: {
-                sync: [],
-                async: []
-              }
-            };
-          arenite.config.context.dependencies[arenite.config.mode] = arenite.config.context.dependencies[arenite.config.mode] || {
-              sync: [],
-              async: []
-            };
-          arenite.config.context.dependencies.forEach(function (env) {
-            env.fuseWith(newDeps);
-          });
-
-          arenite.config = arenite.config.fuseWith(moduleConf);
-          if (moduleConf.imports && moduleConf.imports) {
-            _fetchModules(moduleConf.imports, latch.countDown);
+          results[moduleName] = {path: moduleBasePath, module: JSON.parse(xhr.responseText)};
+          if (results[moduleName].module.imports) {
+            _fetchModules(results[moduleName].module.imports, latch.countDown, results[moduleName].module);
           } else {
             latch.countDown();
           }
@@ -694,7 +700,7 @@ Arenite.DI = function (arenite) {
 
     if (arenite.config.imports) {
       window.console.log('Arenite: Fetching modules', arenite.config.imports.toKeyArray());
-      _fetchModules(JSON.parse(JSON.stringify(arenite.config.imports)), callback);
+      _fetchModules(JSON.parse(JSON.stringify(arenite.config.imports)), callback, arenite.config);
     } else {
       callback();
     }
