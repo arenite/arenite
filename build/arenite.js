@@ -612,18 +612,18 @@ Arenite.DI = function (arenite) {
 
   var _fetchModules = function (modules, callback, config) {
     var results = {};
-    var moduleKeys = arenite.object.keys(modules);
+    var moduleKeys = modules.toKeyArray();
     if (moduleKeys.length) {
       var latch = arenite.async.latch(moduleKeys.length, function () {
-        arenite.object.forEach(modules, function (module, moduleName) {
+        modules.forEach(function (module, moduleName) {
           var mode = module.vendor ? 'default' : arenite.config.mode;
           var newDeps = {async: [], sync: []};
-          arenite.object.forEach(results[moduleName].module.context.dependencies[mode], function (dependencies, depType) {
+          results[moduleName].module.context.dependencies[mode].forEach(function (dependencies, depType) {
             dependencies.forEach(function (dep) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : results[moduleName].path + dep);
               } else {
-                newDeps[depType].push(arenite.object.extend(dep, {url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : results[moduleName].path + dep.url}));
+                newDeps[depType].push(dep.mergeWith({url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : results[moduleName].path + dep.url}));
               }
             });
           });
@@ -640,15 +640,15 @@ Arenite.DI = function (arenite) {
               sync: [],
               async: []
             };
-          arenite.object.forEach(config.context.dependencies, function (env) {
-            arenite.object.extend(env, newDeps);
+          config.context.dependencies.forEach(function (env) {
+            env.mergeWith(newDeps);
           });
 
-          config = arenite.object.extend(config, results[moduleName].module);
+          config = config.mergeWith(results[moduleName].module);
         });
         callback();
       }, 'modules');
-      arenite.object.forEach(modules, function (module, moduleName) {
+      modules.forEach(function (module, moduleName) {
         var moduleBasePath;
         if (module.vendor) {
           if (arenite.config.repo) {

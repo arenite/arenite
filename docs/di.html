@@ -356,18 +356,18 @@
 
   <span class="hljs-keyword">var</span> _fetchModules = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">modules, callback, config</span>) </span>{
     <span class="hljs-keyword">var</span> results = {};
-    <span class="hljs-keyword">var</span> moduleKeys = arenite.object.keys(modules);
+    <span class="hljs-keyword">var</span> moduleKeys = modules.toKeyArray();
     <span class="hljs-keyword">if</span> (moduleKeys.length) {
       <span class="hljs-keyword">var</span> latch = arenite.async.latch(moduleKeys.length, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-        arenite.object.forEach(modules, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">module, moduleName</span>) </span>{
+        modules.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">module, moduleName</span>) </span>{
           <span class="hljs-keyword">var</span> mode = <span class="hljs-built_in">module</span>.vendor ? <span class="hljs-string">'default'</span> : arenite.config.mode;
           <span class="hljs-keyword">var</span> newDeps = {<span class="hljs-keyword">async</span>: [], sync: []};
-          arenite.object.forEach(results[moduleName].module.context.dependencies[mode], <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dependencies, depType</span>) </span>{
+          results[moduleName].module.context.dependencies[mode].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dependencies, depType</span>) </span>{
             dependencies.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
               <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> dep === <span class="hljs-string">'string'</span>) {
                 newDeps[depType].push(dep.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep : results[moduleName].path + dep);
               } <span class="hljs-keyword">else</span> {
-                newDeps[depType].push(arenite.object.extend(dep, {url: dep.url.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep.url : results[moduleName].path + dep.url}));
+                newDeps[depType].push(dep.mergeWith({url: dep.url.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep.url : results[moduleName].path + dep.url}));
               }
             });
           });
@@ -384,15 +384,15 @@
               sync: [],
               <span class="hljs-keyword">async</span>: []
             };
-          arenite.object.forEach(config.context.dependencies, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">env</span>) </span>{
-            arenite.object.extend(env, newDeps);
+          config.context.dependencies.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">env</span>) </span>{
+            env.mergeWith(newDeps);
           });
 
-          config = arenite.object.extend(config, results[moduleName].module);
+          config = config.mergeWith(results[moduleName].module);
         });
         callback();
       }, <span class="hljs-string">'modules'</span>);
-      arenite.object.forEach(modules, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">module, moduleName</span>) </span>{
+      modules.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">module, moduleName</span>) </span>{
         <span class="hljs-keyword">var</span> moduleBasePath;
         <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.vendor) {
           <span class="hljs-keyword">if</span> (arenite.config.repo) {
