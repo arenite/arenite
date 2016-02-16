@@ -367,7 +367,7 @@
               <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> dep === <span class="hljs-string">'string'</span>) {
                 newDeps[depType].push(dep.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep : results[moduleName].path + dep);
               } <span class="hljs-keyword">else</span> {
-                newDeps[depType].push(dep.mergeWith({url: dep.url.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep.url : results[moduleName].path + dep.url}));
+                newDeps[depType].push(dep.fuseWith({url: dep.url.match(_externalUrl) || !<span class="hljs-built_in">module</span>.vendor ? dep.url : results[moduleName].path + dep.url}));
               }
             });
           });
@@ -385,10 +385,10 @@
               <span class="hljs-keyword">async</span>: []
             };
           config.context.dependencies.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">env</span>) </span>{
-            env.mergeWith(newDeps);
+            env.fuseWith(newDeps);
           });
 
-          config = config.mergeWith(results[moduleName].module);
+          config = config.fuseWith(results[moduleName].module);
         });
         callback();
       }, <span class="hljs-string">'modules'</span>);

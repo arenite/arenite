@@ -234,7 +234,7 @@ Arenite.DI = function (arenite) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : results[moduleName].path + dep);
               } else {
-                newDeps[depType].push(dep.mergeWith({url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : results[moduleName].path + dep.url}));
+                newDeps[depType].push(dep.fuseWith({url: dep.url.match(_externalUrl) || !module.vendor ? dep.url : results[moduleName].path + dep.url}));
               }
             });
           });
@@ -252,10 +252,10 @@ Arenite.DI = function (arenite) {
               async: []
             };
           config.context.dependencies.forEach(function (env) {
-            env.mergeWith(newDeps);
+            env.fuseWith(newDeps);
           });
 
-          config = config.mergeWith(results[moduleName].module);
+          config = config.fuseWith(results[moduleName].module);
         });
         callback();
       }, 'modules');
