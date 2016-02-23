@@ -42,8 +42,10 @@ Arenite.Context = function (arenite) {
 
     var resolvedDeps = [];
     deps.forEach(function (dep) {
-      if (deps.length === 1 && dep === 'exports') {//Simplified CommonJS wrapper
+      if (dep === 'exports') { //reserved name for Simplified CommonJS wrapper
         resolvedDeps.push({});
+      } else if (dep === 'require') { //reserved name for Simplified CommonJS wrapper
+        resolvedDeps.push(_getInstance);
       } else {
         resolvedDeps.push(_getInstance(dep));
       }
