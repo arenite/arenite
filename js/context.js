@@ -42,7 +42,11 @@ Arenite.Context = function (arenite) {
 
     var resolvedDeps = [];
     deps.forEach(function (dep) {
-      resolvedDeps.push(_getInstance(dep));
+      if (deps.length === 1 && dep === 'exports') {//Simplified CommonJS wrapper
+        resolvedDeps.push({});
+      } else {
+        resolvedDeps.push(_getInstance(dep));
+      }
     });
     var result = callback.apply(window, resolvedDeps);
     if (!name) {
