@@ -229,7 +229,7 @@ Arenite.DI = function (arenite) {
         modules.forEach(function (module, moduleName) {
           var mode = module.vendor ? 'default' : arenite.config.mode;
           var newDeps = {async: [], sync: []};
-          results[moduleName].module.context.dependencies[mode].forEach(function (dependencies, depType) {
+          (results[moduleName].module.context.dependencies[mode] || []).forEach(function (dependencies, depType) {
             dependencies.forEach(function (dep) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : results[moduleName].path + dep);
