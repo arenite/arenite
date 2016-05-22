@@ -333,7 +333,13 @@ Arenite.Context = function (arenite) {
 
     var resolvedDeps = [];
     deps.forEach(function (dep) {
-      resolvedDeps.push(_getInstance(dep));
+      if (dep === 'exports') { //reserved name for Simplified CommonJS wrapper
+        resolvedDeps.push({});
+      } else if (dep === 'require') { //reserved name for Simplified CommonJS wrapper
+        resolvedDeps.push(_getInstance);
+      } else {
+        resolvedDeps.push(_getInstance(dep));
+      }
     });
     var result = callback.apply(window, resolvedDeps);
     if (!name) {
@@ -618,7 +624,7 @@ Arenite.DI = function (arenite) {
         modules.forEach(function (module, moduleName) {
           var mode = module.vendor ? 'default' : arenite.config.mode;
           var newDeps = {async: [], sync: []};
-          results[moduleName].module.context.dependencies[mode].forEach(function (dependencies, depType) {
+          (results[moduleName].module.context.dependencies[mode] || []).forEach(function (dependencies, depType) {
             dependencies.forEach(function (dep) {
               if (typeof dep === 'string') {
                 newDeps[depType].push(dep.match(_externalUrl) || !module.vendor ? dep : results[moduleName].path + dep);

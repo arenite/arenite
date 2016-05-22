@@ -150,7 +150,13 @@
 
     <span class="hljs-keyword">var</span> resolvedDeps = [];
     deps.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dep</span>) </span>{
-      resolvedDeps.push(_getInstance(dep));
+      <span class="hljs-keyword">if</span> (dep === <span class="hljs-string">'exports'</span>) { <span class="hljs-comment">//reserved name for Simplified CommonJS wrapper</span>
+        resolvedDeps.push({});
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (dep === <span class="hljs-string">'require'</span>) { <span class="hljs-comment">//reserved name for Simplified CommonJS wrapper</span>
+        resolvedDeps.push(_getInstance);
+      } <span class="hljs-keyword">else</span> {
+        resolvedDeps.push(_getInstance(dep));
+      }
     });
     <span class="hljs-keyword">var</span> result = callback.apply(<span class="hljs-built_in">window</span>, resolvedDeps);
     <span class="hljs-keyword">if</span> (!name) {
