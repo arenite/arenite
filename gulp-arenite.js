@@ -26,7 +26,8 @@ global.window.XMLHttpRequest = function () {
       }
       fs.readFile(_options.base + url.replace(/\?.*$/, ''), 'utf8', function (err, data) {
         if (err) {
-          return console.log(err);
+          console.log(err);
+          data='{"context":{"dependencies":{"default":{},"dev":{}}}}';
         }
         _this.responseText = data;
         _this.onreadystatechange();
