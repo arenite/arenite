@@ -2,7 +2,7 @@
 var fs = require('fs');
 var gulp = require('gulp');
 var remoteSrc = require('gulp-download');
-var gulpMerge = require('gulp-merge');
+var gulpMerge = require('merge2');
 require('./build/arenite.js');
 
 var _options;
@@ -27,7 +27,7 @@ global.window.XMLHttpRequest = function () {
       fs.readFile(_options.base + url.replace(/\?.*$/, ''), 'utf8', function (err, data) {
         if (err) {
           console.log(err);
-          data='{"context":{"dependencies":{"default":{},"dev":{}}}}';
+          data = '{"context":{"dependencies":{"default":{},"dev":{}}}}';
         }
         _this.responseText = data;
         _this.onreadystatechange();
@@ -104,7 +104,7 @@ var Loader = function (config, options, cb) {
 
 module.exports = function (options, config, cb) {
   Loader(config, options, function (arenite, config) {
-    var merged;
+    var merged = gulpMerge();
 
     var _parse = function (urls) {
       urls.forEach(function (script) {
@@ -119,18 +119,9 @@ module.exports = function (options, config, cb) {
         script = script.replace(/\?.*$/, '');
         var match = regex.exec(script);
         if (match) {
-          if (!merged) {
-            merged = remoteSrc(script);
-          } else {
-            merged = gulpMerge(merged, remoteSrc(script));
-          }
+          merged.add(remoteSrc(script));
         } else {
-          script = options.base + script
-          if (!merged) {
-            merged = gulp.src(script);
-          } else {
-            merged = gulpMerge(merged, gulp.src(script));
-          }
+          merged.add(gulp.src(options.base + script));
         }
       });
     };
