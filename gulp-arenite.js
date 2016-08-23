@@ -115,7 +115,7 @@ module.exports = function (options, config, cb) {
           return;
         }
         var regex = /http[s]*:\/\/.*?\/.*/;
-        script = script.indexOf("//") === 0 ? 'http:' + script : options.base + script;
+        script = script.indexOf("//") === 0 ? 'http:' + script : script;
         script = script.replace(/\?.*$/, '');
         var match = regex.exec(script);
         if (match) {
@@ -125,6 +125,7 @@ module.exports = function (options, config, cb) {
             merged = gulpMerge(merged, remoteSrc(script));
           }
         } else {
+          script = options.base + script
           if (!merged) {
             merged = gulp.src(script);
           } else {
