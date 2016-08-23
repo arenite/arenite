@@ -903,7 +903,10 @@ Arenite.Loader = function (arenite) {
     } else {
       _loadScriptFrom(script.url, function () {
         script.instances.forEach(function (instance, instanceName) {
-          arenite.context.add(instanceName, window[instance]);
+          var windowInstance = window[instance];
+          if(windowInstance){
+            arenite.context.add(instanceName, windowInstance);
+          }
           delete window[instance];
         });
         if (typeof done === 'function') {
