@@ -1,6 +1,6 @@
 {
   "name": "arenite",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "Inversion of Control / Dependency Injection Library",
   "repository": {
     "type": "git",

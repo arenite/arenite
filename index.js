@@ -2,8 +2,6 @@
 var fs = require('fs');
 require('./build/arenite.js');
 
-var _options;
-
 global.navigator = {userAgent: 'node'};
 
 global.window = global;
