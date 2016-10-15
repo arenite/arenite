@@ -1,10 +1,10 @@
 {
   "name": "arenite",
-  "version": "2.0.11",
+  "version": "2.0.13",
   "description": "Inversion of Control / Dependency Injection Library",
   "repository": {
     "type": "git",
-    "url": "git://github.com/lcavadas/arenite"
+    "url": "git://github.com/arenite/arenite"
   },
   "author": {
     "name": "Luís Serralheiro",

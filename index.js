@@ -1,40 +1,9 @@
-/*global global:true, require:true, console:true, Arenite:true, module:true*/
-var fs = require('fs');
+/*global global:true, require:true, Arenite:true, module:true*/
 require('./build/arenite.js');
 
 global.navigator = {userAgent: 'node'};
 
 global.window = global;
-
-global.window.XMLHttpRequest = function () {
-  return {
-    setRequestHeader: function () {
-    },
-    open: function (m, url) {
-      var _this = this;
-      if (url.substr(0, 2) === '//' || url.substr(0, 4) === 'http') {
-        _this.responseText = '{"context":{"dependencies":{"default":{},"dev":{}}}}';
-        window.setTimeout(function () {
-          _this.onreadystatechange();
-        }, 1);
-        return;
-      }
-      fs.readFile(_options.base + url.replace(/\?.*$/, ''), 'utf8', function (err, data) {
-        if (err) {
-          console.log(err);
-          data = '{"context":{"dependencies":{"default":{},"dev":{}}}}';
-        }
-        _this.responseText = data;
-        _this.onreadystatechange();
-      });
-    },
-    send: function () {
-
-    },
-    readyState: 4,
-    status: 200
-  };
-};
 
 global.window.location = {hostname: '', search: ''};
 global.window.console.groupCollapsed = global.console.log;

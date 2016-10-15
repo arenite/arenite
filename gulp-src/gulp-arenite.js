@@ -1,11 +1,40 @@
-/*global require:true, module:true*/
-var arenite = require('arenite');
+/*global global:true, require:true, module:true, console:true*/
+var fs = require('fs');
 var gulp = require('gulp');
 var remoteSrc = require('gulp-download');
 var gulpMerge = require('merge2');
+var arenite = require('arenite');
 
 var _options;
+global.window.XMLHttpRequest = function () {
+  return {
+    setRequestHeader: function () {
+    },
+    open: function (m, url) {
+      var _this = this;
+      if (url.substr(0, 2) === '//' || url.substr(0, 4) === 'http') {
+        _this.responseText = '{"context":{"dependencies":{"default":{},"dev":{}}}}';
+        window.setTimeout(function () {
+          _this.onreadystatechange();
+        }, 1);
+        return;
+      }
+      fs.readFile(_options.base + url.replace(/\?.*$/, ''), 'utf8', function (err, data) {
+        if (err) {
+          console.log(err);
+          data = '{"context":{"dependencies":{"default":{},"dev":{}}}}';
+        }
+        _this.responseText = data;
+        _this.onreadystatechange();
+      });
+    },
+    send: function () {
 
+    },
+    readyState: 4,
+    status: 200
+  };
+};
 var Loader = function (config, options, cb) {
   if (options.base.length && options.base[options.base.length - 1] !== '/') {
     options.base = options.base + '/';
