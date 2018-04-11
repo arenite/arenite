@@ -285,6 +285,12 @@ retrieve the functions by namespace.</p>
     <span class="hljs-keyword">return</span> match;
   };
 
+  <span class="hljs-keyword">var</span> _findBy = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj, key, val</span>) </span>{
+    <span class="hljs-keyword">return</span> _find(obj, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">elem</span>) </span>{
+      <span class="hljs-keyword">return</span> (key ? _getInObject(elem, key) : elem) === val;
+    });
+  };
+
   <span class="hljs-keyword">var</span> _findAll = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj, func</span>) </span>{
     <span class="hljs-keyword">var</span> isArray = <span class="hljs-built_in">Array</span>.isArray(obj);
     <span class="hljs-keyword">var</span> matches = isArray ? [] : {};
@@ -298,6 +304,12 @@ retrieve the functions by namespace.</p>
       }
     });
     <span class="hljs-keyword">return</span> matches;
+  };
+
+  <span class="hljs-keyword">var</span> _findAllBy = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj, key, val</span>) </span>{
+    <span class="hljs-keyword">return</span> _findAll(obj, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">elem</span>) </span>{
+      <span class="hljs-keyword">return</span> (key ? _getInObject(elem, key) : elem) === val;
+    });
   };
 
   <span class="hljs-keyword">var</span> _collect = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">obj, func</span>) </span>{
@@ -530,6 +542,26 @@ The element is considered to be a match if the result of the function is not und
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
+              <h3 id="object-findby">object.findBy</h3>
+<p>Find the first occurence of a matching object</p>
+<p><pre><code>
+findBy(object, property, value)
+</pre></code>
+where <em><b>object</b></em> is the object to iterate. <em><b>property</b></em> the property of the object to be used in the comparison. <em><b>property</b></em> the property value for the element to be considered a match.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      findBy: _findBy,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
               <h3 id="object-findallwhere">object.findAllWhere</h3>
 <p>Find all occurences of a matching object</p>
 <p><pre><code>
@@ -545,11 +577,31 @@ The element is considered to be a match if the result of the function is not und
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h3 id="object-findallby">object.findAllBy</h3>
+<p>Find all occurences of a matching object</p>
+<p><pre><code>
+findAllBy(object, property, value)
+</pre></code>
+where <em><b>object</b></em> is the object to iterate. <em><b>property</b></em> the property of the object to be used in the comparison. <em><b>property</b></em> the property value for the element to be considered a match.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      findAllBy: _findAllBy,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <h3 id="object-collectwhere">object.collectWhere</h3>
 <p>Collect objects for occurences of a matching object</p>
@@ -568,11 +620,11 @@ The resulting object will contain all elements returned by the function (where t
         </li>
         
         
-        <li id="section-15">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <h3 id="array-containselement">array.containsElement</h3>
 <p>Determines if a element is present in an array:</p>
@@ -588,11 +640,11 @@ where <em><b>object</b></em> is the object to test for the presence of key and <
         </li>
         
         
-        <li id="section-16">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <h3 id="array-filterunique">array.filterUnique</h3>
 <p>Filters an array returning a new one with the unique values.</p>
@@ -608,11 +660,11 @@ where <em><b>array</b></em> is the array to be stripped o duplicate values</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <h3 id="array-mergewith">array.mergeWith</h3>
 <p>Merges two arrays returning a new one with the unique values.</p>
@@ -628,11 +680,11 @@ where <em><b>arr1</b></em> and <em><b>arr2</b></em> are the arrays to be merged<
         </li>
         
         
-        <li id="section-18">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <h3 id="array-toarrayof">array.toArrayOf</h3>
 <p>Extract an array composed of a specified property of the subobjects of a given object</p>
@@ -648,11 +700,11 @@ where <em><b>object</b></em> is the object whose members will be analysed <em><b
         </li>
         
         
-        <li id="section-19">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <h3 id="array-toobject">array.toObject</h3>
 <p>Extract an object indexed by a given key</p>
@@ -668,11 +720,11 @@ where <em><b>array</b></em> is the array whose members will be analysed <em><b>p
         </li>
         
         
-        <li id="section-20">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <h3 id="array-findwhere">array.findWhere</h3>
 <p>Find the first occurence of a matching object</p>
@@ -689,11 +741,31 @@ The element is considered to be a match if the result of the function is not und
         </li>
         
         
-        <li id="section-21">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <h3 id="array-findby">array.findBy</h3>
+<p>Find the first occurence of a matching object</p>
+<p><pre><code>
+findBy(array, property, value)
+</pre></code>
+where <em><b>array</b></em> is the array to iterate. <em><b>property</b></em> the property of the object to be used in the comparison. <em><b>property</b></em> the property value for the element to be considered a match.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      findBy: _findBy,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <h3 id="array-findallwhere">array.findAllWhere</h3>
 <p>Find all occurences of a matching object</p>
@@ -710,11 +782,31 @@ The element is considered to be a match if the result of the function is not und
         </li>
         
         
-        <li id="section-22">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <h3 id="array-findallby">array.findAllBy</h3>
+<p>Find all occurences of a matching object</p>
+<p><pre><code>
+findAllBy(array, property, value)
+</pre></code>
+where <em><b>array</b></em> is the array to iterate. <em><b>property</b></em> the property of the object to be used in the comparison. <em><b>property</b></em> the property value for the element to be considered a match.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      findAllBy: _findAllBy,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <h3 id="array-collectwhere">array.collectWhere</h3>
 <p>Collect objects for occurences of a matching object</p>

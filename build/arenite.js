@@ -1,5 +1,5 @@
 /*!
- * Arenite JavaScript Library v2.1.0
+ * Arenite JavaScript Library v2.1.1
  * https://github.com/lcavadas/arenite
  *
  * Copyright 2014, Luís Serralheiro
@@ -1119,6 +1119,12 @@ Arenite.Object = function () {
     return match;
   };
 
+  var _findBy = function (obj, key, val) {
+    return _find(obj, function (elem) {
+      return (key ? _getInObject(elem, key) : elem) === val;
+    });
+  };
+
   var _findAll = function (obj, func) {
     var isArray = Array.isArray(obj);
     var matches = isArray ? [] : {};
@@ -1132,6 +1138,12 @@ Arenite.Object = function () {
       }
     });
     return matches;
+  };
+
+  var _findAllBy = function (obj, key, val) {
+    return _findAll(obj, function (elem) {
+      return (key ? _getInObject(elem, key) : elem) === val;
+    });
   };
 
   var _collect = function (obj, func) {
@@ -1224,6 +1236,13 @@ Arenite.Object = function () {
       //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
       //The element is considered to be a match if the result of the function is not undefined.
       findWhere: _find,
+      //### object.findBy
+      // Find the first occurence of a matching object
+      //<pre><code>
+      // findBy(object, property, value)
+      //</pre></code>
+      //where *<b>object</b>* is the object to iterate. *<b>property</b>* the property of the object to be used in the comparison. *<b>property</b>* the property value for the element to be considered a match.
+      findBy: _findBy,
       //### object.findAllWhere
       // Find all occurences of a matching object
       //<pre><code>
@@ -1232,6 +1251,13 @@ Arenite.Object = function () {
       //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
       //The element is considered to be a match if the result of the function is not undefined.
       findAllWhere: _findAll,
+      //### object.findAllBy
+      // Find all occurences of a matching object
+      //<pre><code>
+      // findAllBy(object, property, value)
+      //</pre></code>
+      //where *<b>object</b>* is the object to iterate. *<b>property</b>* the property of the object to be used in the comparison. *<b>property</b>* the property value for the element to be considered a match.
+      findAllBy: _findAllBy,
       //### object.collectWhere
       // Collect objects for occurences of a matching object
       //<pre><code>
@@ -1285,6 +1311,13 @@ Arenite.Object = function () {
       //where *<b>array</b>* is the array to iterate. *<b>func(elem, idx)</b>* is the function called for each element and receives the element and its index.
       //The element is considered to be a match if the result of the function is not undefined.
       findWhere: _find,
+      //### array.findBy
+      // Find the first occurence of a matching object
+      //<pre><code>
+      // findBy(array, property, value)
+      //</pre></code>
+      //where *<b>array</b>* is the array to iterate. *<b>property</b>* the property of the object to be used in the comparison. *<b>property</b>* the property value for the element to be considered a match.
+      findBy: _findBy,
       //### array.findAllWhere
       // Find all occurences of a matching object
       //<pre><code>
@@ -1293,6 +1326,13 @@ Arenite.Object = function () {
       //where *<b>array</b>* is the array to iterate. *<b>func(elem, idx)</b>* is the function called for each element and receives the element and its index.
       //The element is considered to be a match if the result of the function is not undefined.
       findAllWhere: _findAll,
+      //### array.findAllBy
+      // Find all occurences of a matching object
+      //<pre><code>
+      // findAllBy(array, property, value)
+      //</pre></code>
+      //where *<b>array</b>* is the array to iterate. *<b>property</b>* the property of the object to be used in the comparison. *<b>property</b>* the property value for the element to be considered a match.
+      findAllBy: _findAllBy,
       //### array.collectWhere
       // Collect objects for occurences of a matching object
       //<pre><code>

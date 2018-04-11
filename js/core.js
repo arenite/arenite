@@ -1,5 +1,5 @@
 /*!
- * Arenite JavaScript Library v2.1.0
+ * Arenite JavaScript Library v2.1.1
  * https://github.com/lcavadas/arenite
  *
  * Copyright 2014, Luís Serralheiro

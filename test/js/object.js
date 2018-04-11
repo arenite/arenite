@@ -145,6 +145,10 @@ describe("Arenite.Object", function () {
     })).toEqual('a');
   });
 
+  it("should findBy first matching element on simple array", function () {
+    expect(obj.array.findBy(['a', 'a', 'b'], '', 'a')).toEqual('a');
+  });
+
   it("should find first matching element on object array", function () {
     expect(obj.array.findWhere(
       [
@@ -157,10 +161,35 @@ describe("Arenite.Object", function () {
       })).toEqual({'b': true, order: 3});
   });
 
+  it("should findBy first matching element on object array", function () {
+    expect(obj.array.findBy(
+      [
+        {'a': true, order: 1},
+        {'a': true, order: 2},
+        {b: true, order: 3},
+        {b: true, order: 4}
+      ], 'b', true)).toEqual({'b': true, order: 3});
+  });
+
+  it("should findBy first matching element on object array with depth", function () {
+    expect(obj.array.findBy(
+      [
+        {'a': {flag: true}, order: 1},
+        {'a': {flag: true}, order: 2},
+        {b: {flag: true}, order: 3},
+        {b: {flag: true}, order: 4},
+        {b: {flag: false}, order: 5}
+      ], 'b.flag', true)).toEqual({'b': {flag: true}, order: 3});
+  });
+
   it("should find all matching elements on simple array", function () {
     expect(obj.array.findAllWhere(['a', 'a', 'b'], function (el) {
       return el === 'a';
     })).toEqual(['a', 'a']);
+  });
+
+  it("should findAllBy matching elements on simple array", function () {
+    expect(obj.array.findAllBy(['a', 'a', 'b'], '', 'a')).toEqual(['a', 'a']);
   });
 
   it("should find all matching element on object array", function () {
@@ -173,6 +202,27 @@ describe("Arenite.Object", function () {
       ], function (el) {
         return el.b;
       })).toEqual([{b: true, order: 3}, {b: true, order: 4}]);
+  });
+
+  it("should findAllBy matching element on object array", function () {
+    expect(obj.array.findAllBy(
+      [
+        {'a': true, order: 1},
+        {'a': true, order: 2},
+        {b: true, order: 3},
+        {b: true, order: 4}
+      ], 'b', true)).toEqual([{b: true, order: 3}, {b: true, order: 4}]);
+  });
+
+  it("should findAllBy matching element on object array with depth", function () {
+    expect(obj.array.findAllBy(
+      [
+        {'a': {flag: true}, order: 1},
+        {'a': {flag: true}, order: 2},
+        {b: {flag: true}, order: 3},
+        {b: {flag: true}, order: 4},
+        {b: {flag: false}, order: 5}
+      ], 'b.flag', true)).toEqual([{b: {flag: true}, order: 3}, {b: {flag: true}, order: 4}]);
   });
 
   it("should collect elements on simple array", function () {
@@ -193,11 +243,14 @@ describe("Arenite.Object", function () {
       })).toEqual([{order: 3}, {order: 4}]);
   });
 
-
   it("should find first matching element on simple object", function () {
     expect(obj.object.findWhere({a: 1, b: 2, c: 3}, function (el) {
       return el === 2;
     })).toEqual({b: 2});
+  });
+
+  it("should findBy first matching element on simple object", function () {
+    expect(obj.object.findBy({a: 1, b: 2, c: 3}, '', 2)).toEqual({b: 2});
   });
 
   it("should find first matching element on complex object", function () {
@@ -212,10 +265,35 @@ describe("Arenite.Object", function () {
       })).toEqual({3: {'b': true, order: 3}});
   });
 
+  it("should findBy first matching element on complex object", function () {
+    expect(obj.object.findBy(
+      {
+        1: {'a': true, order: 1},
+        2: {'a': true, order: 2},
+        3: {b: true, order: 3},
+        4: {b: true, order: 4}
+      }, 'b', true)).toEqual({3: {'b': true, order: 3}});
+  });
+
+  it("should findBy first matching element on complex object with depth", function () {
+    expect(obj.object.findBy(
+      {
+        1: {'a': {flag: true}, order: 1},
+        2: {'a': {flag: true}, order: 2},
+        3: {b: {flag: true}, order: 3},
+        4: {b: {flag: true}, order: 4},
+        5: {b: {flag: false}, order: 5}
+      }, 'b.flag', true)).toEqual({3: {b: {flag: true}, order: 3}});
+  });
+
   it("should find all matching elements on simple object", function () {
     expect(obj.object.findAllWhere({a: 1, b: 2, c: 3, d: 2}, function (el) {
       return el === 2;
     })).toEqual({b: 2, d: 2});
+  });
+
+  it("should findAllBy matching elements on simple object", function () {
+    expect(obj.object.findAllBy({a: 1, b: 2, c: 3, d: 2}, '', 2)).toEqual({b: 2, d: 2});
   });
 
   it("should find all matching element on complex object", function () {
@@ -228,6 +306,27 @@ describe("Arenite.Object", function () {
       }, function (el) {
         return el.b;
       })).toEqual({3: {b: true, order: 3}, 4: {b: true, order: 4}});
+  });
+
+  it("should findAllBy matching element on complex object", function () {
+    expect(obj.object.findAllBy(
+      {
+        1: {'a': true, order: 1},
+        2: {'a': true, order: 2},
+        3: {b: true, order: 3},
+        4: {b: true, order: 4}
+      }, 'b', true)).toEqual({3: {b: true, order: 3}, 4: {b: true, order: 4}});
+  });
+
+  it("should findAllBy matching element on complex object with depth", function () {
+    expect(obj.object.findAllBy(
+      {
+        1: {'a': {flag: true}, order: 1},
+        2: {'a': {flag: true}, order: 2},
+        3: {b: {flag: true}, order: 3},
+        4: {b: {flag: true}, order: 4},
+        5: {b: {flag: false}, order: 5}
+      }, 'b.flag', true)).toEqual({3: {b: {flag: true}, order: 3}, 4: {b: {flag: true}, order: 4}});
   });
 
   it("should collect elements on simple object", function () {
