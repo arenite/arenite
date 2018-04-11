@@ -58,7 +58,7 @@ Arenite.Async = function (arenite) {
 
   return {
     async: {
-      //###Sequencial latch.
+      //### Sequencial latch.
       //The sequencial latch will synchronously execute the handler
       // with the provided values and execute a callback when all operations are complete.
       //<pre><code>
@@ -69,7 +69,7 @@ Arenite.Async = function (arenite) {
       // finishes the execution.
       // The *<b>callback</b>* is the function that is executed once all the values have been handled.
       seqLatch: _sequencialLatch,
-      //###Latch.
+      //### Latch.
       //The latch will execute asynchronous tasks and invoke a callback when all the declared times have been executed
       //<pre><code>
       // latch(times, callback [, name])

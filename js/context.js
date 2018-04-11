@@ -74,14 +74,14 @@ Arenite.Context = function (arenite) {
 
   return {
     context: {
-      //###context.get
+      //### context.get
       // Get an registered instance from arenite.
       //<pre><code>
       // get(instance)
       //</pre></code>
       //where *<b>instance</b>* is the name of the instance to be retrieved
       get: _getInstance,
-      //###context.add
+      //### context.add
       // Register an instance in arenite
       //<pre><code>
       // add(name, instance, factory, args)
@@ -91,7 +91,7 @@ Arenite.Context = function (arenite) {
       // instance should be generated each time it is requested and *<b>args</b>* is the arguments to use in case
       // the instance is a factory.
       add: _addInstance,
-      //###context.remove
+      //### context.remove
       // Removes an instance from the arenite context
       //<pre><code>
       // remove(instance)

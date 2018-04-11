@@ -59,7 +59,7 @@ Arenite.AnnotationProcessor = function (arenite) {
 
   return {
     annotation: {
-      //###annotation.processAnnotations
+      //### annotation.processAnnotations
       // Interpret the annotations specified in a given source.
       //<pre><code>
       // processAnnotations(text)

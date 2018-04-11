@@ -1,5 +1,5 @@
 /*!
- * Arenite JavaScript Library v2.0.0-rc4
+ * Arenite JavaScript Library v2.1.0
  * https://github.com/lcavadas/arenite
  *
  * Copyright 2014, Luís Serralheiro
@@ -144,7 +144,7 @@ Arenite.AnnotationProcessor = function (arenite) {
 
   return {
     annotation: {
-      //###annotation.processAnnotations
+      //### annotation.processAnnotations
       // Interpret the annotations specified in a given source.
       //<pre><code>
       // processAnnotations(text)
@@ -215,7 +215,7 @@ Arenite.Async = function (arenite) {
 
   return {
     async: {
-      //###Sequencial latch.
+      //### Sequencial latch.
       //The sequencial latch will synchronously execute the handler
       // with the provided values and execute a callback when all operations are complete.
       //<pre><code>
@@ -226,7 +226,7 @@ Arenite.Async = function (arenite) {
       // finishes the execution.
       // The *<b>callback</b>* is the function that is executed once all the values have been handled.
       seqLatch: _sequencialLatch,
-      //###Latch.
+      //### Latch.
       //The latch will execute asynchronous tasks and invoke a callback when all the declared times have been executed
       //<pre><code>
       // latch(times, callback [, name])
@@ -365,14 +365,14 @@ Arenite.Context = function (arenite) {
 
   return {
     context: {
-      //###context.get
+      //### context.get
       // Get an registered instance from arenite.
       //<pre><code>
       // get(instance)
       //</pre></code>
       //where *<b>instance</b>* is the name of the instance to be retrieved
       get: _getInstance,
-      //###context.add
+      //### context.add
       // Register an instance in arenite
       //<pre><code>
       // add(name, instance, factory, args)
@@ -382,7 +382,7 @@ Arenite.Context = function (arenite) {
       // instance should be generated each time it is requested and *<b>args</b>* is the arguments to use in case
       // the instance is a factory.
       add: _addInstance,
-      //###context.remove
+      //### context.remove
       // Removes an instance from the arenite context
       //<pre><code>
       // remove(instance)
@@ -727,14 +727,14 @@ Arenite.DI = function (arenite) {
 
   return {
     di: {
-      //###di.init
+      //### di.init
       // Start arenite with the given configuration
       //<pre><code>
       // init(config)
       //</pre></code>
       //where *<b>config</b>* is the complete configuration with imports
       init: _boot,
-      //###di.loadConfig
+      //### di.loadConfig
       // Resolve the imports and merge them into arenite's internal config object
       //<pre><code>
       // loadConfig(config, callback)
@@ -742,14 +742,14 @@ Arenite.DI = function (arenite) {
       //where *<b>config</b>* is the partial configuration with the imports and *<b>callback</b>* is the callback after
       // the import has extended the config.
       loadConfig: _loadConfig,
-      //###di.resolveArgs
+      //### di.resolveArgs
       // Resolve the arguments defined in an instance definition AKA execution defined in the arenite configuration format
       //<pre><code>
       // resolveArgs(execution, done)
       //</pre></code>
       //where *<b>execution</b>* is the object describing the execution and *<b>done</b>* is the callback after the execution.
       resolveArgs: _resolveArgs,
-      //###di.exec
+      //### di.exec
       // Execute an instance definition AKA execution defined in the arenite configuration format
       //<pre><code>
       // exec(execution, before, done)
@@ -757,7 +757,7 @@ Arenite.DI = function (arenite) {
       //where *<b>execution</b>* is the object describing the execution, *<b>before</b>* is an optional function to be executed
       // before the actual execution and *<b>done</b>* is the callback after the execution.
       exec: _execFunction,
-      //###di.wire
+      //### di.wire
       // Wire a new instance at runtime (used for factories)
       //<pre><code>
       // wire(instanceDefinitions)
@@ -918,7 +918,7 @@ Arenite.Loader = function (arenite) {
 
   return {
     loader: {
-      //###loader.loadResource
+      //### loader.loadResource
       // Load a given resource using ajax.
       //<pre><code>
       // loadResource(url, callback, error)
@@ -926,7 +926,7 @@ Arenite.Loader = function (arenite) {
       //where *<b>url</b>* is the url to fetch from,  *<b>callback</b>* is a function called with the ajax request after
       // it's succesful completion and *<b>error</b>* is an optional callback to handle errors when fetching the resource
       loadResource: _loadResource,
-      //###loader.loadScript
+      //### loader.loadScript
       // Load a script. This method will choose the best method to load the script (using tag or ajax) depending on the
       // origin of the script. Additionally it can extract variables exposed in the window object and register them as
       // instances in arenite.
@@ -1103,16 +1103,63 @@ Arenite.Object = function () {
     return filtered;
   };
 
+  var _find = function (obj, func) {
+    var isArray = Array.isArray(obj);
+    var match;
+    _forEach(obj, function (val, key) {
+      if (!match && func(val, key)) {
+        if (isArray) {
+          match = val;
+        } else {
+          match = {};
+          match[key] = val;
+        }
+      }
+    });
+    return match;
+  };
+
+  var _findAll = function (obj, func) {
+    var isArray = Array.isArray(obj);
+    var matches = isArray ? [] : {};
+    _forEach(obj, function (val, key) {
+      if (func(val, key)) {
+        if (isArray) {
+          matches.push(val);
+        } else {
+          matches[key] = val;
+        }
+      }
+    });
+    return matches;
+  };
+
+  var _collect = function (obj, func) {
+    var isArray = Array.isArray(obj);
+    var collection = isArray ? [] : {};
+    _forEach(obj, function (val, key) {
+      var result = func(val, key);
+      if (result !== undefined) {
+        if (isArray) {
+          collection.push(result);
+        } else {
+          collection[key] = result;
+        }
+      }
+    });
+    return collection;
+  };
+
   return {
     object: {
-      //###object.getFromPath
+      //### object.getFromPath
       // Retrieves a property from an object. The property is expressed as a string, denoting a path.
       //<pre><code>
       // getFromPath(object, path)
       //</pre></code>
       //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be fetched.
       getInPath: _getInObject,
-      //###object.setInPath
+      //### object.setInPath
       // Sets a property in an object. The property is expressed as a string, denoting a path.
       //<pre><code>
       // setInPath(object, path, value)
@@ -1120,92 +1167,140 @@ Arenite.Object = function () {
       //where *<b>object</b>* is the target object,
       // *<b>path</b>* is the path of the value and *<b>value</b>* the value to be set at the given path.
       setInPath: _setInObject,
-      //###object.deleteInPath
+      //### object.deleteInPath
       // Removes a property from an object. The property is expressed as a string, denoting a path.
       //<pre><code>
       // deleteInPath(object, path)
       //</pre></code>
       //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be deleted.
       deleteInPath: _deleteInObject,
-      //###object.fuseWith
+      //### object.fuseWith
       // Fuse merges objects. The second object will "override" properties also existing in the first.
       //<pre><code>
       // fuseWith(object, other)
       //</pre></code>
       //where *<b>object</b>* is the object to be merged and extended by *<b>other</b>*.
       fuseWith: _extend,
-      //###object.keysOf
+      //### object.keysOf
       //Returns all the properties available to an object in the form of an array.
       //<pre><code>
       // keysOf(object)
       //</pre></code>
       //where *<b>object</b>* is the object from which the properties will be extracted.
       toKeyArray: _keys,
-      //###object.forEach
+      //### object.forEach
       //Iterates through the object the equivalent to the way forEach works for arrays.
       //<pre><code>
       // forEach(object, func(elem, key))
       //</pre></code>
       //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
       forEach: _forEach,
-      //###object.containsKey
+      //### object.containsKey
       // Determines if a key exists in an object:
       //<pre><code>
       // containsKey(object, key)
       //</pre></code>
       //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
       containsKey: _contains,
-      //###object.toArray
+      //### object.toArray
       // Transforms the object to an array using the values for each key:
       //<pre><code>
       // toArray(object)
       //</pre></code>
       //where *<b>object</b>* is the object to be transformed into the array.
       toArray: _array,
-      //###object.filterWith
+      //### object.filterWith
       // Returns a filtered version of the object:
       //<pre><code>
       // filterWith(object, keys)
       //</pre></code>
       //where *<b>object</b>* is the object to be filtered and *<b>keys</b>* an array of keys to maintain.
-      filterWith: _filter
+      filterWith: _filter,
+      //### object.findWhere
+      // Find the first occurence of a matching element
+      //<pre><code>
+      // findWhere(object, func(elem, key))
+      //</pre></code>
+      //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
+      //The element is considered to be a match if the result of the function is not undefined.
+      findWhere: _find,
+      //### object.findAllWhere
+      // Find all occurences of a matching object
+      //<pre><code>
+      // findWhere(object, func(elem, idx))
+      //</pre></code>
+      //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
+      //The element is considered to be a match if the result of the function is not undefined.
+      findAllWhere: _findAll,
+      //### object.collectWhere
+      // Collect objects for occurences of a matching object
+      //<pre><code>
+      // findWhere(object, func(elem, idx))
+      //</pre></code>
+      //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
+      //The resulting object will contain all elements returned by the function (where the result is not undefined).
+      collectWhere: _collect
     },
     array: {
-      //###array.containsElement
+      //### array.containsElement
       // Determines if a element is present in an array:
       //<pre><code>
       // containsElement(object, key)
       //</pre></code>
       //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
       containsElement: _contains,
-      //###array.filterUnique
+      //### array.filterUnique
       // Filters an array returning a new one with the unique values.
       //<pre><code>
       // filterUnique(array)
       //</pre></code>
       //where *<b>array</b>* is the array to be stripped o duplicate values
       filterUnique: _uniq,
-      //###array.mergeWith
+      //### array.mergeWith
       // Merges two arrays returning a new one with the unique values.
       //<pre><code>
       // mergeWith(arr1, arr2)
       //</pre></code>
       //where *<b>arr1</b>* and *<b>arr2</b>* are the arrays to be merged
       mergeWith: _merge,
-      //###array.toArrayOf
+      //### array.toArrayOf
       // Extract an array composed of a specified property of the subobjects of a given object
       //<pre><code>
       // toArrayOf(object, property)
       //</pre></code>
       //where *<b>object</b>* is the object whose members will be analysed *<b>property</b>* the property to be extracted from those members
       toArrayOf: _extract,
-      //###array.toObject
+      //### array.toObject
       // Extract an object indexed by a given key
       //<pre><code>
       // toObject(array, property)
       //</pre></code>
       //where *<b>array</b>* is the array whose members will be analysed *<b>property</b>* the property of each element to be turned into the key of that element in the resulting object
-      toObject: _obj
+      toObject: _obj,
+      //### array.findWhere
+      // Find the first occurence of a matching object
+      //<pre><code>
+      // findWhere(array, func(elem, idx))
+      //</pre></code>
+      //where *<b>array</b>* is the array to iterate. *<b>func(elem, idx)</b>* is the function called for each element and receives the element and its index.
+      //The element is considered to be a match if the result of the function is not undefined.
+      findWhere: _find,
+      //### array.findAllWhere
+      // Find all occurences of a matching object
+      //<pre><code>
+      // findWhere(array, func(elem, idx))
+      //</pre></code>
+      //where *<b>array</b>* is the array to iterate. *<b>func(elem, idx)</b>* is the function called for each element and receives the element and its index.
+      //The element is considered to be a match if the result of the function is not undefined.
+      findAllWhere: _findAll,
+      //### array.collectWhere
+      // Collect objects for occurences of a matching object
+      //<pre><code>
+      // findWhere(array, func(elem, idx))
+      //</pre></code>
+      //where *<b>array</b>* is the array to iterate. *<b>func(elem, idx)</b>* is the function called for each element and receives the element and its index.
+      //The resulting array will contain all elements returned by the function (where the result is not undefined).
+      collectWhere: _collect
     }
   };
 };

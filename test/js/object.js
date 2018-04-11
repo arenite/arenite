@@ -138,4 +138,114 @@ describe("Arenite.Object", function () {
   it("should merge arrays and return new with unique", function () {
     expect(obj.array.mergeWith(['a', 'b'], ['b', 'c'])).toEqual(['a', 'b', 'c']);
   });
+
+  it("should find first matching element on simple array", function () {
+    expect(obj.array.findWhere(['a', 'a', 'b'], function (el) {
+      return el === 'a';
+    })).toEqual('a');
+  });
+
+  it("should find first matching element on object array", function () {
+    expect(obj.array.findWhere(
+      [
+        {'a': true, order: 1},
+        {'a': true, order: 2},
+        {b: true, order: 3},
+        {b: true, order: 4}
+      ], function (el) {
+        return el.b;
+      })).toEqual({'b': true, order: 3});
+  });
+
+  it("should find all matching elements on simple array", function () {
+    expect(obj.array.findAllWhere(['a', 'a', 'b'], function (el) {
+      return el === 'a';
+    })).toEqual(['a', 'a']);
+  });
+
+  it("should find all matching element on object array", function () {
+    expect(obj.array.findAllWhere(
+      [
+        {'a': true, order: 1},
+        {'a': true, order: 2},
+        {b: true, order: 3},
+        {b: true, order: 4}
+      ], function (el) {
+        return el.b;
+      })).toEqual([{b: true, order: 3}, {b: true, order: 4}]);
+  });
+
+  it("should collect elements on simple array", function () {
+    expect(obj.array.collectWhere(['a', 'a', 'b'], function (el) {
+      return el === 'a' ? 1 : undefined;
+    })).toEqual([1, 1]);
+  });
+
+  it("should collect elements on object array", function () {
+    expect(obj.array.collectWhere(
+      [
+        {'a': true, order: 1},
+        {'a': true, order: 2},
+        {b: true, order: 3},
+        {b: true, order: 4}
+      ], function (el) {
+        return el.b ? {order: el.order} : undefined;
+      })).toEqual([{order: 3}, {order: 4}]);
+  });
+
+
+  it("should find first matching element on simple object", function () {
+    expect(obj.object.findWhere({a: 1, b: 2, c: 3}, function (el) {
+      return el === 2;
+    })).toEqual({b: 2});
+  });
+
+  it("should find first matching element on complex object", function () {
+    expect(obj.object.findWhere(
+      {
+        1: {'a': true, order: 1},
+        2: {'a': true, order: 2},
+        3: {b: true, order: 3},
+        4: {b: true, order: 4}
+      }, function (el) {
+        return el.b;
+      })).toEqual({3: {'b': true, order: 3}});
+  });
+
+  it("should find all matching elements on simple object", function () {
+    expect(obj.object.findAllWhere({a: 1, b: 2, c: 3, d: 2}, function (el) {
+      return el === 2;
+    })).toEqual({b: 2, d: 2});
+  });
+
+  it("should find all matching element on complex object", function () {
+    expect(obj.object.findAllWhere(
+      {
+        1: {'a': true, order: 1},
+        2: {'a': true, order: 2},
+        3: {b: true, order: 3},
+        4: {b: true, order: 4}
+      }, function (el) {
+        return el.b;
+      })).toEqual({3: {b: true, order: 3}, 4: {b: true, order: 4}});
+  });
+
+  it("should collect elements on simple object", function () {
+    expect(obj.object.collectWhere({a: 1, b: 2, c: 3, d: 2}, function (el) {
+      return el === 2 ? {val: el} : undefined;
+    })).toEqual({b: {val: 2}, d: {val: 2}});
+  });
+
+  it("should collect elements on complex object", function () {
+    expect(obj.object.collectWhere(
+      {
+        1: {'a': true, order: 1},
+        2: {'a': true, order: 2},
+        3: {b: true, order: 3},
+        4: {b: true, order: 4}
+      }, function (el) {
+        return el.b ? {order: el.order} : undefined;
+      })).toEqual({3: {order: 3}, 4: {order: 4}});
+  });
+
 });

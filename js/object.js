@@ -161,16 +161,63 @@ Arenite.Object = function () {
     return filtered;
   };
 
+  var _find = function (obj, func) {
+    var isArray = Array.isArray(obj);
+    var match;
+    _forEach(obj, function (val, key) {
+      if (!match && func(val, key)) {
+        if (isArray) {
+          match = val;
+        } else {
+          match = {};
+          match[key] = val;
+        }
+      }
+    });
+    return match;
+  };
+
+  var _findAll = function (obj, func) {
+    var isArray = Array.isArray(obj);
+    var matches = isArray ? [] : {};
+    _forEach(obj, function (val, key) {
+      if (func(val, key)) {
+        if (isArray) {
+          matches.push(val);
+        } else {
+          matches[key] = val;
+        }
+      }
+    });
+    return matches;
+  };
+
+  var _collect = function (obj, func) {
+    var isArray = Array.isArray(obj);
+    var collection = isArray ? [] : {};
+    _forEach(obj, function (val, key) {
+      var result = func(val, key);
+      if (result !== undefined) {
+        if (isArray) {
+          collection.push(result);
+        } else {
+          collection[key] = result;
+        }
+      }
+    });
+    return collection;
+  };
+
   return {
     object: {
-      //###object.getFromPath
+      //### object.getFromPath
       // Retrieves a property from an object. The property is expressed as a string, denoting a path.
       //<pre><code>
       // getFromPath(object, path)
       //</pre></code>
       //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be fetched.
       getInPath: _getInObject,
-      //###object.setInPath
+      //### object.setInPath
       // Sets a property in an object. The property is expressed as a string, denoting a path.
       //<pre><code>
       // setInPath(object, path, value)
@@ -178,92 +225,140 @@ Arenite.Object = function () {
       //where *<b>object</b>* is the target object,
       // *<b>path</b>* is the path of the value and *<b>value</b>* the value to be set at the given path.
       setInPath: _setInObject,
-      //###object.deleteInPath
+      //### object.deleteInPath
       // Removes a property from an object. The property is expressed as a string, denoting a path.
       //<pre><code>
       // deleteInPath(object, path)
       //</pre></code>
       //where *<b>object</b>* is the target object and *<b>path</b>* is the path of the value to be deleted.
       deleteInPath: _deleteInObject,
-      //###object.fuseWith
+      //### object.fuseWith
       // Fuse merges objects. The second object will "override" properties also existing in the first.
       //<pre><code>
       // fuseWith(object, other)
       //</pre></code>
       //where *<b>object</b>* is the object to be merged and extended by *<b>other</b>*.
       fuseWith: _extend,
-      //###object.keysOf
+      //### object.keysOf
       //Returns all the properties available to an object in the form of an array.
       //<pre><code>
       // keysOf(object)
       //</pre></code>
       //where *<b>object</b>* is the object from which the properties will be extracted.
       toKeyArray: _keys,
-      //###object.forEach
+      //### object.forEach
       //Iterates through the object the equivalent to the way forEach works for arrays.
       //<pre><code>
       // forEach(object, func(elem, key))
       //</pre></code>
       //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
       forEach: _forEach,
-      //###object.containsKey
+      //### object.containsKey
       // Determines if a key exists in an object:
       //<pre><code>
       // containsKey(object, key)
       //</pre></code>
       //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
       containsKey: _contains,
-      //###object.toArray
+      //### object.toArray
       // Transforms the object to an array using the values for each key:
       //<pre><code>
       // toArray(object)
       //</pre></code>
       //where *<b>object</b>* is the object to be transformed into the array.
       toArray: _array,
-      //###object.filterWith
+      //### object.filterWith
       // Returns a filtered version of the object:
       //<pre><code>
       // filterWith(object, keys)
       //</pre></code>
       //where *<b>object</b>* is the object to be filtered and *<b>keys</b>* an array of keys to maintain.
-      filterWith: _filter
+      filterWith: _filter,
+      //### object.findWhere
+      // Find the first occurence of a matching element
+      //<pre><code>
+      // findWhere(object, func(elem, key))
+      //</pre></code>
+      //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
+      //The element is considered to be a match if the result of the function is not undefined.
+      findWhere: _find,
+      //### object.findAllWhere
+      // Find all occurences of a matching object
+      //<pre><code>
+      // findWhere(object, func(elem, idx))
+      //</pre></code>
+      //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
+      //The element is considered to be a match if the result of the function is not undefined.
+      findAllWhere: _findAll,
+      //### object.collectWhere
+      // Collect objects for occurences of a matching object
+      //<pre><code>
+      // findWhere(object, func(elem, idx))
+      //</pre></code>
+      //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
+      //The resulting object will contain all elements returned by the function (where the result is not undefined).
+      collectWhere: _collect
     },
     array: {
-      //###array.containsElement
+      //### array.containsElement
       // Determines if a element is present in an array:
       //<pre><code>
       // containsElement(object, key)
       //</pre></code>
       //where *<b>object</b>* is the object to test for the presence of key and *<b>key</b>* is the property/element to be tested.
       containsElement: _contains,
-      //###array.filterUnique
+      //### array.filterUnique
       // Filters an array returning a new one with the unique values.
       //<pre><code>
       // filterUnique(array)
       //</pre></code>
       //where *<b>array</b>* is the array to be stripped o duplicate values
       filterUnique: _uniq,
-      //###array.mergeWith
+      //### array.mergeWith
       // Merges two arrays returning a new one with the unique values.
       //<pre><code>
       // mergeWith(arr1, arr2)
       //</pre></code>
       //where *<b>arr1</b>* and *<b>arr2</b>* are the arrays to be merged
       mergeWith: _merge,
-      //###array.toArrayOf
+      //### array.toArrayOf
       // Extract an array composed of a specified property of the subobjects of a given object
       //<pre><code>
       // toArrayOf(object, property)
       //</pre></code>
       //where *<b>object</b>* is the object whose members will be analysed *<b>property</b>* the property to be extracted from those members
       toArrayOf: _extract,
-      //###array.toObject
+      //### array.toObject
       // Extract an object indexed by a given key
       //<pre><code>
       // toObject(array, property)
       //</pre></code>
       //where *<b>array</b>* is the array whose members will be analysed *<b>property</b>* the property of each element to be turned into the key of that element in the resulting object
-      toObject: _obj
+      toObject: _obj,
+      //### array.findWhere
+      // Find the first occurence of a matching object
+      //<pre><code>
+      // findWhere(array, func(elem, idx))
+      //</pre></code>
+      //where *<b>array</b>* is the array to iterate. *<b>func(elem, idx)</b>* is the function called for each element and receives the element and its index.
+      //The element is considered to be a match if the result of the function is not undefined.
+      findWhere: _find,
+      //### array.findAllWhere
+      // Find all occurences of a matching object
+      //<pre><code>
+      // findWhere(array, func(elem, idx))
+      //</pre></code>
+      //where *<b>array</b>* is the array to iterate. *<b>func(elem, idx)</b>* is the function called for each element and receives the element and its index.
+      //The element is considered to be a match if the result of the function is not undefined.
+      findAllWhere: _findAll,
+      //### array.collectWhere
+      // Collect objects for occurences of a matching object
+      //<pre><code>
+      // findWhere(array, func(elem, idx))
+      //</pre></code>
+      //where *<b>array</b>* is the array to iterate. *<b>func(elem, idx)</b>* is the function called for each element and receives the element and its index.
+      //The resulting array will contain all elements returned by the function (where the result is not undefined).
+      collectWhere: _collect
     }
   };
 };

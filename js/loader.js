@@ -125,7 +125,7 @@ Arenite.Loader = function (arenite) {
 
   return {
     loader: {
-      //###loader.loadResource
+      //### loader.loadResource
       // Load a given resource using ajax.
       //<pre><code>
       // loadResource(url, callback, error)
@@ -133,7 +133,7 @@ Arenite.Loader = function (arenite) {
       //where *<b>url</b>* is the url to fetch from,  *<b>callback</b>* is a function called with the ajax request after
       // it's succesful completion and *<b>error</b>* is an optional callback to handle errors when fetching the resource
       loadResource: _loadResource,
-      //###loader.loadScript
+      //### loader.loadScript
       // Load a script. This method will choose the best method to load the script (using tag or ajax) depending on the
       // origin of the script. Additionally it can extract variables exposed in the window object and register them as
       // instances in arenite.
