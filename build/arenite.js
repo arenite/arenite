@@ -1,5 +1,5 @@
 /*!
- * Arenite JavaScript Library v2.1.1
+ * Arenite JavaScript Library v2.1.2
  * https://github.com/lcavadas/arenite
  *
  * Copyright 2014, Luís Serralheiro
@@ -1162,6 +1162,12 @@ Arenite.Object = function () {
     return collection;
   };
 
+  var _collectBy = function (obj, key) {
+    return obj.collectWhere(function (elem) {
+      return _getInObject(elem, key);
+    });
+  };
+
   return {
     object: {
       //### object.getFromPath
@@ -1261,11 +1267,18 @@ Arenite.Object = function () {
       //### object.collectWhere
       // Collect objects for occurences of a matching object
       //<pre><code>
-      // findWhere(object, func(elem, idx))
+      // collectWhere(object, func(elem, idx))
       //</pre></code>
       //where *<b>object</b>* is the object to iterate. *<b>func(elem, key)</b>* is the function called for each element and receives the element and its key.
       //The resulting object will contain all elements returned by the function (where the result is not undefined).
-      collectWhere: _collect
+      collectWhere: _collect,
+      //### object.collectBy
+      // Collect sub objects
+      //<pre><code>
+      // findWhere(object, property)
+      //</pre></code>
+      //where *<b>object</b>* is the array to iterate. *<b>property</b>* is the object path to be collected.
+      collectBy: _collectBy
     },
     array: {
       //### array.containsElement
@@ -1334,13 +1347,20 @@ Arenite.Object = function () {
       //where *<b>array</b>* is the array to iterate. *<b>property</b>* the property of the object to be used in the comparison. *<b>property</b>* the property value for the element to be considered a match.
       findAllBy: _findAllBy,
       //### array.collectWhere
-      // Collect objects for occurences of a matching object
+      // Collect objects in array
       //<pre><code>
-      // findWhere(array, func(elem, idx))
+      // collectWhere(array, func(elem, idx))
       //</pre></code>
       //where *<b>array</b>* is the array to iterate. *<b>func(elem, idx)</b>* is the function called for each element and receives the element and its index.
       //The resulting array will contain all elements returned by the function (where the result is not undefined).
-      collectWhere: _collect
+      collectWhere: _collect,
+      //### array.collectBy
+      // Collect sub objects
+      //<pre><code>
+      // findWhere(array, property)
+      //</pre></code>
+      //where *<b>array</b>* is the array to iterate. *<b>property</b>* is the object path to be collected.
+      collectBy: _collectBy
     }
   };
 };

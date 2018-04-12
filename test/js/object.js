@@ -231,6 +231,10 @@ describe("Arenite.Object", function () {
     })).toEqual([1, 1]);
   });
 
+  it("should collectBy elements on simple array", function () {
+    expect(obj.array.collectBy(['a', 'a', 'b'], '')).toEqual([]);
+  });
+
   it("should collect elements on object array", function () {
     expect(obj.array.collectWhere(
       [
@@ -241,6 +245,16 @@ describe("Arenite.Object", function () {
       ], function (el) {
         return el.b ? {order: el.order} : undefined;
       })).toEqual([{order: 3}, {order: 4}]);
+  });
+
+  it("should collectBy elements on object array", function () {
+    expect(obj.array.collectBy(
+      [
+        {'a': true, order: 1},
+        {'a': true, order: 2},
+        {b: true, order: 3},
+        {b: true, order: 4}
+      ], 'order')).toEqual([1, 2, 3, 4]);
   });
 
   it("should find first matching element on simple object", function () {
@@ -335,6 +349,10 @@ describe("Arenite.Object", function () {
     })).toEqual({b: {val: 2}, d: {val: 2}});
   });
 
+  it("should collectBy elements on simple object", function () {
+    expect(obj.object.collectBy({a: 1, b: 2, c: 3, d: 2}, 'b')).toEqual({});
+  });
+
   it("should collect elements on complex object", function () {
     expect(obj.object.collectWhere(
       {
@@ -345,6 +363,16 @@ describe("Arenite.Object", function () {
       }, function (el) {
         return el.b ? {order: el.order} : undefined;
       })).toEqual({3: {order: 3}, 4: {order: 4}});
+  });
+
+  it("should collectBy elements on complex object", function () {
+    expect(obj.object.collectBy(
+      {
+        1: {'a': true, order: 1},
+        2: {'a': true, order: 2},
+        3: {b: true, order: 3},
+        4: {b: true, order: 4}
+      }, 'order')).toEqual({1: 1, 2: 2, 3: 3, 4: 4});
   });
 
 });
