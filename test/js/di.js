@@ -305,6 +305,23 @@ describe("Arenite.DI", function () {
     });
   });
 
+  it('should report missing references separately from circular dependencies', function () {
+    expect(function () {
+      Arenite({
+        debug: true,
+        expose: 'arenite',
+        context: {
+          instances: {
+            one: {
+              namespace: 'Arenite.Object',
+              args: [{ref: 'missing'}]
+            }
+          }
+        }
+      });
+    }).toThrow('Unable to resolve the following instances: one - []. Missing references: one -> missing');
+  });
+
   it('should throw error on circular references', function () {
     expect(function () {
       Arenite({
@@ -323,7 +340,7 @@ describe("Arenite.DI", function () {
           }
         }
       });
-    }).toThrow('Make sure you don\'t have circular dependencies, Unable to resolve the following instances: one, two - []');
+    }).toThrow('Unable to resolve the following instances: one, two - []. Circular dependencies: one -> two -> one');
   });
 
   it('should throw error on wire unknown instances', function () {
@@ -340,6 +357,37 @@ describe("Arenite.DI", function () {
         }
       });
     }).toThrow('Unknown function "Arenite.Extra3"');
+  });
+
+  it('should fail fast on circular factory requests', function () {
+    Arenite.FactoryOne = function (arenite) {
+      arenite.context.get('two');
+      return {};
+    };
+    Arenite.FactoryTwo = function (arenite) {
+      arenite.context.get('one');
+      return {};
+    };
+    var arenite = Arenite({
+      debug: true,
+      context: {
+        instances: {
+          one: {
+            factory: true,
+            namespace: 'Arenite.FactoryOne',
+            args: [{ref: 'arenite'}]
+          },
+          two: {
+            factory: true,
+            namespace: 'Arenite.FactoryTwo',
+            args: [{ref: 'arenite'}]
+          }
+        }
+      }
+    });
+    expect(function () {
+      arenite.context.get('one');
+    }).toThrow('Circular factory dependency: one -> two -> one');
   });
 
   it('should execute inits', function () {
