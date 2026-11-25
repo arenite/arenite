@@ -4,6 +4,7 @@ Arenite.Context = function (arenite) {
   var registry = {};
   var factories = {};
   var factory_id = 1;
+  var constructingFactories = [];
 
   var _addInstance = function (name, instance, factory) {
     if (factory) {
@@ -19,13 +20,21 @@ Arenite.Context = function (arenite) {
 
   var _getInstance = function (name) {
     if (factories.hasOwnProperty(name)) {
+      if (constructingFactories.indexOf(name) !== -1) {
+        throw 'Circular factory dependency: ' + constructingFactories.concat(name).join(' -> ');
+      }
+      constructingFactories.push(name);
       var tempId = '__factory_instance_' + name + '__' + factory_id++;
       var tempContext = {};
       tempContext[tempId] = factories[name].fuseWith({factory: false});
-      arenite.di.wire(tempContext);
-      var instance = registry[tempId];
-      _removeInstance(tempId);
-      return instance;
+      try {
+        arenite.di.wire(tempContext);
+        var instance = registry[tempId];
+        _removeInstance(tempId);
+        return instance;
+      } finally {
+        constructingFactories.pop();
+      }
     } else {
       return registry[name];
     }
